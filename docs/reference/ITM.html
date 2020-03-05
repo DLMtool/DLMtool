@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,14 +41,14 @@
 
 
 
-<meta property="og:title" content="Index Target based on natural mortality rate — ITM" />
 
+<meta property="og:title" content="Index Target based on natural mortality rate — ITM" />
 <meta property="og:description" content="An index target MP where the TAC is modified according to current index
 levels (mean index over last number of years determined by natural mortality
 (M)) relative to a target level." />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -77,7 +79,7 @@ levels (mean index over last number of years determined by natural mortality
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -90,7 +92,6 @@ levels (mean index over last number of years determined by natural mortality
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -112,15 +113,13 @@ levels (mean index over last number of years determined by natural mortality
     </div>
 
     <div class="ref-description">
-    
     <p>An index target MP where the TAC is modified according to current index
 levels (mean index over last number of years determined by natural mortality
 (<em>M</em>)) relative to a target level.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>ITM</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -141,11 +140,10 @@ levels (mean index over last number of years determined by natural mortality
       <td><p>Logical. Show the plot?</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The TAC is caluclated as:
@@ -154,39 +152,31 @@ where \(\delta I\) is the ratio of the  mean index over \(4\frac{1}{M}^{1/4}\) y
 to the reference index (<code>Data@Iref</code>).</p>
 <p>The maximum fractional change in TAC is determined by \(mc\), defined as
 \(mc = \textrm{max}\left(\frac{5 + 25M}{100}, 0.2\right)\)</p>
-    
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
 
 <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
 
-<p><code>ITM</code>: Ind, Iref, MPrec, Mort</p>
-    
+<p><code>ITM</code>: Ind, Iref, Mort, MPrec</p>
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
     
 
 <p>See <a href='https://dlmtool.github.io/DLMtool/reference/ITM.html'>Online Documentation</a> for correctly rendered equations</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>ITM</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='ITM-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1153.143 </div></pre>
+#&gt;     1193.742 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#required-data">Required Data</a></li>
-
       <li><a href="#rendered-equations">Rendered Equations</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

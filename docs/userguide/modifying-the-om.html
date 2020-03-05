@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -391,29 +410,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="the-tinyerr-function" class="section level2">
 <h2><span class="header-section-number">12.1</span> The <code>tinyErr</code> function</h2>
 <p>The <code>tinyErr</code> function can be used to remove observation, implementation, and process error, as well as any gradients in life-history parameters. For example, we first create an Operating Model using built-in <a href="the-operating-model.html#om-components">OM Components</a>:</p>
-<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb197-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_IncE, Imprecise_Biased, Overages)</a></code></pre></div>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="modifying-the-om.html#cb200-1"></a>OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_IncE, Imprecise_Biased, Overages)</span></code></pre></div>
 <p>Notice that our OM includes process error and gradients in life-history parameters, as well as observation and implementation error:</p>
-<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb198-1" title="1">OM<span class="op">@</span>Perr <span class="co"># recruitment process error</span></a></code></pre></div>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="modifying-the-om.html#cb201-1"></a>OM<span class="op">@</span>Perr <span class="co"># recruitment process error</span></span></code></pre></div>
 <pre><code>## [1] 0.15 0.30</code></pre>
-<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb200-1" title="1">OM<span class="op">@</span>Linfgrad <span class="co"># gradient in Linf</span></a></code></pre></div>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb203-1"><a href="modifying-the-om.html#cb203-1"></a>OM<span class="op">@</span>Linfgrad <span class="co"># gradient in Linf</span></span></code></pre></div>
 <pre><code>## numeric(0)</code></pre>
-<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb202-1" title="1">OM<span class="op">@</span>Cobs <span class="co"># error in observations</span></a></code></pre></div>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb205-1"><a href="modifying-the-om.html#cb205-1"></a>OM<span class="op">@</span>Cobs <span class="co"># error in observations</span></span></code></pre></div>
 <pre><code>## [1] 0.2 0.6</code></pre>
-<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb204-1" title="1">OM<span class="op">@</span>TACFrac <span class="co"># implementation error in TAC</span></a></code></pre></div>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="modifying-the-om.html#cb207-1"></a>OM<span class="op">@</span>TACFrac <span class="co"># implementation error in TAC</span></span></code></pre></div>
 <pre><code>## [1] 1.1 1.2</code></pre>
 <p>By default the <code>tinyErr</code> function will remove all sources of uncertainty and variability:</p>
-<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb206-1" title="1">OM2 &lt;-<span class="st"> </span><span class="kw">tinyErr</span>(OM)</a></code></pre></div>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb209-1"><a href="modifying-the-om.html#cb209-1"></a>OM2 &lt;-<span class="st"> </span><span class="kw">tinyErr</span>(OM)</span></code></pre></div>
 <pre><code>## Removing all Observation Error</code></pre>
 <pre><code>## Removing all Implementation Error</code></pre>
 <pre><code>## Removing all Process Error</code></pre>
 <pre><code>## Removing all Gradients</code></pre>
-<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb211-1" title="1">OM2<span class="op">@</span>Perr <span class="co"># no recruitment process error</span></a></code></pre></div>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="modifying-the-om.html#cb214-1"></a>OM2<span class="op">@</span>Perr <span class="co"># no recruitment process error</span></span></code></pre></div>
 <pre><code>## [1] 0 0</code></pre>
-<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb213-1" title="1">OM2<span class="op">@</span>Linfgrad <span class="co"># no gradient in Linf</span></a></code></pre></div>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="modifying-the-om.html#cb216-1"></a>OM2<span class="op">@</span>Linfgrad <span class="co"># no gradient in Linf</span></span></code></pre></div>
 <pre><code>## [1] 0 0</code></pre>
-<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb215-1" title="1">OM2<span class="op">@</span>Cobs <span class="co"># very low observation error</span></a></code></pre></div>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="modifying-the-om.html#cb218-1"></a>OM2<span class="op">@</span>Cobs <span class="co"># very low observation error</span></span></code></pre></div>
 <pre><code>## [1] 0.00 0.05</code></pre>
-<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb217-1" title="1">OM2<span class="op">@</span>TACFrac <span class="co"># no implementation error </span></a></code></pre></div>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb220-1"><a href="modifying-the-om.html#cb220-1"></a>OM2<span class="op">@</span>TACFrac <span class="co"># no implementation error </span></span></code></pre></div>
 <pre><code>## [1] 1 1</code></pre>
 <p>The <code>obs</code>, <code>imp</code>, <code>proc</code>, and <code>grad</code> arguments to the <code>tinyErr</code> function can be used to control which sources of error and variability to remove from the OM. See <code>?tinyErr</code> for more details.</p>
 </div>
@@ -421,16 +440,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">12.2</span> The <code>Replace</code> function</h2>
 <p>The can be used to replace individual <code>Stock</code>, <code>Fleet</code>, <code>Obs</code>, or <code>Imp</code> components in an Operating Model.</p>
 <p>For example, to replace the <code>Stock</code> object in an OM we provide <code>Replace</code> with a new Stock object:</p>
-<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb219-1" title="1"> OM1 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_DecE, Generic_Obs, Overages)</a>
-<a class="sourceLine" id="cb219-2" title="2"> OM2 &lt;-<span class="st"> </span><span class="kw">Replace</span>(OM1, Blue_shark, <span class="dt">Name=</span><span class="st">&quot;Blue_shark OM based on OM1&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="modifying-the-om.html#cb222-1"></a> OM1 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_DecE, Generic_Obs, Overages)</span>
+<span id="cb222-2"><a href="modifying-the-om.html#cb222-2"></a> OM2 &lt;-<span class="st"> </span><span class="kw">Replace</span>(OM1, Blue_shark, <span class="dt">Name=</span><span class="st">&quot;Blue_shark OM based on OM1&quot;</span>)</span></code></pre></div>
 <pre><code>## Replacing sub-model: Stock</code></pre>
 <p>Likewise, to replace any of the other OM components:</p>
-<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb221-1" title="1"> OM1 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_DecE, Generic_Obs, Overages)</a>
-<a class="sourceLine" id="cb221-2" title="2"> OM2 &lt;-<span class="st"> </span><span class="kw">Replace</span>(OM1, Generic_IncE, <span class="dt">Name=</span><span class="st">&quot;OM1 with new Fleet&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="modifying-the-om.html#cb224-1"></a> OM1 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_DecE, Generic_Obs, Overages)</span>
+<span id="cb224-2"><a href="modifying-the-om.html#cb224-2"></a> OM2 &lt;-<span class="st"> </span><span class="kw">Replace</span>(OM1, Generic_IncE, <span class="dt">Name=</span><span class="st">&quot;OM1 with new Fleet&quot;</span>)</span></code></pre></div>
 <pre><code>## Replacing sub-model: Fleet</code></pre>
-<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb223-1" title="1"> OM3 &lt;-<span class="st"> </span><span class="kw">Replace</span>(OM2, Perfect_Info, <span class="dt">Name=</span><span class="st">&quot;OM2 with new Obs&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="modifying-the-om.html#cb226-1"></a> OM3 &lt;-<span class="st"> </span><span class="kw">Replace</span>(OM2, Perfect_Info, <span class="dt">Name=</span><span class="st">&quot;OM2 with new Obs&quot;</span>)</span></code></pre></div>
 <pre><code>## Replacing sub-model: Obs</code></pre>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb225-1" title="1"> OM4 &lt;-<span class="st"> </span><span class="kw">Replace</span>(OM3, Perfect_Imp, <span class="dt">Name=</span><span class="st">&quot;OM2 with new Imp&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="modifying-the-om.html#cb228-1"></a> OM4 &lt;-<span class="st"> </span><span class="kw">Replace</span>(OM3, Perfect_Imp, <span class="dt">Name=</span><span class="st">&quot;OM2 with new Imp&quot;</span>)</span></code></pre></div>
 <pre><code>## Replacing sub-model: Imp</code></pre>
 </div>
 </div>
@@ -445,11 +464,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -464,6 +485,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

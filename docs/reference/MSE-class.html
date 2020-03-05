@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,13 +41,13 @@
 
 
 
-<meta property="og:title" content="Class <code>'MSE'</code> — MSE-class" />
 
+<meta property="og:title" content="Class <code>'MSE'</code> — MSE-class" />
 <meta property="og:description" content="A Management Strategy Evaluation object that contains information about
 simulation conditions and performance of data-limited methods" />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -76,7 +78,7 @@ simulation conditions and performance of data-limited methods" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -89,7 +91,6 @@ simulation conditions and performance of data-limited methods" />
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -111,13 +112,12 @@ simulation conditions and performance of data-limited methods" />
     </div>
 
     <div class="ref-description">
-    
     <p>A Management Strategy Evaluation object that contains information about
 simulation conditions and performance of data-limited methods</p>
-    
     </div>
 
-        
+
+
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
@@ -144,6 +144,7 @@ simulation conditions and performance of data-limited methods</p>
 <li><p>Blow: SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY (spawning biomass)</p></li>
 <li><p>BMSY: NA</p></li>
 <li><p>BMSY_B0: ratio of BMSY to unfished total biomass in last historical year</p></li>
+<li><p>CurrentYr: The last historical year</p></li>
 <li><p>D: stock depletion (spawning biomass / unfished spawing biomass) in the final historical year (prior to projection)</p></li>
 <li><p>dFfinal: gradient in fishing mortality rate over final five years of the historical simulation</p></li>
 <li><p>DR: the fraction of caught fish that are discarded</p></li>
@@ -156,16 +157,16 @@ simulation conditions and performance of data-limited methods</p>
 <li><p>hs: steepness of the stock recruitment relationship (the fraction of unfished recruitment at a fifth of unfished stock levels)</p></li>
 <li><p>K: maximum growth rate (von Bertalanffy K parameter)</p></li>
 <li><p>Ksd: interannual variability in maximum growth rate (log normal CV)</p></li>
-<li><p>L5: length at 5/<!-- % selectivity --></p></li>
-<li><p>L50: length at 50/<!-- % maturity --></p></li>
+<li><p>L5: length at 5/% selectivity</p></li>
+<li><p>L50: length at 50/% maturity</p></li>
 <li><p>L50_95: increment between L50 and L95</p></li>
-<li><p>L95: length at 95/<!-- % maturity --></p></li>
+<li><p>L95: length at 95/% maturity</p></li>
 <li><p>LenCV: CV of length-at-age</p></li>
 <li><p>LFR: first length at full retention</p></li>
 <li><p>LFS: first length at full selection</p></li>
 <li><p>Linf: asymptotic length</p></li>
 <li><p>Linfsd: interannual variability in maximum length (log normal CV)</p></li>
-<li><p>LR5: first length at 5/<!-- % retention --></p></li>
+<li><p>LR5: first length at 5/% retention</p></li>
 <li><p>M: instantaneous natural mortality rate</p></li>
 <li><p>maxF: NA</p></li>
 <li><p>maxlen: NA</p></li>
@@ -264,23 +265,19 @@ simulation conditions and performance of data-limited methods</p>
 <dt><code>Misc</code></dt><dd><p>Miscellanenous output such as posterior predictive data</p></dd>
 
 </dl>
-    
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
 
     <p>Objects can be created by calls of the form
 <code>new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
 B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort, PAA, CAA, CAL, CALbins)</code></p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      
       <li><a href="#slots">Slots</a></li>
-
       <li><a href="#objects-from-the-class">Objects from the Class</a></li>
-          </ul>
+    </ul>
 
     <h2>Author</h2>
     <p>T. Carruthers</p>

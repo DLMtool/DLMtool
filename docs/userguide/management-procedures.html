@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -397,36 +416,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="available-management-procedures" class="section level2">
 <h2><span class="header-section-number">5.2</span> Available Management Procedures</h2>
 <p>All management procedures in DLMtool are objects (actually functions in this case) of class <code>MP</code>. There are a number of MPs built into DLMtool. The <code>avail</code> function can be used to provide a list of MPs that can be included in the MSE:</p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;MP&#39;</span>)</a></code></pre></div>
-<pre><code>##   [1] &quot;AvC&quot;          &quot;AvC_MLL&quot;      &quot;BK&quot;           &quot;BK_CC&quot;       
-##   [5] &quot;BK_ML&quot;        &quot;CC1&quot;          &quot;CC2&quot;          &quot;CC3&quot;         
-##   [9] &quot;CC4&quot;          &quot;CC5&quot;          &quot;CompSRA&quot;      &quot;CompSRA4010&quot; 
-##  [13] &quot;CurC&quot;         &quot;curE&quot;         &quot;curE75&quot;       &quot;DAAC&quot;        
-##  [17] &quot;DBSRA&quot;        &quot;DBSRA_40&quot;     &quot;DBSRA4010&quot;    &quot;DCAC&quot;        
-##  [21] &quot;DCAC_40&quot;      &quot;DCAC_ML&quot;      &quot;DCAC4010&quot;     &quot;DCACs&quot;       
-##  [25] &quot;DD&quot;           &quot;DD4010&quot;       &quot;DDe&quot;          &quot;DDe75&quot;       
-##  [29] &quot;DDes&quot;         &quot;DepF&quot;         &quot;DTe40&quot;        &quot;DTe50&quot;       
-##  [33] &quot;DynF&quot;         &quot;EtargetLopt&quot;  &quot;Fadapt&quot;       &quot;Fdem&quot;        
-##  [37] &quot;Fdem_CC&quot;      &quot;Fdem_ML&quot;      &quot;FMSYref&quot;      &quot;FMSYref50&quot;   
-##  [41] &quot;FMSYref75&quot;    &quot;Fratio&quot;       &quot;Fratio_CC&quot;    &quot;Fratio_ML&quot;   
-##  [45] &quot;Fratio4010&quot;   &quot;GB_CC&quot;        &quot;GB_slope&quot;     &quot;GB_target&quot;   
-##  [49] &quot;Gcontrol&quot;     &quot;HDAAC&quot;        &quot;ICI&quot;          &quot;ICI2&quot;        
-##  [53] &quot;Iratio&quot;       &quot;Islope1&quot;      &quot;Islope2&quot;      &quot;Islope3&quot;     
-##  [57] &quot;Islope4&quot;      &quot;IT10&quot;         &quot;IT5&quot;          &quot;Itarget1&quot;    
-##  [61] &quot;Itarget1_MPA&quot; &quot;Itarget2&quot;     &quot;Itarget3&quot;     &quot;Itarget4&quot;    
-##  [65] &quot;ItargetE1&quot;    &quot;ItargetE2&quot;    &quot;ItargetE3&quot;    &quot;ItargetE4&quot;   
-##  [69] &quot;ITe10&quot;        &quot;ITe5&quot;         &quot;ITM&quot;          &quot;L95target&quot;   
-##  [73] &quot;LBSPR&quot;        &quot;LBSPR_MLL&quot;    &quot;Lratio_BHI&quot;   &quot;Lratio_BHI2&quot; 
-##  [77] &quot;Lratio_BHI3&quot;  &quot;LstepCC1&quot;     &quot;LstepCC2&quot;     &quot;LstepCC3&quot;    
-##  [81] &quot;LstepCC4&quot;     &quot;LstepCE1&quot;     &quot;LstepCE2&quot;     &quot;Ltarget1&quot;    
-##  [85] &quot;Ltarget2&quot;     &quot;Ltarget3&quot;     &quot;Ltarget4&quot;     &quot;LtargetE1&quot;   
-##  [89] &quot;LtargetE4&quot;    &quot;matlenlim&quot;    &quot;matlenlim2&quot;   &quot;MCD&quot;         
-##  [93] &quot;MCD4010&quot;      &quot;minlenLopt1&quot;  &quot;MRnoreal&quot;     &quot;MRreal&quot;      
-##  [97] &quot;NFref&quot;        &quot;Rcontrol&quot;     &quot;Rcontrol2&quot;    &quot;SBT1&quot;        
-## [101] &quot;SBT2&quot;         &quot;slotlim&quot;      &quot;SPmod&quot;        &quot;SPMSY&quot;       
-## [105] &quot;SPslope&quot;      &quot;SPSRA&quot;        &quot;SPSRA_ML&quot;     &quot;YPR&quot;         
-## [109] &quot;YPR_CC&quot;       &quot;YPR_ML&quot;       &quot;avgMP&quot;</code></pre>
-<p>As you can see, there are 111 MPs built into the DLMtool.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="management-procedures.html#cb76-1"></a><span class="kw">avail</span>(<span class="st">&#39;MP&#39;</span>)</span></code></pre></div>
+<pre><code>##   [1] &quot;AvC&quot;          &quot;AvC_MLL&quot;      &quot;BK&quot;           &quot;BK_CC&quot;        &quot;BK_ML&quot;        &quot;CC1&quot;          &quot;CC2&quot;         
+##   [8] &quot;CC3&quot;          &quot;CC4&quot;          &quot;CC5&quot;          &quot;CompSRA&quot;      &quot;CompSRA4010&quot;  &quot;CurC&quot;         &quot;curE&quot;        
+##  [15] &quot;curE75&quot;       &quot;DAAC&quot;         &quot;DBSRA&quot;        &quot;DBSRA_40&quot;     &quot;DBSRA4010&quot;    &quot;DCAC&quot;         &quot;DCAC_40&quot;     
+##  [22] &quot;DCAC_ML&quot;      &quot;DCAC4010&quot;     &quot;DCACs&quot;        &quot;DD&quot;           &quot;DD4010&quot;       &quot;DDe&quot;          &quot;DDe75&quot;       
+##  [29] &quot;DDes&quot;         &quot;DepF&quot;         &quot;DTe40&quot;        &quot;DTe50&quot;        &quot;DynF&quot;         &quot;EtargetLopt&quot;  &quot;Fadapt&quot;      
+##  [36] &quot;Fdem&quot;         &quot;Fdem_CC&quot;      &quot;Fdem_ML&quot;      &quot;FMSYref&quot;      &quot;FMSYref50&quot;    &quot;FMSYref75&quot;    &quot;Fratio&quot;      
+##  [43] &quot;Fratio_CC&quot;    &quot;Fratio_ML&quot;    &quot;Fratio4010&quot;   &quot;GB_CC&quot;        &quot;GB_slope&quot;     &quot;GB_target&quot;    &quot;Gcontrol&quot;    
+##  [50] &quot;HDAAC&quot;        &quot;ICI&quot;          &quot;ICI2&quot;         &quot;Iratio&quot;       &quot;Islope1&quot;      &quot;Islope2&quot;      &quot;Islope3&quot;     
+##  [57] &quot;Islope4&quot;      &quot;IT10&quot;         &quot;IT5&quot;          &quot;Itarget1&quot;     &quot;Itarget1_MPA&quot; &quot;Itarget2&quot;     &quot;Itarget3&quot;    
+##  [64] &quot;Itarget4&quot;     &quot;ItargetE1&quot;    &quot;ItargetE2&quot;    &quot;ItargetE3&quot;    &quot;ItargetE4&quot;    &quot;ITe10&quot;        &quot;ITe5&quot;        
+##  [71] &quot;ITM&quot;          &quot;L95target&quot;    &quot;LBSPR&quot;        &quot;LBSPR_MLL&quot;    &quot;Lratio_BHI&quot;   &quot;Lratio_BHI2&quot;  &quot;Lratio_BHI3&quot; 
+##  [78] &quot;LstepCC1&quot;     &quot;LstepCC2&quot;     &quot;LstepCC3&quot;     &quot;LstepCC4&quot;     &quot;LstepCE1&quot;     &quot;LstepCE2&quot;     &quot;Ltarget1&quot;    
+##  [85] &quot;Ltarget2&quot;     &quot;Ltarget3&quot;     &quot;Ltarget4&quot;     &quot;LtargetE1&quot;    &quot;LtargetE4&quot;    &quot;matlenlim&quot;    &quot;matlenlim2&quot;  
+##  [92] &quot;MCD&quot;          &quot;MCD4010&quot;      &quot;minlenLopt1&quot;  &quot;MRnoreal&quot;     &quot;MRreal&quot;       &quot;NFref&quot;        &quot;Rcontrol&quot;    
+##  [99] &quot;Rcontrol2&quot;    &quot;SBT1&quot;         &quot;SBT2&quot;         &quot;slotlim&quot;      &quot;SPmod&quot;        &quot;SPMSY&quot;        &quot;SPslope&quot;     
+## [106] &quot;SPSRA&quot;        &quot;SPSRA_ML&quot;     &quot;YPR&quot;          &quot;YPR_CC&quot;       &quot;YPR_ML&quot;       &quot;avgMP&quot;        &quot;TCPUE&quot;       
+## [113] &quot;TCPUE_e&quot;      &quot;THC&quot;</code></pre>
+<p>As you can see, there are 114 MPs built into the DLMtool.</p>
 <p>DLMtool is extensible and it is relatively straightforward to develop your own MPs and include them in the MSE. This is covered in <a href="developing-custom-management-procedures.html#developing-custom-management-procedures">Developing Custom Management Procedures</a>.</p>
 </div>
 <div id="types-of-management-procedure" class="section level2">
@@ -435,12 +443,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Since DLMtool V5.1 it is possible to include MPs that provide a combination of input and output controls.</p>
 <p>All MPs in DLMtool are now class <code>MP</code>, but the MPs are divided into four types: <strong>Input</strong> which allow regulation offishing effort, size selectivity, or spatial area but not a TAC, <strong>Output</strong> which return only a TAC recommendation, <strong>Mixed</strong> which return a combination of one or several input controls <em>and</em> a TAC, and <strong>Reference</strong> which are MPs that have been designed to be used as reference management procedures (e.g <code>FMSYref</code> which uses perfect information of FMSY and abundance).</p>
 <p>The <code>MPtype</code> function can be used to display the type for a particular MP, for example:</p>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" title="1"><span class="kw">MPtype</span>(<span class="st">&quot;DCAC&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="management-procedures.html#cb78-1"></a><span class="kw">MPtype</span>(<span class="st">&quot;DCAC&quot;</span>)</span></code></pre></div>
 <pre><code>##     MP   Type Recs
 ## 1 DCAC Output  TAC</code></pre>
 <p>This tells us that <code>DCAC</code> is an Output control MP and returns a management recommendation in the form of a total allowable catch limit (TAC).</p>
 <p>Here we list all available MPs:</p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" title="1"><span class="kw">MPtype</span>(<span class="kw">avail</span>(<span class="st">&#39;MP&#39;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="management-procedures.html#cb80-1"></a><span class="kw">MPtype</span>(<span class="kw">avail</span>(<span class="st">&#39;MP&#39;</span>))</span></code></pre></div>
 <pre><code>##               MP      Type         Recs
 ## 1           curE     Input          TAE
 ## 2         curE75     Input          TAE
@@ -468,106 +476,107 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 24      MRnoreal     Input      Spatial
 ## 25        MRreal     Input      Spatial
 ## 26       slotlim     Input           SL
-## 27       AvC_MLL     Mixed      TAC, SL
-## 28  Itarget1_MPA     Mixed TAC, Spatial
-## 29           AvC    Output          TAC
-## 30            BK    Output          TAC
-## 31         BK_CC    Output          TAC
-## 32         BK_ML    Output          TAC
-## 33           CC1    Output          TAC
-## 34           CC2    Output          TAC
-## 35           CC3    Output          TAC
-## 36           CC4    Output          TAC
-## 37           CC5    Output          TAC
-## 38       CompSRA    Output          TAC
-## 39   CompSRA4010    Output          TAC
-## 40          CurC    Output          TAC
-## 41          DAAC    Output          TAC
-## 42         DBSRA    Output          TAC
-## 43      DBSRA_40    Output          TAC
-## 44     DBSRA4010    Output          TAC
-## 45          DCAC    Output          TAC
-## 46       DCAC_40    Output          TAC
-## 47       DCAC_ML    Output          TAC
-## 48      DCAC4010    Output          TAC
-## 49         DCACs    Output          TAC
-## 50            DD    Output          TAC
-## 51        DD4010    Output          TAC
-## 52          DepF    Output          TAC
-## 53          DynF    Output          TAC
-## 54        Fadapt    Output          TAC
-## 55          Fdem    Output          TAC
-## 56       Fdem_CC    Output          TAC
-## 57       Fdem_ML    Output          TAC
-## 58        Fratio    Output          TAC
-## 59     Fratio_CC    Output          TAC
-## 60     Fratio_ML    Output          TAC
-## 61    Fratio4010    Output          TAC
-## 62         GB_CC    Output          TAC
-## 63      GB_slope    Output          TAC
-## 64     GB_target    Output          TAC
-## 65      Gcontrol    Output          TAC
-## 66         HDAAC    Output          TAC
-## 67           ICI    Output          TAC
-## 68          ICI2    Output          TAC
-## 69        Iratio    Output          TAC
-## 70       Islope1    Output          TAC
-## 71       Islope2    Output          TAC
-## 72       Islope3    Output          TAC
-## 73       Islope4    Output          TAC
-## 74          IT10    Output          TAC
-## 75           IT5    Output          TAC
-## 76      Itarget1    Output          TAC
-## 77      Itarget2    Output          TAC
-## 78      Itarget3    Output          TAC
-## 79      Itarget4    Output          TAC
-## 80           ITM    Output          TAC
-## 81     L95target    Output          TAC
-## 82    Lratio_BHI    Output          TAC
-## 83   Lratio_BHI2    Output          TAC
-## 84   Lratio_BHI3    Output          TAC
-## 85      LstepCC1    Output          TAC
-## 86      LstepCC2    Output          TAC
-## 87      LstepCC3    Output          TAC
-## 88      LstepCC4    Output          TAC
-## 89      Ltarget1    Output          TAC
-## 90      Ltarget2    Output          TAC
-## 91      Ltarget3    Output          TAC
-## 92      Ltarget4    Output          TAC
-## 93           MCD    Output          TAC
-## 94       MCD4010    Output          TAC
-## 95      Rcontrol    Output          TAC
-## 96     Rcontrol2    Output          TAC
-## 97          SBT1    Output          TAC
-## 98          SBT2    Output          TAC
-## 99         SPmod    Output          TAC
-## 100        SPMSY    Output          TAC
-## 101      SPslope    Output          TAC
-## 102        SPSRA    Output          TAC
-## 103     SPSRA_ML    Output          TAC
-## 104          YPR    Output          TAC
-## 105       YPR_CC    Output          TAC
-## 106       YPR_ML    Output          TAC
-## 107        avgMP    Output          TAC
-## 108      FMSYref Reference          TAC
-## 109    FMSYref50 Reference          TAC
-## 110    FMSYref75 Reference          TAC
-## 111        NFref Reference          TAC</code></pre>
+## 27       TCPUE_e     Input          TAE
+## 28       AvC_MLL     Mixed      TAC, SL
+## 29  Itarget1_MPA     Mixed TAC, Spatial
+## 30           AvC    Output          TAC
+## 31            BK    Output          TAC
+## 32         BK_CC    Output          TAC
+## 33         BK_ML    Output          TAC
+## 34           CC1    Output          TAC
+## 35           CC2    Output          TAC
+## 36           CC3    Output          TAC
+## 37           CC4    Output          TAC
+## 38           CC5    Output          TAC
+## 39       CompSRA    Output          TAC
+## 40   CompSRA4010    Output          TAC
+## 41          CurC    Output          TAC
+## 42          DAAC    Output          TAC
+## 43         DBSRA    Output          TAC
+## 44      DBSRA_40    Output          TAC
+## 45     DBSRA4010    Output          TAC
+## 46          DCAC    Output          TAC
+## 47       DCAC_40    Output          TAC
+## 48       DCAC_ML    Output          TAC
+## 49      DCAC4010    Output          TAC
+## 50         DCACs    Output          TAC
+## 51            DD    Output          TAC
+## 52        DD4010    Output          TAC
+## 53          DepF    Output          TAC
+## 54          DynF    Output          TAC
+## 55        Fadapt    Output          TAC
+## 56          Fdem    Output          TAC
+## 57       Fdem_CC    Output          TAC
+## 58       Fdem_ML    Output          TAC
+## 59        Fratio    Output          TAC
+## 60     Fratio_CC    Output          TAC
+## 61     Fratio_ML    Output          TAC
+## 62    Fratio4010    Output          TAC
+## 63         GB_CC    Output          TAC
+## 64      GB_slope    Output          TAC
+## 65     GB_target    Output          TAC
+## 66      Gcontrol    Output          TAC
+## 67         HDAAC    Output          TAC
+## 68           ICI    Output          TAC
+## 69          ICI2    Output          TAC
+## 70        Iratio    Output          TAC
+## 71       Islope1    Output          TAC
+## 72       Islope2    Output          TAC
+## 73       Islope3    Output          TAC
+## 74       Islope4    Output          TAC
+## 75          IT10    Output          TAC
+## 76           IT5    Output          TAC
+## 77      Itarget1    Output          TAC
+## 78      Itarget2    Output          TAC
+## 79      Itarget3    Output          TAC
+## 80      Itarget4    Output          TAC
+## 81           ITM    Output          TAC
+## 82     L95target    Output          TAC
+## 83    Lratio_BHI    Output          TAC
+## 84   Lratio_BHI2    Output          TAC
+## 85   Lratio_BHI3    Output          TAC
+## 86      LstepCC1    Output          TAC
+## 87      LstepCC2    Output          TAC
+## 88      LstepCC3    Output          TAC
+## 89      LstepCC4    Output          TAC
+## 90      Ltarget1    Output          TAC
+## 91      Ltarget2    Output          TAC
+## 92      Ltarget3    Output          TAC
+## 93      Ltarget4    Output          TAC
+## 94           MCD    Output          TAC
+## 95       MCD4010    Output          TAC
+## 96      Rcontrol    Output          TAC
+## 97     Rcontrol2    Output          TAC
+## 98          SBT1    Output          TAC
+## 99          SBT2    Output          TAC
+## 100        SPmod    Output          TAC
+## 101        SPMSY    Output          TAC
+## 102      SPslope    Output          TAC
+## 103        SPSRA    Output          TAC
+## 104     SPSRA_ML    Output          TAC
+## 105          YPR    Output          TAC
+## 106       YPR_CC    Output          TAC
+## 107       YPR_ML    Output          TAC
+## 108        avgMP    Output          TAC
+## 109        TCPUE    Output          TAC
+## 110          THC    Output          TAC
+## 111      FMSYref Reference          TAC
+## 112    FMSYref50 Reference          TAC
+## 113    FMSYref75 Reference          TAC
+## 114        NFref Reference          TAC</code></pre>
 <p>You can access help documentation for the MPs in the usual fashion, for example:</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" title="1">?DCAC</a></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="management-procedures.html#cb82-1"></a>?DCAC</span></code></pre></div>
 <div id="input-control-mps" class="section level3">
 <h3><span class="header-section-number">5.3.1</span> Input Control MPs</h3>
 <p>Input controls allow some combination of adjustments to <strong>fishing effort</strong>, <strong>size selectivity</strong>, or <strong>spatial area</strong>.</p>
 <p>The available input control MPs are:</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" title="1"><span class="kw">avail</span>(<span class="st">&quot;Input&quot;</span>)</a></code></pre></div>
-<pre><code>##  [1] &quot;curE&quot;        &quot;curE75&quot;      &quot;DDe&quot;         &quot;DDe75&quot;       &quot;DDes&quot;       
-##  [6] &quot;DTe40&quot;       &quot;DTe50&quot;       &quot;EtargetLopt&quot; &quot;ItargetE1&quot;   &quot;ItargetE2&quot;  
-## [11] &quot;ItargetE3&quot;   &quot;ItargetE4&quot;   &quot;ITe10&quot;       &quot;ITe5&quot;        &quot;LBSPR&quot;      
-## [16] &quot;LBSPR_MLL&quot;   &quot;LstepCE1&quot;    &quot;LstepCE2&quot;    &quot;LtargetE1&quot;   &quot;LtargetE4&quot;  
-## [21] &quot;matlenlim&quot;   &quot;matlenlim2&quot;  &quot;minlenLopt1&quot; &quot;MRnoreal&quot;    &quot;MRreal&quot;     
-## [26] &quot;slotlim&quot;</code></pre>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="management-procedures.html#cb83-1"></a><span class="kw">avail</span>(<span class="st">&quot;Input&quot;</span>)</span></code></pre></div>
+<pre><code>##  [1] &quot;curE&quot;        &quot;curE75&quot;      &quot;DDe&quot;         &quot;DDe75&quot;       &quot;DDes&quot;        &quot;DTe40&quot;       &quot;DTe50&quot;       &quot;EtargetLopt&quot;
+##  [9] &quot;ItargetE1&quot;   &quot;ItargetE2&quot;   &quot;ItargetE3&quot;   &quot;ItargetE4&quot;   &quot;ITe10&quot;       &quot;ITe5&quot;        &quot;LBSPR&quot;       &quot;LBSPR_MLL&quot;  
+## [17] &quot;LstepCE1&quot;    &quot;LstepCE2&quot;    &quot;LtargetE1&quot;   &quot;LtargetE4&quot;   &quot;matlenlim&quot;   &quot;matlenlim2&quot;  &quot;minlenLopt1&quot; &quot;MRnoreal&quot;   
+## [25] &quot;MRreal&quot;      &quot;slotlim&quot;     &quot;TCPUE_e&quot;</code></pre>
 <p>Remember, to access help documentation:</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb85-1" title="1">?matlenlim</a></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="management-procedures.html#cb85-1"></a>?matlenlim</span></code></pre></div>
 <p>More information on input control MPs can be found in <a href="developing-custom-management-procedures.html#beyond-the-catch-limit">Beyond the Catch Limit</a>.</p>
 </div>
 <div id="output-control-mps" class="section level3">
@@ -575,35 +584,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The output control methods in the DLMtool provide a management recommendation in the form of a TAC. Some output controls are stochastic, allowing for uncertainty in the data or input parameters, and return a distribution of recommended TACs.</p>
 <p>Output control methods are very common in fisheries management, especially in regions which have a tradition of managing fisheries by regulating the total amount of catch.</p>
 <p>The available output controls are:</p>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb86-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Output&#39;</span>)</a></code></pre></div>
-<pre><code>##  [1] &quot;AvC&quot;         &quot;BK&quot;          &quot;BK_CC&quot;       &quot;BK_ML&quot;       &quot;CC1&quot;        
-##  [6] &quot;CC2&quot;         &quot;CC3&quot;         &quot;CC4&quot;         &quot;CC5&quot;         &quot;CompSRA&quot;    
-## [11] &quot;CompSRA4010&quot; &quot;CurC&quot;        &quot;DAAC&quot;        &quot;DBSRA&quot;       &quot;DBSRA_40&quot;   
-## [16] &quot;DBSRA4010&quot;   &quot;DCAC&quot;        &quot;DCAC_40&quot;     &quot;DCAC_ML&quot;     &quot;DCAC4010&quot;   
-## [21] &quot;DCACs&quot;       &quot;DD&quot;          &quot;DD4010&quot;      &quot;DepF&quot;        &quot;DynF&quot;       
-## [26] &quot;Fadapt&quot;      &quot;Fdem&quot;        &quot;Fdem_CC&quot;     &quot;Fdem_ML&quot;     &quot;Fratio&quot;     
-## [31] &quot;Fratio_CC&quot;   &quot;Fratio_ML&quot;   &quot;Fratio4010&quot;  &quot;GB_CC&quot;       &quot;GB_slope&quot;   
-## [36] &quot;GB_target&quot;   &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;       
-## [41] &quot;Iratio&quot;      &quot;Islope1&quot;     &quot;Islope2&quot;     &quot;Islope3&quot;     &quot;Islope4&quot;    
-## [46] &quot;IT10&quot;        &quot;IT5&quot;         &quot;Itarget1&quot;    &quot;Itarget2&quot;    &quot;Itarget3&quot;   
-## [51] &quot;Itarget4&quot;    &quot;ITM&quot;         &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot;
-## [56] &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;    &quot;LstepCC2&quot;    &quot;LstepCC3&quot;    &quot;LstepCC4&quot;   
-## [61] &quot;Ltarget1&quot;    &quot;Ltarget2&quot;    &quot;Ltarget3&quot;    &quot;Ltarget4&quot;    &quot;MCD&quot;        
-## [66] &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SBT2&quot;       
-## [71] &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;     &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;   
-## [76] &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;      &quot;avgMP&quot;</code></pre>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="management-procedures.html#cb86-1"></a><span class="kw">avail</span>(<span class="st">&#39;Output&#39;</span>)</span></code></pre></div>
+<pre><code>##  [1] &quot;AvC&quot;         &quot;BK&quot;          &quot;BK_CC&quot;       &quot;BK_ML&quot;       &quot;CC1&quot;         &quot;CC2&quot;         &quot;CC3&quot;         &quot;CC4&quot;        
+##  [9] &quot;CC5&quot;         &quot;CompSRA&quot;     &quot;CompSRA4010&quot; &quot;CurC&quot;        &quot;DAAC&quot;        &quot;DBSRA&quot;       &quot;DBSRA_40&quot;    &quot;DBSRA4010&quot;  
+## [17] &quot;DCAC&quot;        &quot;DCAC_40&quot;     &quot;DCAC_ML&quot;     &quot;DCAC4010&quot;    &quot;DCACs&quot;       &quot;DD&quot;          &quot;DD4010&quot;      &quot;DepF&quot;       
+## [25] &quot;DynF&quot;        &quot;Fadapt&quot;      &quot;Fdem&quot;        &quot;Fdem_CC&quot;     &quot;Fdem_ML&quot;     &quot;Fratio&quot;      &quot;Fratio_CC&quot;   &quot;Fratio_ML&quot;  
+## [33] &quot;Fratio4010&quot;  &quot;GB_CC&quot;       &quot;GB_slope&quot;    &quot;GB_target&quot;   &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;       
+## [41] &quot;Iratio&quot;      &quot;Islope1&quot;     &quot;Islope2&quot;     &quot;Islope3&quot;     &quot;Islope4&quot;     &quot;IT10&quot;        &quot;IT5&quot;         &quot;Itarget1&quot;   
+## [49] &quot;Itarget2&quot;    &quot;Itarget3&quot;    &quot;Itarget4&quot;    &quot;ITM&quot;         &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot; &quot;Lratio_BHI3&quot;
+## [57] &quot;LstepCC1&quot;    &quot;LstepCC2&quot;    &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;    &quot;Ltarget3&quot;    &quot;Ltarget4&quot;   
+## [65] &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;      
+## [73] &quot;SPslope&quot;     &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;      &quot;avgMP&quot;       &quot;TCPUE&quot;      
+## [81] &quot;THC&quot;</code></pre>
 </div>
 <div id="mixed-mps" class="section level3">
 <h3><span class="header-section-number">5.3.3</span> Mixed MPs</h3>
 <p>Mixed MPs return a combination of input and output controls. Currently there are only a few mixed MPs in DLMtool, and these were developed simply for demonstration purposes. They may not work very well! See <a href="developing-custom-management-procedures.html#developing-custom-management-procedures">Developing Custom Management Procedures</a> for more information on developing your own mixed MPs. And please <a href="http://www.datalimitedtoolkit.org/contact">share</a> them with us, we’d love to add them to DLMtool!</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb88-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Mixed&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="management-procedures.html#cb88-1"></a><span class="kw">avail</span>(<span class="st">&#39;Mixed&#39;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;AvC_MLL&quot;      &quot;Itarget1_MPA&quot;</code></pre>
 </div>
 <div id="reference-mps" class="section level3">
 <h3><span class="header-section-number">5.3.4</span> Reference MPs</h3>
 <p>The final type is the reference MPs. These MPs are not designed to be used in practice, but are useful for providing a reference for comparing for the performance of other MPs. For example, the <code>FMSYref</code> and <code>NFref</code> methods (fishing perfectedly at F[MSY] and no fishing at all) can be useful for framing realistic performance with respect to a set of management objectives.</p>
 <p>The available reference MPs are:</p>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb90-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Reference&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="management-procedures.html#cb90-1"></a><span class="kw">avail</span>(<span class="st">&#39;Reference&#39;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;FMSYref&quot;   &quot;FMSYref50&quot; &quot;FMSYref75&quot; &quot;NFref&quot;</code></pre>
 </div>
 </div>
@@ -619,11 +623,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -638,6 +644,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

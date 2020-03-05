@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 10 Creating a New Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 10 Creating a New Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 10 Creating a New Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 10 Creating a New Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 10 Creating a New Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 10 Creating a New Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -395,7 +414,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">10.2</span> Create a New Project</h2>
 <p>We recommend creating a new directory for each OM. Each new R session should start by setting the working directory to this location. One of the easiest ways to do this is to create a new project in RStudio (File &gt; New Project) and open this each time you revisit the analysis.</p>
 <p>Alternatively, you can set the working directory with RStudio (Session &gt; Set Working Directory) or directly in the R console, for example:</p>
-<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb142-1" title="1"><span class="kw">setwd</span>(<span class="st">&quot;C:/MSE/MyOM&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="creating-a-new-operating-model.html#cb145-1"></a><span class="kw">setwd</span>(<span class="st">&quot;C:/MSE/MyOM&quot;</span>)</span></code></pre></div>
 </div>
 <div id="initialize-a-new-om" class="section level2">
 <h2><span class="header-section-number">10.3</span> Initialize a New OM</h2>
@@ -415,19 +434,19 @@ This is only required the first time a new OM is created.</p>
 <p>Some users may wish to build an operating model based on other pre-existing OM, Stock, Fleet, Obs, or Imp objects.</p>
 <p>For example, <code>OMinit('Albacore2', Albacore)</code> will result in a <strong>Albacore2.xlsx</strong> file being created with the <strong>Stock</strong> sheet populated with the values from the <strong>Albacore</strong> Stock object.</p>
 <p>Other examples:</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb143-1" title="1"><span class="kw">OMinit</span>(<span class="st">&#39;StockAndFleet&#39;</span>, Albacore, Generic_FlatE) <span class="co"># using existing Stock and Fleet objects</span></a>
-<a class="sourceLine" id="cb143-2" title="2"></a>
-<a class="sourceLine" id="cb143-3" title="3"><span class="kw">OMinit</span>(<span class="st">&#39;ObsAndImp&#39;</span>, Generic_Obs, Perfect_Imp) <span class="co"># using existing Obs and Imp objects</span></a>
-<a class="sourceLine" id="cb143-4" title="4"></a>
-<a class="sourceLine" id="cb143-5" title="5"><span class="kw">OMinit</span>(<span class="st">&#39;BorrowOM&#39;</span>, OtherOM) <span class="co"># using an existing OM</span></a></code></pre></div>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="creating-a-new-operating-model.html#cb146-1"></a><span class="kw">OMinit</span>(<span class="st">&#39;StockAndFleet&#39;</span>, Albacore, Generic_FlatE) <span class="co"># using existing Stock and Fleet objects</span></span>
+<span id="cb146-2"><a href="creating-a-new-operating-model.html#cb146-2"></a></span>
+<span id="cb146-3"><a href="creating-a-new-operating-model.html#cb146-3"></a><span class="kw">OMinit</span>(<span class="st">&#39;ObsAndImp&#39;</span>, Generic_Obs, Perfect_Imp) <span class="co"># using existing Obs and Imp objects</span></span>
+<span id="cb146-4"><a href="creating-a-new-operating-model.html#cb146-4"></a></span>
+<span id="cb146-5"><a href="creating-a-new-operating-model.html#cb146-5"></a><span class="kw">OMinit</span>(<span class="st">&#39;BorrowOM&#39;</span>, OtherOM) <span class="co"># using an existing OM</span></span></code></pre></div>
 </div>
 <div id="an-example" class="section level3">
 <h3><span class="header-section-number">10.3.2</span> An Example</h3>
 <p>In this example we are going to create an OM called ‘MyOM’ using existing OM objects:</p>
-<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb144-1" title="1"><span class="kw">OMinit</span>(<span class="st">&#39;MyOM&#39;</span>, Albacore, Generic_FlatE, Imprecise_Unbiased, Perfect_Imp)</a></code></pre></div>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="creating-a-new-operating-model.html#cb147-1"></a><span class="kw">OMinit</span>(<span class="st">&#39;MyOM&#39;</span>, Albacore, Generic_FlatE, Imprecise_Unbiased, Perfect_Imp)</span></code></pre></div>
 <p>We did this so that we can demonstrate the populated Excel and RMarkdown Files.</p>
 <p>To create a blank OM called ‘MyOM’ you would simply write:</p>
-<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb145-1" title="1"><span class="kw">OMinit</span>(<span class="st">&#39;MyOM&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="creating-a-new-operating-model.html#cb148-1"></a><span class="kw">OMinit</span>(<span class="st">&#39;MyOM&#39;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="populate-and-document-om" class="section level2">
@@ -451,7 +470,7 @@ This is only required the first time a new OM is created.</p>
 <h2><span class="header-section-number">10.5</span> Compile the OM Report</h2>
 <p>Once the OM has been specified in the spreadsheet and documented in the RMarkdown file, it can be compiled into a OM Report using the <code>OMdoc</code> function.</p>
 <p>The <code>OMdoc</code> function</p>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb146-1" title="1"><span class="kw">OMdoc</span>(<span class="st">&#39;MyOM&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="creating-a-new-operating-model.html#cb149-1"></a><span class="kw">OMdoc</span>(<span class="st">&#39;MyOM&#39;</span>)</span></code></pre></div>
 <p>In most cases it is not neccessary to provide the name of the RMarkdown file to <code>OMdoc</code>. By default the <code>OMdoc</code> function will look for a file with the extension ‘.rmd’ in working directory. For example, if the Excel file is named <em>MyOM</em> then <code>OMdoc</code> will look for <em>MyOM.rmd</em>, which is default name created by <code>OMinit</code>.</p>
 <p>Additionally, if there is only one <em>xlsx</em> file in the working directory the name of the OM is not required, i.e., <code>OMdoc()</code>.</p>
 <p>The resulting <a href="docs/ExampleOM/MyOM.html">MyOM.html</a> can opened in any web browser. Because we have not replaced any of the default text in the RMarkdown file, the resulting OM Report contains the same text. In your case, this default text should be replaced with information relevant to your OM.</p>
@@ -461,24 +480,24 @@ This is only required the first time a new OM is created.</p>
 <h2><span class="header-section-number">10.6</span> Import the OM into R</h2>
 <p>The OM can be imported from the Excel file using the <code>XL2OM</code> function.</p>
 <p>For example, to import the example OM created in the previous section:</p>
-<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb147-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">XL2OM</span>(<span class="st">&#39;MyOM&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="creating-a-new-operating-model.html#cb150-1"></a>OM &lt;-<span class="st"> </span><span class="kw">XL2OM</span>(<span class="st">&#39;MyOM&#39;</span>)</span></code></pre></div>
 <p>The OM is now ready to be used for analysis, for example:</p>
-<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb148-1" title="1"><span class="co"># Plot the OM</span></a>
-<a class="sourceLine" id="cb148-2" title="2"><span class="kw">plot</span>(OM) </a>
-<a class="sourceLine" id="cb148-3" title="3"></a>
-<a class="sourceLine" id="cb148-4" title="4"><span class="co"># Run an MSE using default MPs</span></a>
-<a class="sourceLine" id="cb148-5" title="5">MyMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM)</a></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="creating-a-new-operating-model.html#cb151-1"></a><span class="co"># Plot the OM</span></span>
+<span id="cb151-2"><a href="creating-a-new-operating-model.html#cb151-2"></a><span class="kw">plot</span>(OM) </span>
+<span id="cb151-3"><a href="creating-a-new-operating-model.html#cb151-3"></a></span>
+<span id="cb151-4"><a href="creating-a-new-operating-model.html#cb151-4"></a><span class="co"># Run an MSE using default MPs</span></span>
+<span id="cb151-5"><a href="creating-a-new-operating-model.html#cb151-5"></a>MyMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM)</span></code></pre></div>
 </div>
 <div id="documenting-an-existing-om" class="section level2">
 <h2><span class="header-section-number">10.7</span> Documenting an Existing OM</h2>
 <p>To document existing OMs that don’t use the Excel workbook the <code>OMinit</code> function can be used to create just the RMarkdown documentation file in the working directory.</p>
 <p>The <code>OMdoc</code> function can be used to generate an OM report directly from an OM object and a RMarkdown file. In this case it is necessary to provide the name of the Rmarkdown file to <code>OMdoc</code>.</p>
 <p>For example, here we create an OM using existing objects from DLMtool, generate the RMarkdown documentation skeleton (only required once), and compile the OM report:</p>
-<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb149-1" title="1">BlueSharkOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_Fleet, Imprecise_Biased, Perfect_Imp) </a>
-<a class="sourceLine" id="cb149-2" title="2"><span class="kw">OMinit</span>(<span class="st">&#39;BlueSharkOM&#39;</span>, <span class="dt">files=</span><span class="st">&#39;rmd&#39;</span>, BlueSharkOM)</a>
-<a class="sourceLine" id="cb149-3" title="3"></a>
-<a class="sourceLine" id="cb149-4" title="4"><span class="co"># - Enter OM details in BlueSharkOM.rmd - </span></a>
-<a class="sourceLine" id="cb149-5" title="5"><span class="kw">OMdoc</span>(BlueSharkOM, <span class="st">&#39;BlueSharkOM.rmd&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="creating-a-new-operating-model.html#cb152-1"></a>BlueSharkOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_Fleet, Imprecise_Biased, Perfect_Imp) </span>
+<span id="cb152-2"><a href="creating-a-new-operating-model.html#cb152-2"></a><span class="kw">OMinit</span>(<span class="st">&#39;BlueSharkOM&#39;</span>, <span class="dt">files=</span><span class="st">&#39;rmd&#39;</span>, BlueSharkOM)</span>
+<span id="cb152-3"><a href="creating-a-new-operating-model.html#cb152-3"></a></span>
+<span id="cb152-4"><a href="creating-a-new-operating-model.html#cb152-4"></a><span class="co"># - Enter OM details in BlueSharkOM.rmd - </span></span>
+<span id="cb152-5"><a href="creating-a-new-operating-model.html#cb152-5"></a><span class="kw">OMdoc</span>(BlueSharkOM, <span class="st">&#39;BlueSharkOM.rmd&#39;</span>)</span></code></pre></div>
 <p>The same process is used if you are using the <code>cpars</code> feature to provide custom parameters to the MSE (see <a href="custom-parameters.html#custom-parameters">Custom Parameters</a> section for more details).</p>
 </div>
 </div>
@@ -493,11 +512,13 @@ This is only required the first time a new OM is created.</p>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -512,6 +533,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

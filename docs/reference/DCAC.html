@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,14 +41,14 @@
 
 
 
-<meta property="og:title" content="Depletion Corrected Average Catch — DCACs" />
 
+<meta property="og:title" content="Depletion Corrected Average Catch — DCACs" />
 <meta property="og:description" content="This group of MPs calculates a catch limit (dcac; intended as an MSY proxy) based on
 average historical catch while accounting for the windfall catch that got the stock down to
 its current depletion level (D)." />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -77,7 +79,7 @@ its current depletion level (D)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -90,7 +92,6 @@ its current depletion level (D)." />
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -112,11 +113,9 @@ its current depletion level (D)." />
     </div>
 
     <div class="ref-description">
-    
     <p>This group of MPs calculates a catch limit (<em>dcac</em>; intended as an MSY proxy) based on
 average historical catch while accounting for the windfall catch that got the stock down to
 its current depletion level (<em>D</em>).</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>DCACs</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
@@ -132,7 +131,7 @@ its current depletion level (<em>D</em>).</p>
 <span class='fu'>DAAC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>HDAAC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -153,11 +152,10 @@ its current depletion level (<em>D</em>).</p>
       <td><p>Logical. Show the plot?</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The method calculates the depletion-corrected average catch (<em>dcac</em>) as:</p>
@@ -166,7 +164,6 @@ its current depletion level (<em>D</em>).</p>
 $$Y_{\textrm{pot}} = \frac{B_{\textrm{MSY}}}{B_0}\frac{F_{\textrm{MSY}}}{M}M$$
 and \(C\) is the historical catches; i.e \(C\) does not change in the future projections in the MSE</p>
 <p>The methods differ in the assumptions of current depletion (<em>D</em>). See the <strong>Functions</strong> section below for details.</p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -197,34 +194,31 @@ divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).</p></li>
 divided by BMSY/B0 (Bpeak) when below BMSY,
 and DCAC above BMSY (Harford and Carruthers 2017).</p></li>
 </ul>
-    
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>It's probably worth noting that DCAC TAC recommendations do not tend
 to zero as depletion tends to zero. It adjusts for depletion only in
 calculating historical average catch. It follows that at stock levels much
 below BMSY, DCAC tends to chronically overfish.</p>
-    
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
 
 <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
 
-<p><code>DCACs</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+<p><code>DCACs</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
 
-<p><code>DCAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+<p><code>DCAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
 
-<p><code>DCAC_40</code>: AvC, BMSY_B0, FMSY_M, LHYear, Mort, Year, t</p>
+<p><code>DCAC_40</code>: AvC, BMSY_B0, FMSY_M, LHYear, Mort, t, Year</p>
 
-<p><code>DCAC4010</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+<p><code>DCAC4010</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
 
-<p><code>DCAC_ML</code>: AvC, CAL, Cat, LHYear, Lbar, Lc, Mort, Year, t, vbK, vbLinf</p>
+<p><code>DCAC_ML</code>: AvC, CAL, Cat, Lbar, Lc, LHYear, Mort, t, vbK, vbLinf, Year</p>
 
-<p><code>DAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+<p><code>DAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
 
-<p><code>HDAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
-    
+<p><code>HDAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
     
@@ -242,7 +236,6 @@ below BMSY, DCAC tends to chronically overfish.</p>
 
 
 
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>MacCall, A.D., 2009. Depletion-corrected average catch: a simple
@@ -250,12 +243,11 @@ formula for estimating sustainable yields in data-poor situations. ICES J.
 Mar. Sci. 66, 2267-2271.</p>
 <p>Harford W. and Carruthers, T. 2017. Interim and long-term performance of
 static and adaptive management procedures. Fish. Res. 190, 84-94.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other Average Catch MPs: <code><a href='AvC_MLL.html'>AvC_MLL</a></code>,
-  <code><a href='AvC.html'>AvC</a></code></p></div>
-    
+    <div class='dont-index'><p>Other Average Catch MPs: 
+<code><a href='AvC_MLL.html'>AvC_MLL</a>()</code>,
+<code><a href='AvC.html'>AvC</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>DCACs</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/Data-class-objects.html'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
@@ -269,7 +261,7 @@ static and adaptive management procedures. Fish. Res. 190, 84-94.</p>
 <span class='fu'>DCAC4010</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
 #&gt;     1.524634 </div><div class='input'>
 <span class='fu'>DCAC_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1037.519 </div><div class='input'>
+#&gt;     1106.524 </div><div class='input'>
 <span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/Data-class-objects.html'>Atlantic_mackerel</a></span>
 <span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
 <span class='fu'>DAAC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-6.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
@@ -284,23 +276,14 @@ static and adaptive management procedures. Fish. Res. 190, 84-94.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#functions">Functions</a></li>
-
       <li><a href="#note">Note</a></li>
-
       <li><a href="#required-data">Required Data</a></li>
-
       <li><a href="#rendered-equations">Rendered Equations</a></li>
-
       <li><a href="#references">References</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

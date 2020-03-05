@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -389,66 +408,56 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The MSE object contains all of the output from the MSE. In this chapter we will examine the MSE object in more detail.</p>
 <p>First we will run an MSE so that we have an MSE object to work with. We will then briefly examine some of the contents of the MSE object. The chapters <a href="performance-metrics.html#performance-metrics">Performance Metrics</a> and <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> contain more information on the MSE object.</p>
 <p>We create an OM based on the Blue Shark stock object and other built-in objects:</p>
-<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb227-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_Fleet, Imprecise_Biased, Perfect_Imp, <span class="dt">nsim=</span><span class="dv">200</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="examining-the-mse-object.html#cb230-1"></a>OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_Fleet, Imprecise_Biased, Perfect_Imp, <span class="dt">nsim=</span><span class="dv">200</span>)</span></code></pre></div>
 <p>Note that we have increased the number of simulations from the default 48 to 200:</p>
-<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb228-1" title="1">OM<span class="op">@</span>nsim</a></code></pre></div>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb231-1"><a href="examining-the-mse-object.html#cb231-1"></a>OM<span class="op">@</span>nsim</span></code></pre></div>
 <pre><code>## [1] 200</code></pre>
 <p>Let’s choose an arbitrary set of MPs:</p>
-<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb230-1" title="1">MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>) </a></code></pre></div>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb233-1"><a href="examining-the-mse-object.html#cb233-1"></a>MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>) </span></code></pre></div>
 <p>Set up parallel processing:</p>
-<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb231-1" title="1"><span class="kw">setup</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="examining-the-mse-object.html#cb234-1"></a><span class="kw">setup</span>()</span></code></pre></div>
 <pre><code>## Library DLMtool loaded.</code></pre>
 <p>And run the MSE using parallel processing and save the output to an object called <code>BSharkMSE</code>:</p>
-<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb233-1" title="1">BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, MPs, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<pre><code>## Running MSE in parallel on 8 processors</code></pre>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="examining-the-mse-object.html#cb236-1"></a>BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, MPs, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<pre><code>## Running MSE in parallel on 10 processors</code></pre>
 <pre><code>## MSE completed</code></pre>
 <p>The names of the slots in an object of class <code>MSE</code> can be displayed using the <code>slotNames</code> function:</p>
-<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb236-1" title="1"><span class="kw">slotNames</span>(BSharkMSE)</a></code></pre></div>
-<pre><code>##  [1] &quot;Name&quot;     &quot;nyears&quot;   &quot;proyears&quot; &quot;nMPs&quot;     &quot;MPs&quot;      &quot;nsim&quot;    
-##  [7] &quot;OM&quot;       &quot;Obs&quot;      &quot;B_BMSY&quot;   &quot;F_FMSY&quot;   &quot;B&quot;        &quot;SSB&quot;     
-## [13] &quot;VB&quot;       &quot;FM&quot;       &quot;C&quot;        &quot;TAC&quot;      &quot;SSB_hist&quot; &quot;CB_hist&quot; 
-## [19] &quot;FM_hist&quot;  &quot;Effort&quot;   &quot;PAA&quot;      &quot;CAA&quot;      &quot;CAL&quot;      &quot;CALbins&quot; 
-## [25] &quot;Misc&quot;</code></pre>
+<div class="sourceCode" id="cb239"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb239-1"><a href="examining-the-mse-object.html#cb239-1"></a><span class="kw">slotNames</span>(BSharkMSE)</span></code></pre></div>
+<pre><code>##  [1] &quot;Name&quot;     &quot;nyears&quot;   &quot;proyears&quot; &quot;nMPs&quot;     &quot;MPs&quot;      &quot;nsim&quot;     &quot;OM&quot;       &quot;Obs&quot;      &quot;B_BMSY&quot;   &quot;F_FMSY&quot;  
+## [11] &quot;B&quot;        &quot;SSB&quot;      &quot;VB&quot;       &quot;FM&quot;       &quot;C&quot;        &quot;TAC&quot;      &quot;SSB_hist&quot; &quot;CB_hist&quot;  &quot;FM_hist&quot;  &quot;Effort&quot;  
+## [21] &quot;PAA&quot;      &quot;CAA&quot;      &quot;CAL&quot;      &quot;CALbins&quot;  &quot;Misc&quot;</code></pre>
 <p>As you can see, <code>MSE</code> objects contain all of the information from the MSE, stored in 25 slots.</p>
 <div id="the-first-six-slots" class="section level2">
 <h2><span class="header-section-number">14.1</span> The First Six Slots</h2>
 <p>The first six slots contain information on the structure of the MSE. For example the first slot (<code>Name</code>), is a combination of the names of the <code>Stock</code>, <code>Fleet</code>, and <code>Obs</code> objects that were used in the MSE:</p>
-<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb238-1" title="1">BSharkMSE<span class="op">@</span>Name</a></code></pre></div>
+<div class="sourceCode" id="cb241"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb241-1"><a href="examining-the-mse-object.html#cb241-1"></a>BSharkMSE<span class="op">@</span>Name</span></code></pre></div>
 <pre><code>## [1] &quot;Stock:Blue shark  Fleet:Generic_Fleet  Obs model:Imprecise-Biased  Imp model:Perfect_Imp&quot;</code></pre>
 <p>Other information in these first slots includes the number of historical years (<code>nyears</code>), the number of projection years (<code>proyears</code>), the number of name of the Management Procedures (<code>nMPs</code> and <code>MPs</code>), and the number of simulations (<code>nsim</code>).</p>
 </div>
 <div id="the-om-slot" class="section level2">
 <h2><span class="header-section-number">14.2</span> The <code>OM</code> Slot</h2>
 <p>The <code>OM</code> slot in the <code>MSE</code> object is a data frame that the values of the parameters used in the Operating Model:</p>
-<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb240-1" title="1"><span class="kw">names</span>(BSharkMSE<span class="op">@</span>OM)</a></code></pre></div>
-<pre><code>##  [1] &quot;A&quot;            &quot;AC&quot;           &quot;ageM&quot;         &quot;Asp&quot;         
-##  [5] &quot;Blow&quot;         &quot;BMSY&quot;         &quot;BMSY_B0&quot;      &quot;D&quot;           
-##  [9] &quot;dFfinal&quot;      &quot;DR&quot;           &quot;Esd&quot;          &quot;Fdisc&quot;       
-## [13] &quot;FinF&quot;         &quot;FMSY&quot;         &quot;FMSY_M&quot;       &quot;Frac_area_1&quot; 
-## [17] &quot;hs&quot;           &quot;K&quot;            &quot;Ksd&quot;          &quot;L5&quot;          
-## [21] &quot;L50&quot;          &quot;L50_95&quot;       &quot;L95&quot;          &quot;LenCV&quot;       
-## [25] &quot;LFR&quot;          &quot;LFS&quot;          &quot;Linf&quot;         &quot;Linfsd&quot;      
-## [29] &quot;LR5&quot;          &quot;M&quot;            &quot;maxF&quot;         &quot;maxlen&quot;      
-## [33] &quot;Mexp&quot;         &quot;MGT&quot;          &quot;Msd&quot;          &quot;MSY&quot;         
-## [37] &quot;OFLreal&quot;      &quot;Prob_staying&quot; &quot;procmu&quot;       &quot;procsd&quot;      
-## [41] &quot;qcv&quot;          &quot;qinc&quot;         &quot;R0&quot;           &quot;RefY&quot;        
-## [45] &quot;Rmaxlen&quot;      &quot;Size_area_1&quot;  &quot;SizeLimFrac&quot;  &quot;SizeLimSD&quot;   
-## [49] &quot;Spat_targ&quot;    &quot;SRrel&quot;        &quot;SSB0&quot;         &quot;SSBMSY&quot;      
-## [53] &quot;SSBMSY_SSB0&quot;  &quot;t0&quot;           &quot;TACFrac&quot;      &quot;TACSD&quot;       
-## [57] &quot;TAEFrac&quot;      &quot;TAESD&quot;        &quot;UMSY&quot;         &quot;Vmaxlen&quot;</code></pre>
-<p>If you use the <code>dim</code> function to report the dimensions of the <code>OM</code> data frame, you’ll notice that there are 60 columns, corresponding to the 60 parameters in the Operating Model, and 200 rows, each corresponding to a single simulation of the MSE.</p>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="examining-the-mse-object.html#cb243-1"></a><span class="kw">names</span>(BSharkMSE<span class="op">@</span>OM)</span></code></pre></div>
+<pre><code>##  [1] &quot;A&quot;            &quot;AC&quot;           &quot;ageM&quot;         &quot;Asp&quot;          &quot;Blow&quot;         &quot;BMSY&quot;         &quot;BMSY_B0&quot;     
+##  [8] &quot;CurrentYr&quot;    &quot;D&quot;            &quot;dFfinal&quot;      &quot;DR&quot;           &quot;Esd&quot;          &quot;Fdisc&quot;        &quot;FinF&quot;        
+## [15] &quot;FMSY&quot;         &quot;FMSY_M&quot;       &quot;Frac_area_1&quot;  &quot;hs&quot;           &quot;K&quot;            &quot;Ksd&quot;          &quot;L5&quot;          
+## [22] &quot;L50&quot;          &quot;L50_95&quot;       &quot;L95&quot;          &quot;LenCV&quot;        &quot;LFR&quot;          &quot;LFS&quot;          &quot;Linf&quot;        
+## [29] &quot;Linfsd&quot;       &quot;LR5&quot;          &quot;M&quot;            &quot;maxF&quot;         &quot;maxlen&quot;       &quot;Mexp&quot;         &quot;MGT&quot;         
+## [36] &quot;Msd&quot;          &quot;MSY&quot;          &quot;OFLreal&quot;      &quot;Prob_staying&quot; &quot;procmu&quot;       &quot;procsd&quot;       &quot;qcv&quot;         
+## [43] &quot;qinc&quot;         &quot;R0&quot;           &quot;RefY&quot;         &quot;Rmaxlen&quot;      &quot;Size_area_1&quot;  &quot;SizeLimFrac&quot;  &quot;SizeLimSD&quot;   
+## [50] &quot;Spat_targ&quot;    &quot;SRrel&quot;        &quot;SSB0&quot;         &quot;SSBMSY&quot;       &quot;SSBMSY_SSB0&quot;  &quot;t0&quot;           &quot;TACFrac&quot;     
+## [57] &quot;TACSD&quot;        &quot;TAEFrac&quot;      &quot;TAESD&quot;        &quot;UMSY&quot;         &quot;Vmaxlen&quot;</code></pre>
+<p>If you use the <code>dim</code> function to report the dimensions of the <code>OM</code> data frame, you’ll notice that there are 61 columns, corresponding to the 61 parameters in the Operating Model, and 200 rows, each corresponding to a single simulation of the MSE.</p>
 <p>More information on the <code>MSE@OM</code> slot can be found in the help documentation: <code>class?MSE</code></p>
 </div>
 <div id="the-obs-slot" class="section level2">
 <h2><span class="header-section-number">14.3</span> The <code>Obs</code> Slot</h2>
 <p>The <code>Obs</code> slot contains another data frame, this one with 26 columns corresponding to the values drawn from the Observation model:</p>
-<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb242-1" title="1"><span class="kw">names</span>(BSharkMSE<span class="op">@</span>Obs)</a></code></pre></div>
-<pre><code>##  [1] &quot;Abias&quot;       &quot;Aerr&quot;        &quot;betas&quot;       &quot;BMSY_B0bias&quot; &quot;Brefbias&quot;   
-##  [6] &quot;CAA_ESS&quot;     &quot;CAA_nsamp&quot;   &quot;CAL_ESS&quot;     &quot;CAL_nsamp&quot;   &quot;Cbias&quot;      
-## [11] &quot;Crefbias&quot;    &quot;Csd&quot;         &quot;Dbias&quot;       &quot;Derr&quot;        &quot;FMSY_Mbias&quot; 
-## [16] &quot;hbias&quot;       &quot;Irefbias&quot;    &quot;Isd&quot;         &quot;Kbias&quot;       &quot;lenMbias&quot;   
-## [21] &quot;LFCbias&quot;     &quot;LFSbias&quot;     &quot;Linfbias&quot;    &quot;Mbias&quot;       &quot;Recsd&quot;      
-## [26] &quot;t0bias&quot;</code></pre>
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="examining-the-mse-object.html#cb245-1"></a><span class="kw">names</span>(BSharkMSE<span class="op">@</span>Obs)</span></code></pre></div>
+<pre><code>##  [1] &quot;Abias&quot;       &quot;Aerr&quot;        &quot;betas&quot;       &quot;BMSY_B0bias&quot; &quot;Brefbias&quot;    &quot;CAA_ESS&quot;     &quot;CAA_nsamp&quot;   &quot;CAL_ESS&quot;    
+##  [9] &quot;CAL_nsamp&quot;   &quot;Cbias&quot;       &quot;Crefbias&quot;    &quot;Csd&quot;         &quot;Dbias&quot;       &quot;Derr&quot;        &quot;FMSY_Mbias&quot;  &quot;hbias&quot;      
+## [17] &quot;Irefbias&quot;    &quot;Isd&quot;         &quot;Kbias&quot;       &quot;lenMbias&quot;    &quot;LFCbias&quot;     &quot;LFSbias&quot;     &quot;Linfbias&quot;    &quot;Mbias&quot;      
+## [25] &quot;Recsd&quot;       &quot;t0bias&quot;</code></pre>
 <p>The <code>Obs</code> data frame also has 200 rows, each corresponding to a single simulation. More information on the <code>MSE@Obs</code> slot can be found in the help documentation: <code>class?MSE</code></p>
 <p>The information contained in the <code>OM</code> and <code>Obs</code> slots can be used to examine the sensitivity of the performance of Management Procedures with respect to different operating model and observation parameters. This is discussed in more detail below.</p>
 </div>
@@ -456,16 +465,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">14.4</span> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</h2>
 <p>The <code>B_BMSY</code> and <code>F_FMSY</code> are data frames containing the biomass relative to biomass at maximum sustainable yield <span class="math inline">\(\left(\frac{B}{B_{MSY}}\right)\)</span>, and fishing mortality relative to the rate corresponding to maximum sustainable yield <span class="math inline">\(\left(\frac{F}{F_{MSY}}\right)\)</span> for each simulation, Management Procedure and projection year.</p>
 <p>If we look at the class of the <code>B_BMSY</code> slot, we see that it is an <code>array</code>:</p>
-<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb244-1" title="1"><span class="kw">class</span>(BSharkMSE<span class="op">@</span>B_BMSY)</a></code></pre></div>
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="examining-the-mse-object.html#cb247-1"></a><span class="kw">class</span>(BSharkMSE<span class="op">@</span>B_BMSY)</span></code></pre></div>
 <pre><code>## [1] &quot;array&quot;</code></pre>
 <p>Using the <code>dim</code> function we can see that it is a 3-dimensional array, with the size corresponding to the number of simulations (<code>nsim</code>), the number of Management Procedures (<code>nMPs</code>), and the number of projection years (<code>proyears</code>):</p>
-<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb246-1" title="1"><span class="kw">dim</span>(BSharkMSE<span class="op">@</span>B_BMSY)</a></code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="examining-the-mse-object.html#cb249-1"></a><span class="kw">dim</span>(BSharkMSE<span class="op">@</span>B_BMSY)</span></code></pre></div>
 <pre><code>## [1] 200   5  50</code></pre>
 <p>This information can be used to calculate statistics relating to the performance of each Management Procedure with respect to these metrics.</p>
 <p>For example, if you wish to look at the distribution of <span class="math inline">\(\frac{B}{B_{MSY}}\)</span> for the second Management Procedure (DCAC), you could use the <code>boxplot</code> function:</p>
-<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb248-1" title="1"><span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>B_BMSY[,<span class="dv">2</span>,], <span class="dt">xlab=</span><span class="st">&quot;Year&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;B/BMSY&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="examining-the-mse-object.html#cb251-1"></a><span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>B_BMSY[,<span class="dv">2</span>,], <span class="dt">xlab=</span><span class="st">&quot;Year&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;B/BMSY&quot;</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
-<p>This plot shows that the relative biomass for the stock generally increases through the projection period when the DCAC method is used, with the median relative biomass increasing from about 0.93 in the first year to 0.4 in the final year.</p>
+<p>This plot shows that the relative biomass for the stock generally increases through the projection period when the DCAC method is used, with the median relative biomass increasing from about 0.98 in the first year to 0.83 in the final year.</p>
 <p>However, the distribution appears to have quite high variability, which suggests that although the method works well on average, the final biomass was very low in some simulations.</p>
 </div>
 <div id="the-b-fm-c-and-tac-slots" class="section level2">
@@ -488,11 +497,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">14.7</span> The <code>Effort</code> Slot</h2>
 <p>The <code>Effort</code> slot is a 3-dimensional array containing information on the relative fishing effort (relative to last historical year, or current conditions) for each simulation, Management Procedure and projection year.</p>
 <p>We can look at the distribution of fishing effort for each Management Procedure in the final year of the projection period:</p>
-<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb249-1" title="1">pyear &lt;-<span class="st"> </span>BSharkMSE<span class="op">@</span>proyears</a>
-<a class="sourceLine" id="cb249-2" title="2"><span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>Effort[,, pyear], <span class="dt">outline=</span><span class="ot">FALSE</span>, </a>
-<a class="sourceLine" id="cb249-3" title="3">        <span class="dt">names=</span>BSharkMSE<span class="op">@</span>MPs, <span class="dt">ylab=</span><span class="st">&quot;Relative fishing effort&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="examining-the-mse-object.html#cb252-1"></a>pyear &lt;-<span class="st"> </span>BSharkMSE<span class="op">@</span>proyears</span>
+<span id="cb252-2"><a href="examining-the-mse-object.html#cb252-2"></a><span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>Effort[,, pyear], <span class="dt">outline=</span><span class="ot">FALSE</span>, </span>
+<span id="cb252-3"><a href="examining-the-mse-object.html#cb252-3"></a>        <span class="dt">names=</span>BSharkMSE<span class="op">@</span>MPs, <span class="dt">ylab=</span><span class="st">&quot;Relative fishing effort&quot;</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
-<p>This plot shows that the median fishing effort in the final year ranges from 0.83 to 2.31 for the first four output control methods, and is constant for the input control method (<code>matlenlim</code>).</p>
+<p>This plot shows that the median fishing effort in the final year ranges from 0.77 to 1.57 for the first four output control methods, and is constant for the input control method (<code>matlenlim</code>).</p>
 <p>This is because the output control method adjusts the total allowable catch, which depending on the amount of available stock, also impacts the amount of fishing activity.</p>
 <p>The input control methods assume that fishing effort is held at constant levels in the future, although the catchability is able to randomly or systematically vary between years. Furthermore, input control methods can also adjust the amount of fishing effort in each year.</p>
 </div>
@@ -508,11 +517,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -527,6 +538,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

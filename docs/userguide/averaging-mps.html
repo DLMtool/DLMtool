@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 23 Averaging MPs | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 23 Averaging MPs | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 23 Averaging MPs | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 23 Averaging MPs | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 23 Averaging MPs | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 23 Averaging MPs | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -390,25 +409,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The <code>makeMeanMP</code> function can be used to create a new MP that averages the results of several MPs.</p>
 <p>For example, suppose we wished to develop an MP that averages the results of 4 output control MPs: <code>BK</code>, <code>DBSRA</code>, <code>Fadapt</code> and <code>Rcontrol</code>.</p>
 <p>This can be achieved by the following:</p>
-<div class="sourceCode" id="cb418"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb418-1" title="1">avgMP &lt;-<span class="st"> </span><span class="kw">makeMeanMP</span>(<span class="kw">c</span>(<span class="st">&quot;BK&quot;</span>, <span class="st">&quot;DBSRA&quot;</span>, <span class="st">&quot;Fadapt&quot;</span>, <span class="st">&quot;Rcontrol&quot;</span>))</a>
-<a class="sourceLine" id="cb418-2" title="2"><span class="kw">class</span>(avgMP)</a></code></pre></div>
+<div class="sourceCode" id="cb422"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb422-1"><a href="averaging-mps.html#cb422-1"></a>avgMP &lt;-<span class="st"> </span><span class="kw">makeMeanMP</span>(<span class="kw">c</span>(<span class="st">&quot;BK&quot;</span>, <span class="st">&quot;DBSRA&quot;</span>, <span class="st">&quot;Fadapt&quot;</span>, <span class="st">&quot;Rcontrol&quot;</span>))</span>
+<span id="cb422-2"><a href="averaging-mps.html#cb422-2"></a><span class="kw">class</span>(avgMP)</span></code></pre></div>
 <pre><code>## [1] &quot;MP&quot;</code></pre>
 <p>And now we can test our new MP in MSE. We will run a decent run of simulations so the results are stable:</p>
-<div class="sourceCode" id="cb420"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb420-1" title="1">OM &lt;-<span class="st"> </span>DLMtool<span class="op">::</span>testOM</a>
-<a class="sourceLine" id="cb420-2" title="2">OM<span class="op">@</span>nsim &lt;-<span class="st"> </span><span class="dv">200</span></a>
-<a class="sourceLine" id="cb420-3" title="3">MSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">MPs=</span><span class="kw">c</span>(<span class="st">&quot;avgMP&quot;</span>, <span class="st">&quot;BK&quot;</span>, <span class="st">&quot;DBSRA&quot;</span>, <span class="st">&quot;Fadapt&quot;</span>, <span class="st">&quot;Rcontrol&quot;</span>), <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb424"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb424-1"><a href="averaging-mps.html#cb424-1"></a>OM &lt;-<span class="st"> </span>DLMtool<span class="op">::</span>testOM</span>
+<span id="cb424-2"><a href="averaging-mps.html#cb424-2"></a>OM<span class="op">@</span>nsim &lt;-<span class="st"> </span><span class="dv">200</span></span>
+<span id="cb424-3"><a href="averaging-mps.html#cb424-3"></a>MSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">MPs=</span><span class="kw">c</span>(<span class="st">&quot;avgMP&quot;</span>, <span class="st">&quot;BK&quot;</span>, <span class="st">&quot;DBSRA&quot;</span>, <span class="st">&quot;Fadapt&quot;</span>, <span class="st">&quot;Rcontrol&quot;</span>), <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <pre><code>## Exporting custom MPs in global environment</code></pre>
-<pre><code>## Running MSE in parallel on 8 processors</code></pre>
+<pre><code>## Running MSE in parallel on 10 processors</code></pre>
 <pre><code>## MSE completed</code></pre>
 <p>How did our newly created averaging MP perform?</p>
-<div class="sourceCode" id="cb424"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb424-1" title="1"><span class="kw">Tplot</span>(MSE)</a></code></pre></div>
+<div class="sourceCode" id="cb428"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb428-1"><a href="averaging-mps.html#cb428-1"></a><span class="kw">Tplot</span>(MSE)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-135-1.png" width="672" /></p>
 <pre><code>##         MP PNOF  LTY P100  P50  P10 Satisificed
-## 1    avgMP 0.39 0.67 0.32 0.55 0.83       FALSE
-## 2       BK 0.33 0.42 0.24 0.39 0.65       FALSE
-## 3    DBSRA 0.63 0.89 0.50 0.83 0.99        TRUE
-## 4   Fadapt 0.37 0.52 0.32 0.49 0.69       FALSE
-## 5 Rcontrol 0.89 0.38 0.85 0.94 0.99       FALSE</code></pre>
+## 1    avgMP 0.50 0.85 0.43 0.69 0.93       FALSE
+## 2       BK 0.42 0.56 0.34 0.52 0.81       FALSE
+## 3    DBSRA 0.66 0.91 0.58 0.85 0.99        TRUE
+## 4   Fadapt 0.50 0.67 0.46 0.64 0.83       FALSE
+## 5 Rcontrol 0.91 0.37 0.88 0.95 0.99       FALSE</code></pre>
 <p>More information on creating your own MPs can be found in the <a href="developing-custom-management-procedures.html#developing-custom-management-procedures">Developing Custom Management Procedures</a> chapter.</p>
 </div>
             </section>
@@ -422,11 +441,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -441,6 +462,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

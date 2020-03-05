@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,10 +41,11 @@
 
 
 
-<meta property="og:title" content="Changelog" />
 
+<meta property="og:title" content="Changelog" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -73,7 +76,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -86,7 +89,6 @@
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -106,12 +108,20 @@
       
     </div>
 
+    <div id="dlmtool-542" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-542" class="anchor"></a>DLMtool 5.4.2</h2>
+</div>
+    <div id="dlmtool-541" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-541" class="anchor"></a>DLMtool 5.4.1</h2>
+</div>
     <div id="dlmtool-540" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dlmtool-540" class="anchor"></a>DLMtool 5.4.0</h2>
-<div id="minor-changes" class="section level3">
+<div id="minor-changes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-changes" class="anchor"></a>Minor changes</h3>
+<a href="#minor-changes-2" class="anchor"></a>Minor changes</h3>
 <ul>
 <li>The <code>Data</code> object has been updated, main new features are the addition of an Effort slot (<code>Data@Effort</code> and <code>Data@CV_Effort</code>) and all CV by year for all time-series information.</li>
 <li>the <code>Data@RInd</code> slot has been removed and replaced with <code>Data@AddInd</code>
@@ -119,9 +129,9 @@
 <li>Additional information on the Data object can be found <a href="https://dlmtool.github.io/DLMtool/Data/Data.html">here</a>.</li>
 </ul>
 </div>
-<div id="fixes" class="section level3">
+<div id="fixes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fixes" class="anchor"></a>Fixes</h3>
+<a href="#fixes-2" class="anchor"></a>Fixes</h3>
 <ul>
 <li>fix bug where TAE implementation error was affecting TAC controls (thanks to Robyn Forrest and Sean Anderson for finding this)</li>
 <li>fix bug in <code>Cplot</code> (thanks Sarah Valencia for picking this up)</li>
@@ -146,9 +156,9 @@
     <div id="dlmtool-531" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dlmtool-531" class="anchor"></a>DLMtool 5.3.1</h2>
-<div id="minor-changes-1" class="section level3">
+<div id="minor-changes-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-changes-1" class="anchor"></a>Minor changes</h3>
+<a href="#minor-changes-3" class="anchor"></a>Minor changes</h3>
 <ul>
 <li>add option to specify width of the CAL bins using <code>OM@cpars$binWidth</code>
 </li>
@@ -157,9 +167,9 @@
 </li>
 </ul>
 </div>
-<div id="fixes-1" class="section level3">
+<div id="fixes-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fixes-1" class="anchor"></a>Fixes</h3>
+<a href="#fixes-3" class="anchor"></a>Fixes</h3>
 <ul>
 <li>fix indexing issue for recruitment deviations</li>
 <li>fix issue with <code>cpars$mov</code> when nareas&gt;2</li>
@@ -186,7 +196,7 @@
 <li>
 <code>Uses</code> function has been added to return MPs that use a particular data slot. For example: <code>Uses('AvC</code>)</li>
 <li>Depletion for the initial year of the simulations can now be specified using <code>OM@cpars$initD</code>.</li>
-<li>Real indices of abundance can be added to the Data object and used to condition OM. See <a href="https://dlmtool.github.io/DLMtool/userguide/using-real-indices.html">userguide</a> for details.</li>
+<li>Real indices of abundance can be added to the Data object and used to condition OM.</li>
 <li>The calculations for unfished and MSY reference points have been standardized and are now fully described in the <a href="https://dlmtool.github.io/DLMtool/userguide/assumptions-of-dlmtool.html#calculating-reference-points.html">userguide</a>
 </li>
 <li>New functions <code>PMLimit</code> and <code>PMObj</code> have been added to generate interacive HTML tables showing the performance of MPs (using objects of class <code>PM</code>)</li>
@@ -204,9 +214,9 @@
 <li>The <code>runMSErobust</code> function has been now removed from package (it was broken in the previous version).</li>
 </ul>
 </div>
-<div id="fixes-2" class="section level3">
+<div id="fixes-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fixes-2" class="anchor"></a>Fixes</h3>
+<a href="#fixes-4" class="anchor"></a>Fixes</h3>
 <ul>
 <li>fix issue with importing <code>Data</code> objects with larger number of length bins</li>
 <li>fix issue where length-at-age was negative with high t0</li>
@@ -235,16 +245,16 @@
 <li>New function to estimate length-weight parameters from data (<code>LW2OM</code>).</li>
 </ul>
 </div>
-<div id="minor-changes-2" class="section level3">
+<div id="minor-changes-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-changes-2" class="anchor"></a>Minor changes</h3>
+<a href="#minor-changes-4" class="anchor"></a>Minor changes</h3>
 <ul>
 <li>update <code>plotMPA</code> to include relative size of areas</li>
 </ul>
 </div>
-<div id="fixes-3" class="section level3">
+<div id="fixes-5" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fixes-3" class="anchor"></a>Fixes</h3>
+<a href="#fixes-5" class="anchor"></a>Fixes</h3>
 <ul>
 <li>export built in MPs from MSEtool package to parallel cluster</li>
 <li>fix issue with CAA at very low stocks sizes</li>
@@ -255,9 +265,9 @@
     <div id="dlmtool-522" class="section level2">
 <h2 class="hasAnchor">
 <a href="#dlmtool-522" class="anchor"></a>DLMtool 5.2.2</h2>
-<div id="fixes-4" class="section level3">
+<div id="fixes-6" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fixes-4" class="anchor"></a>Fixes</h3>
+<a href="#fixes-6" class="anchor"></a>Fixes</h3>
 <ul>
 <li>fix issue with hyperstability/depletion for future projections</li>
 <li>
@@ -424,6 +434,8 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#dlmtool-542">5.4.2</a></li>
+        <li><a href="#dlmtool-541">5.4.1</a></li>
         <li><a href="#dlmtool-540">5.4.0</a></li>
         <li><a href="#dlmtool-531">5.3.1</a></li>
         <li><a href="#dlmtool-53">5.3</a></li>

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>E Changes | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>E Changes | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="E Changes | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="E Changes | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="E Changes | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="E Changes | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -408,6 +427,202 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>This was done so that an OM object is completely self-contained and includes all information used in the MSE.</p>
 
 </div>
+<div id="bio-economic-model" class="section level2">
+<h2><span class="header-section-number">E.1</span> Bio-Economic Model</h2>
+<p>Since DLMtool V5.4+ there is now the option to include a simple bio-economic model to control the effort dynamics of the fishery in the projection years.</p>
+<p>Without the bio-economic model, the total allowable catch (TAC) recommendation provided by an MP is caught each year (assuming no implementation error, the vulnerable biomass &gt; TAC,and the Fmax constraint is not exceeded). In cases where the vulnerable biomass is low, fishing effort can increase to very high levels. Similarly, a total allowable effort (TAE) recommendation prescribes the fishing effort each year, regardless of the level of catch that is obtained with that effort.</p>
+<p>With the bio-economic model the TAC and TAE act as total catch and effort limits respectively, but change in fishing effort each year is based on recent profits.</p>
+<p>Effort <span class="math inline">\(E\)</span> in year <span class="math inline">\(t+1\)</span> is calculated as:</p>
+<p><span class="math display">\[ E_{t+1} = \text{max}(E_t + \eta P_t, 0)\]</span>
+where <span class="math inline">\(\eta\)</span> is a responsiveness parameter that determines the rate that fishers enter or leave the fishery based on the profit <span class="math inline">\(\left(P_t\right)\)</span> from the current year <span class="math inline">\(t\)</span>.</p>
+<p>Profit is calculated as:</p>
+<p><span class="math display">\[P_t = R_t - C_t\]</span></p>
+<p>where <span class="math inline">\(R_t\)</span> and <span class="math inline">\(C_t\)</span> are total revenue and total cost in year <span class="math inline">\(t\)</span>. Note that in this context, ‘normal’ profits of the fishing operations are included in the total costs (e.g., operating expenses + crew salary + minimum profit required to make the business venture feasible), and <span class="math inline">\(P\)</span> refers to profits in excess of this normal profit; sometimes referred to as resource rent.</p>
+<p>As in any industry, profits above the ‘normal’ profits (i.e, positive resource rents) will attract new entrants to the fishery (assuming an open access fishery). Conversely, when the profits are negative, fishers are able to earn a higher income in an alternative livelihood and will leave the fishery.</p>
+</div>
+<div id="key-bio-economic-parameters" class="section level2">
+<h2><span class="header-section-number">E.2</span> Key Bio-Economic Parameters</h2>
+<p>Currently, the bio-economic model is specified using the custom parameters (<code>cpars</code>) feature of DLMtool. There are three required parameters for the bio-economic model: <code>CostCurr</code>, <code>RevCurr</code>, and <code>Response</code>.</p>
+<div id="current-cost-and-revenue" class="section level3">
+<h3><span class="header-section-number">E.2.1</span> Current Cost and Revenue</h3>
+<p>The first two parameters, <code>CostCurr</code> and <code>RevCurr</code>, are used to specify the cost of the current effort and the revenue of the current retained catch respectively.</p>
+<p>As a simple example, suppose the fishery is currently close to a bio-economic equilibrium (revenue = cost), with the cost of the current effort around $10,000 and the revenue from the current catch a similiar value.</p>
+<p>These can be specified as a vector of length <code>OM@nsim</code> using the cpars feature. First we create an Operating Model (OM). For simplicity, we’ll assume there is no observation or implementation error and only include a few simulations:</p>
+<div class="sourceCode" id="cb602"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb602-1"><a href="changes.html#cb602-1"></a>OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, <span class="dt">Stock=</span>Albacore, <span class="dt">Fleet=</span>FlatE_NDom, <span class="dt">Obs=</span>Perfect_Info, <span class="dt">Imp=</span>Perfect_Imp) <span class="co"># new OM object</span></span>
+<span id="cb602-2"><a href="changes.html#cb602-2"></a>OM<span class="op">@</span>nsim &lt;-<span class="st"> </span><span class="dv">3</span> <span class="co"># three simulations</span></span>
+<span id="cb602-3"><a href="changes.html#cb602-3"></a></span>
+<span id="cb602-4"><a href="changes.html#cb602-4"></a>OM<span class="op">@</span>qinc &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb602-5"><a href="changes.html#cb602-5"></a>OM<span class="op">@</span>qcv &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)</span></code></pre></div>
+<p>Note that we also assume that there is no inter-annual variability or long-term trends in catchability. Directional changes in catchability will have a signficant impact on the profitability of fishing.</p>
+<p>We then specify the cost of current effort (<code>CostCurr</code>) and revenue of the current catch (<code>RevCurr</code>) using <code>cpars</code>, with the parameter values drawn from uniform distributions:</p>
+<div class="sourceCode" id="cb603"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb603-1"><a href="changes.html#cb603-1"></a>OM<span class="op">@</span>cpars<span class="op">$</span>CostCurr &lt;-<span class="st"> </span><span class="kw">runif</span>(OM<span class="op">@</span>nsim, <span class="dv">9500</span>, <span class="dv">10500</span>)</span>
+<span id="cb603-2"><a href="changes.html#cb603-2"></a>OM<span class="op">@</span>cpars<span class="op">$</span>CostCurr <span class="co"># cost of current effort in $</span></span></code></pre></div>
+<pre><code>## [1]  9872.198  9543.825 10209.684</code></pre>
+<div class="sourceCode" id="cb605"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb605-1"><a href="changes.html#cb605-1"></a>OM<span class="op">@</span>cpars<span class="op">$</span>RevCurr &lt;-<span class="st"> </span><span class="kw">runif</span>(OM<span class="op">@</span>nsim, <span class="dv">9500</span>, <span class="dv">10500</span>)</span>
+<span id="cb605-2"><a href="changes.html#cb605-2"></a>OM<span class="op">@</span>cpars<span class="op">$</span>RevCurr <span class="co"># revenue of current catch in $</span></span></code></pre></div>
+<pre><code>## [1] 10157.690  9749.856  9800.055</code></pre>
+<p>Profit in the current year (i.e., the last historical year in the simulation) is:</p>
+<div class="sourceCode" id="cb607"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb607-1"><a href="changes.html#cb607-1"></a>Profit &lt;-<span class="st"> </span>OM<span class="op">@</span>cpars<span class="op">$</span>RevCurr <span class="op">-</span><span class="st"> </span>OM<span class="op">@</span>cpars<span class="op">$</span>CostCurr</span>
+<span id="cb607-2"><a href="changes.html#cb607-2"></a>Profit <span class="co"># cost of current effort in $</span></span></code></pre></div>
+<pre><code>## [1]  285.4920  206.0309 -409.6292</code></pre>
+</div>
+<div id="fishing-effort-responsiveness" class="section level3">
+<h3><span class="header-section-number">E.2.2</span> Fishing Effort Responsiveness</h3>
+<p>The responsiveness parameter (<span class="math inline">\(\eta\)</span>) is specified with the <code>cpars$Response</code>. Note that in DLMtool fishing effort is always calculated relative to the fishing effort in the last historical year (i.e., ‘current effort’). Therefore, <span class="math inline">\(\eta\)</span> describes the units of current effort expected to enter/leave the fishery per unit-profit.</p>
+<p>Suppose the current cost of fishing effort is $10,000 and involves 200 days of fishing. This means that each day of fishing must earn revenue of at least $50 to make it worthwhile to go fishing, and each $50 in profit (loss) will result in one more (less) day fishing. Put another way, each dollar in profit (loss) will result in <span class="math inline">\(\frac{1}{50} = 0.02\)</span> additional (fewer) days of fishing.</p>
+<p>Given that current effort is 200 days, <span class="math inline">\(\eta\)</span> is calculated as <span class="math inline">\(\frac{0.02}{200} = 0.0001\)</span>:</p>
+<div class="sourceCode" id="cb609"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb609-1"><a href="changes.html#cb609-1"></a>OM<span class="op">@</span>cpars<span class="op">$</span>Response &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">0.0001</span>, OM<span class="op">@</span>nsim) <span class="co"># fishing effort response rate - assuming no variability</span></span></code></pre></div>
+<p>Effort at the beginning of the first projection year is then:</p>
+<p><span class="math display">\[ E_{1} = \text{max}(E_0 + 0.0001 P_0), 0)\]</span>
+As effort is always relative to the last historical year, <span class="math inline">\(E_0 = 1\)</span>.</p>
+<p>Continuing our example:</p>
+<div class="sourceCode" id="cb610"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb610-1"><a href="changes.html#cb610-1"></a>Effort &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">+</span>OM<span class="op">@</span>cpars<span class="op">$</span>Response<span class="op">*</span>Profit </span>
+<span id="cb610-2"><a href="changes.html#cb610-2"></a>Effort <span class="co"># effort in the first projection year</span></span></code></pre></div>
+<pre><code>## [1] 1.0285492 1.0206031 0.9590371</code></pre>
+</div>
+</div>
+<div id="changes-in-cost-and-revenue" class="section level2">
+<h2><span class="header-section-number">E.3</span> Changes in Cost and Revenue</h2>
+<p>By default cost per unit effort and revenue per unit catch are assumed to be stationary. Average annual increases or decreases in cost and revenue can be included using the <code>CostInc</code> and <code>RevInc</code> parameters.</p>
+<p>Suppose costs are expected to increase by 2 - 3% per year:</p>
+<div class="sourceCode" id="cb612"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb612-1"><a href="changes.html#cb612-1"></a>OM<span class="op">@</span>cpars<span class="op">$</span>CostInc &lt;-<span class="st"> </span><span class="kw">runif</span>(OM<span class="op">@</span>nsim, <span class="dv">2</span>, <span class="dv">3</span>)</span></code></pre></div>
+<p>and the price per-unit-catch is assumed to either increase or decrease by up to 1% per year:</p>
+<div class="sourceCode" id="cb613"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb613-1"><a href="changes.html#cb613-1"></a>OM<span class="op">@</span>cpars<span class="op">$</span>RevInc &lt;-<span class="st"> </span><span class="kw">runif</span>(OM<span class="op">@</span>nsim, <span class="dv">-1</span>, <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb614"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb614-1"><a href="changes.html#cb614-1"></a>ind &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">expand.grid</span>(<span class="dt">y=</span><span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>proyears, <span class="dt">sim=</span><span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>nsim))</span>
+<span id="cb614-2"><a href="changes.html#cb614-2"></a>CpE &lt;-<span class="st"> </span>RpC &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>, <span class="dt">nrow=</span>OM<span class="op">@</span>proyears, <span class="dt">ncol=</span>OM<span class="op">@</span>nsim)</span>
+<span id="cb614-3"><a href="changes.html#cb614-3"></a>CpE[ind] &lt;-<span class="st"> </span>(<span class="dv">1</span><span class="op">+</span>OM<span class="op">@</span>cpars<span class="op">$</span>CostInc[ind[,<span class="dv">2</span>]]<span class="op">/</span><span class="dv">100</span>)<span class="op">^</span>ind[,<span class="dv">1</span>]</span>
+<span id="cb614-4"><a href="changes.html#cb614-4"></a>RpC[ind] &lt;-<span class="st"> </span>(<span class="dv">1</span><span class="op">+</span>OM<span class="op">@</span>cpars<span class="op">$</span>RevInc[ind[,<span class="dv">2</span>]]<span class="op">/</span><span class="dv">100</span>)<span class="op">^</span>ind[,<span class="dv">1</span>]</span>
+<span id="cb614-5"><a href="changes.html#cb614-5"></a></span>
+<span id="cb614-6"><a href="changes.html#cb614-6"></a>ylim &lt;-<span class="st"> </span><span class="kw">range</span>(<span class="kw">c</span>(CpE, RpC))</span>
+<span id="cb614-7"><a href="changes.html#cb614-7"></a><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb614-8"><a href="changes.html#cb614-8"></a><span class="kw">matplot</span>(CpE, <span class="dt">type=</span><span class="st">&quot;l&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Projection Year&quot;</span>, <span class="dt">ylab=</span><span class="st">&#39;Change in cost per-unit-effort&#39;</span>,</span>
+<span id="cb614-9"><a href="changes.html#cb614-9"></a>        <span class="dt">bty=</span><span class="st">&quot;l&quot;</span>, <span class="dt">lwd=</span><span class="dv">2</span>, <span class="dt">ylim=</span>ylim)</span>
+<span id="cb614-10"><a href="changes.html#cb614-10"></a><span class="kw">matplot</span>(RpC, <span class="dt">type=</span><span class="st">&quot;l&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Projection Year&quot;</span>, <span class="dt">ylab=</span><span class="st">&#39;Change in price per-unit-catch&#39;</span>,</span>
+<span id="cb614-11"><a href="changes.html#cb614-11"></a>        <span class="dt">bty=</span><span class="st">&quot;l&quot;</span>, <span class="dt">lwd=</span><span class="dv">2</span>, <span class="dt">ylim=</span>ylim)</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-233-1.png" width="672" /></p>
+<p>It’s clear that this fishery is going to be a lot less profitable in the future!</p>
+<p>For simplicity we will assume no change in the marginal cost and revenue in the future for the remaining examples:</p>
+<div class="sourceCode" id="cb615"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb615-1"><a href="changes.html#cb615-1"></a>OM<span class="op">@</span>cpars<span class="op">$</span>CostInc &lt;-<span class="st"> </span>OM<span class="op">@</span>cpars<span class="op">$</span>RevInc &lt;-<span class="st"> </span><span class="ot">NULL</span></span></code></pre></div>
+</div>
+<div id="bio-economic-model-mps" class="section level2">
+<h2><span class="header-section-number">E.4</span> Bio-Economic Model &amp; MPs</h2>
+<div id="with-a-tac" class="section level3">
+<h3><span class="header-section-number">E.4.1</span> With a TAC</h3>
+<p>When an output control is used, the effort required to catch the TAC is first calculated. Then, if the required effort is greater than the actual effort in the fishery, the entire TAC is not caught. That is, the retained catch in that year is less than the TAC.</p>
+<p>If the effort required to catch the TAC is less than the effort entering the fishery at the beginning of the year, fishing is assumed to cease for the year, and the actual effort is less than that calculated by the bio-economic model. In these cases the TAC is limiting effort while the fishery is still profitable. However, the potential fishing effort for that year is still used to calculate potential effort for the following year.</p>
+<p>For example, suppose, based on the profit from the previous year, potential fishing effort at the beginning of the year is 300 days, but because of a restrictive TAC only 100 days fishing is required to catch the entire TAC. Potential effort for the following year is calculated from the profit from the previous year and the effort available at the beginning of the previous year (i.e., 300 days).</p>
+</div>
+<div id="with-a-tae" class="section level3">
+<h3><span class="header-section-number">E.4.2</span> With a TAE</h3>
+<p>In an fishery managed with an effort control the maximum allowed effort is determined by the management procedure. Actual effort is determined by the bio-economic model, but cannot exceed the total allowable effort (TAE) set by the MP, i.e, the actual effort can be less than the TAE. Latent effort is recorded in <code>MSE@Misc$LatEffort</code>.</p>
+</div>
+<div id="without-tac-or-tae" class="section level3">
+<h3><span class="header-section-number">E.4.3</span> Without TAC or TAE</h3>
+<p>For fisheries without a TAE or TAC control (e.g., a size limit or spatial closure) the fishing effort each year is determined by the bio-economic model.</p>
+</div>
+</div>
+<div id="some-examples" class="section level2">
+<h2><span class="header-section-number">E.5</span> Some Examples</h2>
+<p>First we’ll define a Management Procedure that returns no management recommendations:</p>
+<div class="sourceCode" id="cb616"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb616-1"><a href="changes.html#cb616-1"></a>NMref &lt;-<span class="st"> </span><span class="cf">function</span>(x, Data, ...) {</span>
+<span id="cb616-2"><a href="changes.html#cb616-2"></a>  <span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>)</span>
+<span id="cb616-3"><a href="changes.html#cb616-3"></a>}</span>
+<span id="cb616-4"><a href="changes.html#cb616-4"></a><span class="kw">class</span>(NMref) &lt;-<span class="st"> &quot;MP&quot;</span></span></code></pre></div>
+<p>Here fishing effort is determined by the bio-economic model. Note that if the bio-economic model is not used, this MP will be equivalent to <code>curE</code>, where fishing effort in the future is fixed at the current level.</p>
+<p>We select four management procedures: ‘NMref’ - our new custom MP with no management, <code>curE</code> - a TAE fixed at the current historical level, <code>Itarget1</code> - an output control where the TAC is adjusted based on a trend in the index, and <code>ItargetE1</code> - an effort control where the TAE is adjusted based on a trend in the index.</p>
+<div class="sourceCode" id="cb617"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb617-1"><a href="changes.html#cb617-1"></a>MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;NMref&#39;</span>, <span class="st">&#39;curE&#39;</span>, <span class="st">&#39;Itarget1&#39;</span>, <span class="st">&quot;ItargetE1&quot;</span>)</span>
+<span id="cb617-2"><a href="changes.html#cb617-2"></a>MSE1 &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">MPs=</span>MPs, <span class="dt">silent=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p>We demonstrate the bio-economic model by plotting the biomass, catch, effort, cost, profit, and revenue for a single simulation and several MPs. See the last section for the plotting code.</p>
+<p>The plots show projections of a single simulation of: a) Depletion (solid) and BMSY (dashed), b) Catch (solid) relative to current catch (dotted) and where applicable the TAC (dashed), c) Effort (solid) relative to current effort (dotted) and where applicable the TAE (dashed), and Cost, Revenue and Profit (dotted line indicates 0 profit).</p>
+<p>The plot of simulation 2 of the first MP <code>NMref</code> shows that the projected fishing effort decreases in the first several years as profits are negative, and increases to well above the current level later in the projection period as profits increase.</p>
+<div class="sourceCode" id="cb618"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb618-1"><a href="changes.html#cb618-1"></a><span class="kw">Plot</span>(MSE1, <span class="dv">1</span>, <span class="dt">sim=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-237-1.png" width="672" /></p>
+<p>The <code>curE</code> MP shows the same pattern in fishing effort for the first ~30 years, but the TAE constraint limits the maximum effort to the current effort (i.e, 1).</p>
+<div class="sourceCode" id="cb619"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb619-1"><a href="changes.html#cb619-1"></a><span class="kw">Plot</span>(MSE1, <span class="dv">2</span>, <span class="dt">sim=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-238-1.png" width="672" /></p>
+<p>In several years the TAC set by the <code>Itarget1</code> MP is not able to be caught due to insufficient effort in the fishery (Catch &lt; TAC).</p>
+<div class="sourceCode" id="cb620"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb620-1"><a href="changes.html#cb620-1"></a><span class="kw">Plot</span>(MSE1, <span class="dv">3</span>, <span class="dt">sim=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-239-1.png" width="672" /></p>
+<p>Similiarly, while the <code>ItargetE1</code> MP decreases the TAE in the first several years of the projection period, the large negative profits result in a larger decrease in fishing effort (Effort &lt; TAE).</p>
+<div class="sourceCode" id="cb621"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb621-1"><a href="changes.html#cb621-1"></a><span class="kw">Plot</span>(MSE1, <span class="dv">4</span>, <span class="dt">sim=</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-240-1.png" width="672" /></p>
+</div>
+<div id="future-developments" class="section level2">
+<h2><span class="header-section-number">E.6</span> Future Developments</h2>
+<p>Future versions of DLMtool will extend the bio-economic model to include additional features, including:</p>
+<ul>
+<li>ability to include price by size class</li>
+<li>ability to specify an existing limited entry fishery</li>
+<li>inter-annual variability in cost and price</li>
+<li>include cost of fishing by area</li>
+<li>include discount rate to calculate net present value of catch</li>
+<li>specify the number of years profit is calculated to determine fishers entering/leaving fishery (currently previous year)</li>
+<li>separate response parameters for increasing and decreasing fleet</li>
+</ul>
+</div>
+<div id="plotting-code" class="section level2">
+<h2><span class="header-section-number">E.7</span> Plotting Code</h2>
+<p>The code to produce the plots:</p>
+<div class="sourceCode" id="cb622"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb622-1"><a href="changes.html#cb622-1"></a><span class="kw">library</span>(dplyr); <span class="kw">library</span>(ggplot2); <span class="kw">library</span>(cowplot); <span class="kw">library</span>(tidyr)</span>
+<span id="cb622-2"><a href="changes.html#cb622-2"></a>Plot &lt;-<span class="st"> </span><span class="cf">function</span>(MSEobj, <span class="dt">mp=</span><span class="dv">1</span>, <span class="dt">sim=</span><span class="dv">1</span>) {</span>
+<span id="cb622-3"><a href="changes.html#cb622-3"></a>  Depletion &lt;-<span class="st"> </span><span class="kw">as.vector</span>(MSEobj<span class="op">@</span>SSB[sim, , ])<span class="op">/</span>MSEobj<span class="op">@</span>OM<span class="op">$</span>SSB0[sim]</span>
+<span id="cb622-4"><a href="changes.html#cb622-4"></a>  BMSY_B0 &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>OM<span class="op">$</span>SSBMSY_SSB0[sim]</span>
+<span id="cb622-5"><a href="changes.html#cb622-5"></a>  MPs &lt;-<span class="st"> </span><span class="kw">rep</span>(MSEobj<span class="op">@</span>MPs, MSEobj<span class="op">@</span>proyears)</span>
+<span id="cb622-6"><a href="changes.html#cb622-6"></a>  Years &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>MSEobj<span class="op">@</span>proyears, <span class="dt">each=</span>MSEobj<span class="op">@</span>nMPs)</span>
+<span id="cb622-7"><a href="changes.html#cb622-7"></a>  </span>
+<span id="cb622-8"><a href="changes.html#cb622-8"></a>  currCatch &lt;-<span class="st"> </span><span class="kw">apply</span>(MSEobj<span class="op">@</span>CB_hist[,,MSEobj<span class="op">@</span>nyears,], <span class="dv">1</span>, sum)</span>
+<span id="cb622-9"><a href="changes.html#cb622-9"></a>  Catch &lt;-<span class="st"> </span><span class="kw">as.vector</span>(MSEobj<span class="op">@</span>C[sim, , ])<span class="op">/</span>currCatch[sim]</span>
+<span id="cb622-10"><a href="changes.html#cb622-10"></a>  TAC &lt;-<span class="st"> </span><span class="kw">as.vector</span>(MSEobj<span class="op">@</span>TAC[sim,,])<span class="op">/</span>currCatch[sim]</span>
+<span id="cb622-11"><a href="changes.html#cb622-11"></a>  </span>
+<span id="cb622-12"><a href="changes.html#cb622-12"></a>  Effort &lt;-<span class="st"> </span><span class="kw">as.vector</span>(MSEobj<span class="op">@</span>Effort[sim, , ])</span>
+<span id="cb622-13"><a href="changes.html#cb622-13"></a>  TAE &lt;-<span class="st"> </span><span class="kw">as.vector</span>(MSEobj<span class="op">@</span>Misc<span class="op">$</span>TAE[sim,,])</span>
+<span id="cb622-14"><a href="changes.html#cb622-14"></a>  </span>
+<span id="cb622-15"><a href="changes.html#cb622-15"></a>  Cost &lt;-<span class="st"> </span><span class="kw">as.vector</span>(MSEobj<span class="op">@</span>Misc<span class="op">$</span>Cost[sim, , ])</span>
+<span id="cb622-16"><a href="changes.html#cb622-16"></a>  Revenue &lt;-<span class="st"> </span><span class="kw">as.vector</span>(MSEobj<span class="op">@</span>Misc<span class="op">$</span>Revenue[sim, , ])</span>
+<span id="cb622-17"><a href="changes.html#cb622-17"></a>  Profit &lt;-<span class="st"> </span>Revenue <span class="op">-</span><span class="st"> </span>Cost</span>
+<span id="cb622-18"><a href="changes.html#cb622-18"></a>  </span>
+<span id="cb622-19"><a href="changes.html#cb622-19"></a>  DF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">MP=</span>MPs, <span class="dt">Year=</span>Years, <span class="dt">Depletion=</span>Depletion, <span class="dt">BMSY_B0=</span>BMSY_B0,</span>
+<span id="cb622-20"><a href="changes.html#cb622-20"></a>                   <span class="dt">Catch=</span>Catch, <span class="dt">TAC=</span>TAC,</span>
+<span id="cb622-21"><a href="changes.html#cb622-21"></a>                   <span class="dt">Effort=</span>Effort, <span class="dt">TAE=</span>TAE,</span>
+<span id="cb622-22"><a href="changes.html#cb622-22"></a>                   <span class="dt">Cost=</span>Cost, <span class="dt">Revenue=</span>Revenue, <span class="dt">Profit=</span>Profit)</span>
+<span id="cb622-23"><a href="changes.html#cb622-23"></a>  </span>
+<span id="cb622-24"><a href="changes.html#cb622-24"></a>  MP1 &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>MPs[mp]</span>
+<span id="cb622-25"><a href="changes.html#cb622-25"></a>  pDF &lt;-<span class="st"> </span>DF <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(MP<span class="op">==</span>MP1)</span>
+<span id="cb622-26"><a href="changes.html#cb622-26"></a>  LineSize &lt;-<span class="st"> </span><span class="dv">1</span> </span>
+<span id="cb622-27"><a href="changes.html#cb622-27"></a>  pDF2 &lt;-<span class="st"> </span>pDF <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">gather</span>(<span class="st">&quot;key&quot;</span>, <span class="st">&quot;value&quot;</span>, <span class="dv">3</span><span class="op">:</span><span class="dv">4</span>)</span>
+<span id="cb622-28"><a href="changes.html#cb622-28"></a>  pDF2<span class="op">$</span>key &lt;-<span class="st"> </span><span class="kw">factor</span>(pDF2<span class="op">$</span>key, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;Depletion&quot;</span>, <span class="st">&quot;BMSY_B0&quot;</span>), <span class="dt">ordered =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb622-29"><a href="changes.html#cb622-29"></a>  p1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(pDF2, <span class="kw">aes</span>(<span class="dt">x=</span>Year, <span class="dt">y=</span>value, <span class="dt">linetype=</span>key)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">size=</span>LineSize) <span class="op">+</span></span>
+<span id="cb622-30"><a href="changes.html#cb622-30"></a><span class="st">    </span><span class="kw">theme_classic</span>() <span class="op">+</span><span class="st"> </span><span class="kw">expand_limits</span>(<span class="dt">y=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) </span>
+<span id="cb622-31"><a href="changes.html#cb622-31"></a>  </span>
+<span id="cb622-32"><a href="changes.html#cb622-32"></a>  pDF2 &lt;-<span class="st"> </span>pDF <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">gather</span>(<span class="st">&quot;key&quot;</span>, <span class="st">&quot;value&quot;</span>, <span class="dv">5</span><span class="op">:</span><span class="dv">6</span>)</span>
+<span id="cb622-33"><a href="changes.html#cb622-33"></a>  chk &lt;-<span class="st"> </span>pDF2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(key <span class="op">==</span><span class="st"> &quot;TAC&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(value)</span>
+<span id="cb622-34"><a href="changes.html#cb622-34"></a>  <span class="cf">if</span> (<span class="kw">all</span>(<span class="kw">is.na</span>(chk<span class="op">$</span>value))) pDF2 &lt;-<span class="st"> </span>pDF2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(key <span class="op">!=</span><span class="st"> &quot;TAC&quot;</span>) </span>
+<span id="cb622-35"><a href="changes.html#cb622-35"></a>  p2 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(pDF2, <span class="kw">aes</span>(<span class="dt">x=</span>Year, <span class="dt">y=</span>value, <span class="dt">linetype=</span>key)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">size=</span>LineSize) <span class="op">+</span></span>
+<span id="cb622-36"><a href="changes.html#cb622-36"></a><span class="st">    </span><span class="kw">theme_classic</span>() <span class="op">+</span><span class="st"> </span><span class="kw">expand_limits</span>(<span class="dt">y=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb622-37"><a href="changes.html#cb622-37"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="dt">slope=</span><span class="dv">0</span>, <span class="dt">intercept =</span> <span class="dv">1</span>, <span class="dt">lty=</span><span class="dv">3</span>, <span class="dt">color=</span><span class="st">&quot;darkgray&quot;</span>)</span>
+<span id="cb622-38"><a href="changes.html#cb622-38"></a></span>
+<span id="cb622-39"><a href="changes.html#cb622-39"></a>  pDF2 &lt;-<span class="st"> </span>pDF <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">gather</span>(<span class="st">&quot;key&quot;</span>, <span class="st">&quot;value&quot;</span>, <span class="dv">7</span><span class="op">:</span><span class="dv">8</span>)</span>
+<span id="cb622-40"><a href="changes.html#cb622-40"></a>  chk &lt;-<span class="st"> </span>pDF2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(key <span class="op">==</span><span class="st"> &quot;TAE&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(value)</span>
+<span id="cb622-41"><a href="changes.html#cb622-41"></a>  <span class="cf">if</span> (<span class="kw">all</span>(<span class="kw">is.na</span>(chk<span class="op">$</span>value))) pDF2 &lt;-<span class="st"> </span>pDF2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(key <span class="op">!=</span><span class="st"> &quot;TAE&quot;</span>)</span>
+<span id="cb622-42"><a href="changes.html#cb622-42"></a>  p3 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(pDF2, <span class="kw">aes</span>(<span class="dt">x=</span>Year, <span class="dt">y=</span>value, <span class="dt">linetype=</span>key)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">size=</span>LineSize) <span class="op">+</span></span>
+<span id="cb622-43"><a href="changes.html#cb622-43"></a><span class="st">    </span><span class="kw">theme_classic</span>() <span class="op">+</span><span class="st"> </span><span class="kw">expand_limits</span>(<span class="dt">y=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="op">+</span></span>
+<span id="cb622-44"><a href="changes.html#cb622-44"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="dt">slope=</span><span class="dv">0</span>, <span class="dt">intercept =</span> <span class="dv">1</span>, <span class="dt">lty=</span><span class="dv">3</span>, <span class="dt">color=</span><span class="st">&quot;darkgray&quot;</span>)</span>
+<span id="cb622-45"><a href="changes.html#cb622-45"></a>  </span>
+<span id="cb622-46"><a href="changes.html#cb622-46"></a>  pDF2 &lt;-<span class="st"> </span>pDF <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">gather</span>(<span class="st">&quot;key&quot;</span>, <span class="st">&quot;value&quot;</span>, <span class="dv">9</span><span class="op">:</span><span class="dv">10</span>)</span>
+<span id="cb622-47"><a href="changes.html#cb622-47"></a>  p4 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(pDF2, <span class="kw">aes</span>(<span class="dt">x=</span>Year, <span class="dt">y=</span>value, <span class="dt">color=</span>key)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">size=</span>LineSize) <span class="op">+</span></span>
+<span id="cb622-48"><a href="changes.html#cb622-48"></a><span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x=</span>Year, <span class="dt">y=</span>Profit, <span class="dt">color=</span><span class="st">&quot;Profit&quot;</span>), <span class="dt">size=</span>LineSize) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb622-49"><a href="changes.html#cb622-49"></a><span class="st">    </span><span class="kw">theme_classic</span>() <span class="op">+</span><span class="st"> </span><span class="kw">expand_limits</span>(<span class="dt">y=</span><span class="dv">0</span>) <span class="op">+</span></span>
+<span id="cb622-50"><a href="changes.html#cb622-50"></a><span class="st">    </span><span class="kw">geom_abline</span>(<span class="dt">slope=</span><span class="dv">0</span>, <span class="dt">intercept =</span> <span class="dv">0</span>, <span class="dt">lty=</span><span class="dv">3</span>, <span class="dt">color=</span><span class="st">&quot;darkgray&quot;</span>)</span>
+<span id="cb622-51"><a href="changes.html#cb622-51"></a>  </span>
+<span id="cb622-52"><a href="changes.html#cb622-52"></a>  <span class="kw">suppressWarnings</span>(</span>
+<span id="cb622-53"><a href="changes.html#cb622-53"></a>    p &lt;-<span class="st"> </span><span class="kw">plot_grid</span>( p1, p2, p3, p4, <span class="dt">ncol=</span><span class="dv">2</span>, <span class="dt">labels=</span><span class="st">&quot;auto&quot;</span>)</span>
+<span id="cb622-54"><a href="changes.html#cb622-54"></a>  )</span>
+<span id="cb622-55"><a href="changes.html#cb622-55"></a>  </span>
+<span id="cb622-56"><a href="changes.html#cb622-56"></a>  title &lt;-<span class="st"> </span><span class="kw">ggdraw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">draw_label</span>(MP1, <span class="dt">fontface=</span><span class="st">&#39;bold&#39;</span>)</span>
+<span id="cb622-57"><a href="changes.html#cb622-57"></a>  <span class="kw">plot_grid</span>(title, p, <span class="dt">ncol=</span><span class="dv">1</span>, <span class="dt">rel_heights=</span><span class="kw">c</span>(<span class="fl">0.1</span>, <span class="dv">1</span>))</span>
+<span id="cb622-58"><a href="changes.html#cb622-58"></a>}</span></code></pre></div>
+
+</div>
 </div>
             </section>
 
@@ -420,11 +635,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -439,6 +656,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

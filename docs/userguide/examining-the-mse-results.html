@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 8 Examining the MSE Results | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 8 Examining the MSE Results | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 8 Examining the MSE Results | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 8 Examining the MSE Results | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 8 Examining the MSE Results | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 8 Examining the MSE Results | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -410,29 +429,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="summary-table" class="section level2">
 <h2><span class="header-section-number">8.2</span> Summary Table</h2>
 <p>The <code>summary</code> function can be used to generate a table of MP performance with respect to a set of performance metrics:</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb113-1" title="1"><span class="kw">summary</span>(myMSE_<span class="dv">200</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="examining-the-mse-results.html#cb116-1"></a><span class="kw">summary</span>(myMSE_<span class="dv">200</span>)</span></code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
-<pre><code>##                                       Performance.Metrics 
-## 1                 Probability of not overfishing (F&lt;FMSY) 
-## 2                      Spawning Biomass relative to SBMSY 
-## 3        Average Annual Variability in Yield (Years 1-50) 
-## 4 Average Yield relative to Reference Yield (Years 41-50) 
-##                                             
-## 1              Prob. F &lt; FMSY (Years 1 - 50)
-## 2        Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
-## 3              Prob. AAVY &lt; 20% (Years 1-50)
-## 4 Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
+<pre><code>##                                       Performance.Metrics                                            
+## 1                 Probability of not overfishing (F&lt;FMSY)               Prob. F &lt; FMSY (Years 1 - 50)
+## 2                      Spawning Biomass relative to SBMSY         Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+## 3        Average Annual Variability in Yield (Years 1-50)               Prob. AAVY &lt; 20% (Years 1-50)
+## 4 Average Yield relative to Reference Yield (Years 41-50)  Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
 ## 
 ## 
 ## Performance Statistics:
 ##             MP PNOF  P50 AAVY  LTY
-## 1          AvC 0.38 0.51 0.78 0.37
-## 2     Itarget1 0.86 0.92 0.88 0.78
-## 3    matlenlim 0.81 0.99 0.10 0.56
-## 4        ITe10 0.34 0.61 0.23 0.64
-## 5      AvC_MLL 0.27 0.91 0.71 0.93
-## 6 Itarget1_MPA 0.89 0.96 0.98 0.83
-## 7      FMSYref 0.15 0.86 0.98 1.00
+## 1          AvC 0.42 0.56 0.94 0.48
+## 2     Itarget1 0.86 0.93 0.92 0.80
+## 3    matlenlim 0.97 0.99 0.09 0.60
+## 4        ITe10 0.33 0.62 0.23 0.66
+## 5      AvC_MLL 0.83 0.95 0.76 0.94
+## 6 Itarget1_MPA 0.83 0.93 0.96 0.80
+## 7      FMSYref 0.22 0.94 0.98 1.00
 ## 8        NFref 1.00 1.00 1.00 0.00</code></pre>
 <p>By default the <code>summary</code> function includes four performance metrics, and displays the probability that:</p>
 <ol style="list-style-type: decimal">
@@ -441,16 +455,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>average interannual variability in yield is less than 20% (<code>AAVY</code>)</li>
 <li>long-term yield (last 10 years of projection period) is above half of the maximum yield obtainable at a constant fishing rate (<code>LTY</code>)</li>
 </ol>
-<p>In this example we can see that probability of <span class="math inline">\(\text{SB} &gt; 0.5\text{SB}_\text{MSY}\)</span> for AvC is 0.51.</p>
+<p>In this example we can see that probability of <span class="math inline">\(\text{SB} &gt; 0.5\text{SB}_\text{MSY}\)</span> for AvC is 0.56.</p>
 <p>The performance metrics have been defined in such a way that a higher number is always better (e.g, probability of <em>Not Overfishing</em> rather than <em>Overfishing</em> where a lower probability would be more desirable).</p>
 <p>Help documentation for the peformance metrics can be found in the usual way, for example:</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb116-1" title="1">?PNOF</a></code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="examining-the-mse-results.html#cb119-1"></a>?PNOF</span></code></pre></div>
 <p>The performance metrics in the <code>summary</code> function are completely customizable. See the <a href="performance-metrics.html#performance-metrics">Performance Metrics</a> and <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> chapters for more details.</p>
 </div>
 <div id="plotting-mse-results" class="section level2">
 <h2><span class="header-section-number">8.3</span> Plotting MSE Results</h2>
 <p>DLMtool includes several functions for plotting the MSE results. You can see a list of all the plotting functions in the DLMtool for <code>MSE</code> objects using the <code>plotFun</code> function:</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb117-1" title="1"><span class="kw">plotFun</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="examining-the-mse-results.html#cb120-1"></a><span class="kw">plotFun</span>()</span></code></pre></div>
 <pre><code>## DLMtool functions for plotting objects of class MSE are:</code></pre>
 <pre><code>## barplot COSEWIC_Dplot COSEWIC_Hplot COSEWIC_Pplot Cplot
 ## DFO_plot DFO_plot2 DFO_proj IOTC_plot Kplot
@@ -470,28 +484,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <p>The <code>Tplot</code> function includes minimum acceptable risk thresholds indicated by the horizontal and vertical gray shading. These thresholds can be adjusted be the <code>Lims</code> argument to the <code>Tplot</code> function. See <code>?Tplot</code> for more information on adjusting the risk thresholds.</p>
 <p>MPs that fail to meet one or both of the risk thresholds for each axis are shown in <em>italics</em> text. The <code>Tplot</code> function returns a data frame showing the performance of each MP with respect to the 5 performance metrics, and whether the MP is <em>Satisificed</em>, i.e., if it meets the minimum performance criteria for <strong>all</strong> performance metrics.</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb120-1" title="1"><span class="kw">Tplot</span>(myMSE_<span class="dv">200</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="examining-the-mse-results.html#cb123-1"></a><span class="kw">Tplot</span>(myMSE_<span class="dv">200</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-47-1.png" width="768" /></p>
 <pre><code>##             MP PNOF  LTY P100  P50  P10 Satisificed
-## 1          AvC 0.38 0.37 0.39 0.51 0.61       FALSE
-## 2     Itarget1 0.86 0.78 0.81 0.92 0.98        TRUE
-## 3    matlenlim 0.81 0.56 0.95 0.99 1.00        TRUE
-## 4        ITe10 0.34 0.64 0.34 0.61 0.91       FALSE
-## 5      AvC_MLL 0.27 0.93 0.73 0.91 1.00       FALSE
-## 6 Itarget1_MPA 0.89 0.83 0.84 0.96 1.00        TRUE
-## 7      FMSYref 0.15 1.00 0.14 0.86 1.00       FALSE
+## 1          AvC 0.42 0.48 0.43 0.56 0.70       FALSE
+## 2     Itarget1 0.86 0.80 0.83 0.93 0.99        TRUE
+## 3    matlenlim 0.97 0.60 0.95 0.99 1.00        TRUE
+## 4        ITe10 0.33 0.66 0.34 0.62 0.91       FALSE
+## 5      AvC_MLL 0.83 0.94 0.79 0.95 1.00        TRUE
+## 6 Itarget1_MPA 0.83 0.80 0.82 0.93 1.00        TRUE
+## 7      FMSYref 0.22 1.00 0.24 0.94 1.00       FALSE
 ## 8        NFref 1.00 0.00 0.98 1.00 1.00       FALSE</code></pre>
 <p>The <code>Tplot2</code> function shows the trade-off between long-term and short-term yield, and the trade-off between biomass being above <span class="math inline">\(0.1B_{MSY}\)</span> and the expected variability in the yield:</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb122-1" title="1"><span class="kw">Tplot2</span>(myMSE_<span class="dv">200</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="examining-the-mse-results.html#cb125-1"></a><span class="kw">Tplot2</span>(myMSE_<span class="dv">200</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-48-1.png" width="768" /></p>
 <pre><code>##             MP  STY  LTY  P10 AAVY Satisificed
-## 1          AvC 0.93 0.37 0.61 0.78       FALSE
-## 2     Itarget1 0.64 0.78 0.98 0.88        TRUE
-## 3    matlenlim 0.41 0.56 1.00 0.10       FALSE
-## 4        ITe10 0.87 0.64 0.91 0.23       FALSE
-## 5      AvC_MLL 0.87 0.93 1.00 0.71       FALSE
-## 6 Itarget1_MPA 0.63 0.83 1.00 0.98        TRUE
-## 7      FMSYref 0.95 1.00 1.00 0.98        TRUE
+## 1          AvC 0.94 0.48 0.70 0.94       FALSE
+## 2     Itarget1 0.64 0.80 0.99 0.92        TRUE
+## 3    matlenlim 0.42 0.60 1.00 0.09       FALSE
+## 4        ITe10 0.88 0.66 0.91 0.23       FALSE
+## 5      AvC_MLL 0.87 0.94 1.00 0.76       FALSE
+## 6 Itarget1_MPA 0.64 0.80 1.00 0.96        TRUE
+## 7      FMSYref 0.96 1.00 1.00 0.98        TRUE
 ## 8        NFref 0.00 0.00 1.00 1.00       FALSE</code></pre>
 <p>The <code>Tplot</code>, <code>Tplot2</code> and <code>Tplot3</code> functions are part of a family of plotting functions that are fully customizable, and designed to work with all Performance Metrics objects. See <code>?Tplot</code> and the <a href="performance-metrics.html#performance-metrics">Performance Metrics</a> chapter for more information.</p>
 <!-- ## Joint Probability Plot -->
@@ -506,7 +520,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="wormplot" class="section level3">
 <h3><span class="header-section-number">8.3.2</span> Wormplot</h3>
 <p>The <code>wormplot</code> function plots the likelihood of meeting biomass targets in future years:</p>
-<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb124-1" title="1"><span class="kw">wormplot</span>(myMSE_<span class="dv">200</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="examining-the-mse-results.html#cb127-1"></a><span class="kw">wormplot</span>(myMSE_<span class="dv">200</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
 <p>The arguments to the <code>wormplot</code> function allow you to choose the reference level for the biomass relative to <span class="math inline">\(B_{MSY}\)</span>, as well as the upper and lower bounds of the colored bands.</p>
 </div>
@@ -514,14 +528,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3><span class="header-section-number">8.3.3</span> Projection Plots</h3>
 <p>The <code>Pplot</code> function plots the trajectories of biomass, fishing mortality, and relative yield for the Management Procedures.</p>
 <p>By default, the <code>Pplot</code> function shows the individual trajectories of <span class="math inline">\(B/B_{MSY}\)</span> and <span class="math inline">\(F/F_{MSY}\)</span> for each simulation:</p>
-<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb125-1" title="1"><span class="kw">Pplot</span>(myMSE_<span class="dv">200</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="examining-the-mse-results.html#cb128-1"></a><span class="kw">Pplot</span>(myMSE_<span class="dv">200</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/projection-plot-1.png" width="672" /></p>
 <p>The <code>Pplot2</code> function has several additional arguments. The <code>YVar</code> argument can be used to specify additional variables of interest. For example, here we have included the projections of yield relative to the long-term optimum yield:</p>
-<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb126-1" title="1"><span class="kw">Pplot2</span>(myMSE_<span class="dv">200</span>, <span class="dt">YVar=</span><span class="kw">c</span>(<span class="st">&quot;B_BMSY&quot;</span>, <span class="st">&quot;F_FMSY&quot;</span>, <span class="st">&quot;Yield&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="examining-the-mse-results.html#cb129-1"></a><span class="kw">Pplot2</span>(myMSE_<span class="dv">200</span>, <span class="dt">YVar=</span><span class="kw">c</span>(<span class="st">&quot;B_BMSY&quot;</span>, <span class="st">&quot;F_FMSY&quot;</span>, <span class="st">&quot;Yield&quot;</span>))</span></code></pre></div>
 <pre><code>## MSE object has more than 6 MPs. Plotting the first 6</code></pre>
 <p><img src="userguide_files/figure-html/projection-plot2-1.png" width="672" /></p>
 <p>The <code>traj</code> argument can be used to summarize the projections into quantiles. Here we show the 20th and 80th percentiles of the distributions (the median (50th percentile) is included by default):</p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb128-1" title="1"><span class="kw">Pplot2</span>(myMSE_<span class="dv">200</span>, <span class="dt">traj=</span><span class="st">&quot;quant&quot;</span>, <span class="dt">quants=</span><span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb131-1"><a href="examining-the-mse-results.html#cb131-1"></a><span class="kw">Pplot2</span>(myMSE_<span class="dv">200</span>, <span class="dt">traj=</span><span class="st">&quot;quant&quot;</span>, <span class="dt">quants=</span><span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>))</span></code></pre></div>
 <pre><code>## MSE object has more than 6 MPs. Plotting the first 6</code></pre>
 <p><img src="userguide_files/figure-html/projection-plot3-1.png" width="672" /></p>
 <p>Details on additional controls for the <code>Pplot</code> and <code>Pplot2</code> functions can be found in the help documentation associated with this function.</p>
@@ -529,13 +543,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="kobe-plots" class="section level3">
 <h3><span class="header-section-number">8.3.4</span> Kobe Plots</h3>
 <p>Kobe plots are often used in stock assessment and MSE to examine the proportion of time the stock spends in different states. A Kobe plot of the MSE results can be produced with the <code>Kplot</code> function:</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb130-1" title="1"><span class="kw">Kplot</span>(myMSE_<span class="dv">200</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="examining-the-mse-results.html#cb133-1"></a><span class="kw">Kplot</span>(myMSE_<span class="dv">200</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/kobe-plot-1.png" width="672" /></p>
 </div>
 <div id="compare-to-current-conditions" class="section level3">
 <h3><span class="header-section-number">8.3.5</span> Compare to Current Conditions</h3>
 <p>The <code>Cplot</code> shows a scatter plot of the median biomass and median yield over the last five years of the projection relative to the current conditions (the last year in the historical period):</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb131-1" title="1"><span class="kw">Cplot</span>(myMSE_<span class="dv">200</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb134-1"><a href="examining-the-mse-results.html#cb134-1"></a><span class="kw">Cplot</span>(myMSE_<span class="dv">200</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
 </div>
 </div>
@@ -551,11 +565,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -570,6 +586,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

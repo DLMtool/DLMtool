@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -387,105 +406,83 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="applying-management-procedures" class="section level1">
 <h1><span class="header-section-number">Chapter 22</span> Applying Management Procedures</h1>
 <p>The <code>runMP</code> function can be used to apply a MP to a Data object. For example, to apply the <code>AvC</code> method:</p>
-<div class="sourceCode" id="cb384"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb384-1" title="1"><span class="kw">runMP</span>(Atlantic_mackerel, <span class="st">&quot;AvC&quot;</span>, <span class="dt">reps=</span><span class="dv">1000</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb387"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb387-1"><a href="applying-management-procedures.html#cb387-1"></a><span class="kw">runMP</span>(Atlantic_mackerel, <span class="st">&quot;AvC&quot;</span>, <span class="dt">reps=</span><span class="dv">1000</span>)</span></code></pre></div>
 <pre><code>##       TAC
 ## AvC 24.33</code></pre>
 <p>The <code>runMP</code> prints out the MP recommendations to the console. In the case of a TAC, where multiple repititions where (see <code>reps</code> = 1000 above) used the <code>runMP</code> function prints the median TAC recommendation.</p>
 <p>Although it only displays a summary, <code>runMP</code> invisibly returns the Data object with the TAC slot populated:</p>
-<div class="sourceCode" id="cb386"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb386-1" title="1">Recs &lt;-<span class="st"> </span><span class="kw">runMP</span>(Atlantic_mackerel, <span class="st">&quot;AvC&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb389"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb389-1"><a href="applying-management-procedures.html#cb389-1"></a>Recs &lt;-<span class="st"> </span><span class="kw">runMP</span>(Atlantic_mackerel, <span class="st">&quot;AvC&quot;</span>)</span></code></pre></div>
 <pre><code>##       TAC
 ## AvC 24.76</code></pre>
-<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb388-1" title="1"><span class="kw">hist</span>(Recs<span class="op">@</span>TAC)</a></code></pre></div>
+<div class="sourceCode" id="cb391"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb391-1"><a href="applying-management-procedures.html#cb391-1"></a><span class="kw">hist</span>(Recs<span class="op">@</span>TAC)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-129-1.png" width="672" /></p>
 <p><code>runMP</code> can be used to run several MPs:</p>
-<div class="sourceCode" id="cb389"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb389-1" title="1"><span class="kw">runMP</span>(Atlantic_mackerel, <span class="kw">c</span>(<span class="st">&quot;AvC&quot;</span>, <span class="st">&quot;AvC_MLL&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb392"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb392-1"><a href="applying-management-procedures.html#cb392-1"></a><span class="kw">runMP</span>(Atlantic_mackerel, <span class="kw">c</span>(<span class="st">&quot;AvC&quot;</span>, <span class="st">&quot;AvC_MLL&quot;</span>))</span></code></pre></div>
 <pre><code>##           TAC   LR5 LFR
 ## AvC     24.54          
 ## AvC_MLL 23.88 90.25  95</code></pre>
 <p>Or all available MPs:</p>
-<div class="sourceCode" id="cb391"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb391-1" title="1">Atlantic_mackerel &lt;-<span class="st"> </span><span class="kw">runMP</span>(Atlantic_mackerel, <span class="dt">reps=</span><span class="dv">1000</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb394"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb394-1"><a href="applying-management-procedures.html#cb394-1"></a>Atlantic_mackerel &lt;-<span class="st"> </span><span class="kw">runMP</span>(Atlantic_mackerel, <span class="dt">reps=</span><span class="dv">1000</span>)</span></code></pre></div>
 <pre><code>## running all available MPs</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced
 
-## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method CC1 produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method CC2 produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method CC3 produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method CC4 produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method CC5 produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method CurC produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method Islope1 produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method Islope2 produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method Islope3 produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method Islope4 produced greater than 50% NA values</code></pre>
 <pre><code>## Method Rcontrol produced greater than 50% NA values</code></pre>
-<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
-## produced</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs produced</code></pre>
 <pre><code>## Method SBT1 produced greater than 50% NA values</code></pre>
 <pre><code>##                TAC Effort   LR5    LFR     HS Area 1 Area 2
 ## AvC          24.70                                         
-## AvC_MLL      24.43        90.25  95.00                     
+## AvC_MLL      24.44        90.25  95.00                     
 ## BK           11.13                                         
-## CC1          23.50                                         
-## CC2          20.58                                         
+## CC1          23.74                                         
+## CC2          20.48                                         
 ## CC3          18.82                                         
 ## CC4          16.50                                         
 ## CC5          14.09                                         
-## CurC         18.24                                         
+## CurC         18.28                                         
 ## curE                 1.00                                  
 ## curE75               0.75                                  
-## DAAC          2.88                                         
-## DBSRA         6.30                                         
+## DAAC          2.87                                         
+## DBSRA         6.22                                         
 ## DBSRA_40      9.83                                         
 ## DBSRA4010     3.97                                         
 ## DCAC          5.70                                         
@@ -541,10 +538,65 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## SPslope      13.85                                         
 ## SPSRA         5.75                                         
 ## YPR           8.09                                         
-## avgMP         8.62</code></pre>
+## avgMP         8.62                                         
+## TCPUE_e              0.95                                  
+## THC          42.98</code></pre>
 <p>The TAC recommendations from each Output control can be plotted:</p>
-<div class="sourceCode" id="cb417"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb417-1" title="1"><span class="kw">boxplot</span>(Atlantic_mackerel)</a></code></pre></div>
+<div class="sourceCode" id="cb420"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb420-1"><a href="applying-management-procedures.html#cb420-1"></a><span class="kw">boxplot</span>(Atlantic_mackerel)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-132-1.png" width="576" /></p>
+<pre><code>##              MP Median   SD           Units
+## 1        DD4010   0.45 0.28 thousand tonnes
+## 2      DCAC4010   1.48 1.01 thousand tonnes
+## 3            DD   1.99 0.85 thousand tonnes
+## 4    Fratio4010   2.24 2.08 thousand tonnes
+## 5         HDAAC   2.86 1.30 thousand tonnes
+## 6          DAAC   2.87 1.31 thousand tonnes
+## 7          DepF   2.88 2.09 thousand tonnes
+## 8        Fratio   3.70 2.27 thousand tonnes
+## 9     DBSRA4010   3.97 5.27 thousand tonnes
+## 10         Fdem   4.70 1.83 thousand tonnes
+## 11         DynF   4.92 2.14 thousand tonnes
+## 12     Itarget4   4.94 0.46 thousand tonnes
+## 13         DCAC   5.70 1.86 thousand tonnes
+## 14        SPSRA   5.75 3.37 thousand tonnes
+## 15        DCACs   5.81 1.84 thousand tonnes
+## 16        DBSRA   6.22 4.42 thousand tonnes
+## 17     Gcontrol   6.53 0.04 thousand tonnes
+## 18     Rcontrol   6.53 0.00 thousand tonnes
+## 19    Rcontrol2   6.53 0.00 thousand tonnes
+## 20 Itarget1_MPA   7.03 0.62 thousand tonnes
+## 21     Itarget2   7.08 0.65 thousand tonnes
+## 22     Itarget3   7.09 0.63 thousand tonnes
+## 23     Itarget1   7.10 0.64 thousand tonnes
+## 24      DCAC_40   7.16 2.07 thousand tonnes
+## 25          YPR   8.09 3.59 thousand tonnes
+## 26       Fadapt   8.13 0.05 thousand tonnes
+## 27        avgMP   8.62 1.94 thousand tonnes
+## 28      MCD4010   8.88 8.07 thousand tonnes
+## 29     DBSRA_40   9.83 3.00 thousand tonnes
+## 30       Iratio  10.24 4.14 thousand tonnes
+## 31           BK  11.13 4.16 thousand tonnes
+## 32        SPMSY  12.04 7.96 thousand tonnes
+## 33      Islope3  12.47 1.21 thousand tonnes
+## 34      Islope4  13.23 1.15 thousand tonnes
+## 35          ICI  13.75 2.79 thousand tonnes
+## 36      SPslope  13.85 1.46 thousand tonnes
+## 37         ICI2  13.98 2.89 thousand tonnes
+## 38          CC5  14.09 1.32 thousand tonnes
+## 39         SBT1  14.16 3.29 thousand tonnes
+## 40          MCD  14.29 6.23 thousand tonnes
+## 41     GB_slope  15.14 1.52 thousand tonnes
+## 42      Islope2  15.22 1.45 thousand tonnes
+## 43        SPmod  15.90 3.57 thousand tonnes
+## 44          CC4  16.50 1.39 thousand tonnes
+## 45      Islope1  16.90 1.37 thousand tonnes
+## 46         CurC  18.28 3.88 thousand tonnes
+## 47          CC3  18.82 1.41 thousand tonnes
+## 48          CC2  20.48 1.94 thousand tonnes
+## 49          CC1  23.74 2.07 thousand tonnes
+## 50      AvC_MLL  24.44 5.01 thousand tonnes
+## 51          AvC  24.70 5.10 thousand tonnes
+## 52          THC  42.98 4.33 thousand tonnes</code></pre>
 
 <!-- # (PART\*) Example Workflow  {-} -->
 
@@ -563,11 +615,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -582,6 +636,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

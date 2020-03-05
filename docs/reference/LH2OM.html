@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,13 +41,13 @@
 
 
 
-<meta property="og:title" content="Predict missing life-history parameters — LH2OM" />
 
+<meta property="og:title" content="Predict missing life-history parameters — LH2OM" />
 <meta property="og:description" content="Predict missing life-history based on taxonomic information and
 hierachical model fitted to FishBase life-history parameters" />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -76,7 +78,7 @@ hierachical model fitted to FishBase life-history parameters" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -89,7 +91,6 @@ hierachical model fitted to FishBase life-history parameters" />
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -111,22 +112,37 @@ hierachical model fitted to FishBase life-history parameters" />
     </div>
 
     <div class="ref-description">
-    
     <p>Predict missing life-history based on taxonomic information and
 hierachical model fitted to FishBase life-history parameters</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>LH2OM</span>(<span class='no'>OM</span>, <span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unif"</span>, <span class='st'>"norm"</span>), <span class='kw'>filterMK</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>Class</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>, <span class='kw'>Order</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>, <span class='kw'>Family</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
-  <span class='kw'>msg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/LHdatabase.html'>LHdatabase</a></span>)
+    <pre class="usage"><span class='fu'>LH2OM</span>(
+  <span class='no'>OM</span>,
+  <span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unif"</span>, <span class='st'>"norm"</span>),
+  <span class='kw'>filterMK</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>Class</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
+  <span class='kw'>Order</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
+  <span class='kw'>Family</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
+  <span class='kw'>msg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/LHdatabase.html'>LHdatabase</a></span>
+)
 
-<span class='fu'>predictLH</span>(<span class='kw'>inpars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), <span class='kw'>Genus</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
-  <span class='kw'>Species</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>, <span class='kw'>nsamp</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/LHdatabase.html'>LHdatabase</a></span>,
-  <span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unif"</span>, <span class='st'>"norm"</span>), <span class='kw'>filterMK</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>Class</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>, <span class='kw'>Order</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>, <span class='kw'>Family</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
-  <span class='kw'>msg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
+<span class='fu'>predictLH</span>(
+  <span class='kw'>inpars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  <span class='kw'>Genus</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
+  <span class='kw'>Species</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
+  <span class='kw'>nsamp</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>db</span> <span class='kw'>=</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/LHdatabase.html'>LHdatabase</a></span>,
+  <span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unif"</span>, <span class='st'>"norm"</span>),
+  <span class='kw'>filterMK</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>Class</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
+  <span class='kw'>Order</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
+  <span class='kw'>Family</span> <span class='kw'>=</span> <span class='st'>"predictive"</span>,
+  <span class='kw'>msg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -189,16 +205,14 @@ for the predictions.</p></td>
       <td><p>The number of samples to return</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
     <p><a href='https://github.com/James-Thorson/FishLife/'>https://github.com/James-Thorson/FishLife/</a></p>
-    
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>LH2OM: An OM with <code>OM@cpars</code> populated with <code>OM@nsim</code> samples of M, K, Linf and L50</p>
 <p>predictLH: A data.frame with <code>nsamp</code> rows with <code>Linf</code>, <code>L50</code>, <code>K</code>, and <code>M</code> values.</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The model predicts missing life-history parameters based on provided parameters and taxonomic information.
@@ -206,7 +220,6 @@ If both <em>M</em> and <em>K</em> are provided in <code>inpars</code> or  <code>
 so that resulting <em>K</em> values are within bounds specified in <code>inpars$K</code> or <code>OM@K</code> (see <code>filterMK</code>).</p>
 <p>If both <em>Linf</em> and <em>L50</em> are provided in <code>inpars</code> or <code>OM</code>, <em>L50</em> values are predicted and values in <code>inpars$L50</code>
 or <code>OM@L50</code> are ignored.</p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -215,16 +228,13 @@ or <code>OM@L50</code> are ignored.</p>
 <li><p><code>predictLH</code>: Predict missing life-history based on taxonomic information and
 hierachical model fitted to FishBase life-history parameters</p></li>
 </ul>
-    
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>See relevant section of the <a href='https://dlmtool.github.io/DLMtool/userguide/generating-correlated-life-history-parameters.html'>DLMtool User Guide</a> for more information.</p>
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Thorson, J. T., S. B. Munch, J. M. Cope, and J. Gao. 2017.
 Predicting life history parameters for all fishes worldwide. Ecological Applications. 27(8): 2262--2276</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>myOM</span><span class='kw'>&lt;-</span><span class='fu'>LH2OM</span>(<span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/testOM.html'>testOM</a></span>)</div><div class='output co'>#&gt; <span class='message'><span style='color: #0000BB;'>Predicting L50 from Linf</span><span></span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #0000BB;'>Predicting K from M</span><span></span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #0000BB;'>Predicting from all species in FishBase</span><span></span></div><div class='img'><img src='LH2OM-1.png' alt='' width='700' height='433' /></div><div class='input'>
@@ -252,19 +262,12 @@ Predicting life history parameters for all fishes worldwide. Ecological Applicat
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#source">Source</a></li>
-
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#functions">Functions</a></li>
-
       <li><a href="#note">Note</a></li>
-
       <li><a href="#references">References</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

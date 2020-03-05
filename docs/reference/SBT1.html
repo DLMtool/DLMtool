@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,15 +41,15 @@
 
 
 
-<meta property="og:title" content="SBT simple MP — SBT1" />
 
+<meta property="og:title" content="SBT simple MP — SBT1" />
 <meta property="og:description" content="An MP that makes incremental adjustments to TAC recommendations based on the
 apparent trend in CPUE, a an MP that makes incremental adjustments to TAC
 recommendations based on index levels relative to target levels (BMSY/B0)
 and catch levels relative to target levels (MSY)." />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -78,7 +80,7 @@ and catch levels relative to target levels (MSY)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -91,7 +93,6 @@ and catch levels relative to target levels (MSY)." />
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -113,20 +114,25 @@ and catch levels relative to target levels (MSY)." />
     </div>
 
     <div class="ref-description">
-    
     <p>An MP that makes incremental adjustments to TAC recommendations based on the
 apparent trend in CPUE, a an MP that makes incremental adjustments to TAC
 recommendations based on index levels relative to target levels (BMSY/B0)
 and catch levels relative to target levels (MSY).</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>SBT1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>k1</span> <span class='kw'>=</span> <span class='fl'>1.5</span>,
-  <span class='kw'>k2</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>gamma</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+    <pre class="usage"><span class='fu'>SBT1</span>(
+  <span class='no'>x</span>,
+  <span class='no'>Data</span>,
+  <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>k1</span> <span class='kw'>=</span> <span class='fl'>1.5</span>,
+  <span class='kw'>k2</span> <span class='kw'>=</span> <span class='fl'>3</span>,
+  <span class='kw'>gamma</span> <span class='kw'>=</span> <span class='fl'>1</span>
+)
 
-<span class='fu'>SBT2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>epsR</span> <span class='kw'>=</span> <span class='fl'>0.75</span>, <span class='kw'>tauR</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>gamma</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
-    
+<span class='fu'>SBT2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>epsR</span> <span class='kw'>=</span> <span class='fl'>0.75</span>, <span class='kw'>tauR</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>gamma</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -172,18 +178,17 @@ indices</p></td>
       <td><p>Control parameter</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>For <code>SBT1</code> the TAC is calculated as:
 $$\textrm{TAC}_y = 
              \left\{\begin{array}{ll} 
-             C_{y-1} (1+K_2\lambda) &amp; \textrm{if } \lambda \geq 0 \\ 
-              C_{y-1} (1-K_1\lambda^\gamma) &amp; \textrm{if } \lambda &lt; 0\\ 
+              C_{y-1} (1+K_2 \left| \lambda \right| ) &amp; \textrm{if } \lambda \geq 0 \\ 
+              C_{y-1} (1-K_1 \left| \lambda \right| ^\gamma) &amp; \textrm{if } \lambda &lt; 0\\ 
              \end{array}\right.
            $$
 where \(\lambda\) is the slope of index over the last <code>yrmsth</code> years, and
@@ -207,7 +212,6 @@ this implementation. The method doesn't tend to work too well under many
 circumstances possibly due to the lack of 'tuning' that occurs in the real
 SBT assessment environment. You could try asking Rich Hillary at CSIRO about
 this approach.</p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -215,7 +219,6 @@ this approach.</p>
 <li><p><code>SBT1</code>: Simple SBT MP</p></li>
 <li><p><code>SBT2</code>: Complex SBT MP</p></li>
 </ul>
-    
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
@@ -225,7 +228,6 @@ this approach.</p>
 <p><code>SBT1</code>: Cat, Ind, Year</p>
 
 <p><code>SBT2</code>: Cat, Cref, Rec</p>
-    
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
     
@@ -233,34 +235,25 @@ this approach.</p>
 <p>See <a href='https://dlmtool.github.io/DLMtool/reference/SBT1.html'>Online Documentation</a> for correctly rendered equations</p>
 
 
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>http://www.ccsbt.org/site/recent_assessment.php</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>SBT1</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='SBT1-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     989.5304 </div><div class='input'><span class='fu'>SBT2</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='SBT1-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1178.801 </div></pre>
+#&gt;     1032.683 </div><div class='input'><span class='fu'>SBT2</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='SBT1-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     1200.014 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#functions">Functions</a></li>
-
       <li><a href="#required-data">Required Data</a></li>
-
       <li><a href="#rendered-equations">Rendered Equations</a></li>
-
       <li><a href="#references">References</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

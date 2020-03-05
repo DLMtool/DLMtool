@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -396,31 +415,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">19.1</span> Creating a Data File in Excel</h2>
 <p>Probably the easiest way to get your data into the DLMtool is to populate a data table in an Excel workbook.</p>
 <p>You can create a Data workbook using the <code>DataInit</code> function, for example:</p>
-<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb342-1" title="1"><span class="kw">DataInit</span>(<span class="st">&quot;MyData&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="creating-your-own-data-object.html#cb345-1"></a><span class="kw">DataInit</span>(<span class="st">&quot;MyData&quot;</span>)</span></code></pre></div>
 <p>This will create a file ‘MyData.xlsx’ in your current working directory, which can be populate with your fishery data.</p>
 <p>Remember, to see the help documentation for information on the slots in the Data object:</p>
-<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb343-1" title="1">?<span class="kw">class</span>(<span class="st">&quot;Data&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="creating-your-own-data-object.html#cb346-1"></a>?<span class="kw">class</span>(<span class="st">&quot;Data&quot;</span>)</span></code></pre></div>
 <p>You do not have to enter data for every line of the data file, if data are not available simply put an ‘NA’ next to any given field.</p>
 </div>
 <div id="importing-the-data-object" class="section level2">
 <h2><span class="header-section-number">19.2</span> Importing the Data object</h2>
 <p>Once populated, the Excel Data file can be imported into R:</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb344-1" title="1">MyData &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="st">&#39;MyData&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="creating-your-own-data-object.html#cb347-1"></a>MyData &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="st">&#39;MyData&#39;</span>)</span></code></pre></div>
 <p>In this case we get an error because the Data file is empty: we haven’t populated it with an data yet. Luckily for us, DLMtool includes several example Data files.</p>
 </div>
 <div id="example-fishery-data-files" class="section level2">
 <h2><span class="header-section-number">19.3</span> Example Fishery Data Files</h2>
 <p>One example Data file is the China rockfish. You can <a href="docs/ExampleData/China_rockfish.csv">download</a> this Data file to your current working directory and import into R:</p>
-<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb345-1" title="1">China_rockfish &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="st">&quot;China_rockfish.csv&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="creating-your-own-data-object.html#cb348-1"></a>China_rockfish &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="st">&quot;China_rockfish.csv&quot;</span>)</span></code></pre></div>
 <p>The CSV files for the other example Fishery Data objects are also included in the DLMtool package. To find the location where these files are located on your machine, use the <code>DLMDataDir</code> function:</p>
-<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb346-1" title="1"><span class="kw">DLMDataDir</span>()</a></code></pre></div>
-<pre><code>## [1] &quot;C:/~/R/win-library/3.6/DLMtool&quot;</code></pre>
+<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="creating-your-own-data-object.html#cb349-1"></a><span class="kw">DLMDataDir</span>()</span></code></pre></div>
+<pre><code>## [1] &quot;C:/Users/User/Documents/R/win-library/3.6/DLMtool&quot;</code></pre>
 <p>We can then load one of the example CSV files using the <code>XL2Data</code> function:</p>
-<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb348-1" title="1">China_rockfish2 &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="kw">file.path</span>(<span class="kw">DLMDataDir</span>(), <span class="st">&quot;China_rockfish.csv&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="creating-your-own-data-object.html#cb351-1"></a>China_rockfish2 &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="kw">file.path</span>(<span class="kw">DLMDataDir</span>(), <span class="st">&quot;China_rockfish.csv&quot;</span>))</span></code></pre></div>
 <pre><code>## Warning in XL2Data(file.path(DLMDataDir(), &quot;China_rockfish.csv&quot;)): These rows in the Data file are not valid names and were not imported:
 ## MSY, BMSY, Sigma length composition</code></pre>
 <p>or the <code>new</code> function:</p>
-<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb350-1" title="1">China_rockfish2 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Data&quot;</span>, <span class="kw">file.path</span>(<span class="kw">DLMDataDir</span>(),<span class="st">&quot;China_rockfish.csv&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="creating-your-own-data-object.html#cb353-1"></a>China_rockfish2 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Data&quot;</span>, <span class="kw">file.path</span>(<span class="kw">DLMDataDir</span>(),<span class="st">&quot;China_rockfish.csv&quot;</span>))</span></code></pre></div>
 <pre><code>## Warning in XL2Data(stock, ...): These rows in the Data file are not valid names and were not imported:
 ## MSY, BMSY, Sigma length composition</code></pre>
 <p>Alternatively, you can navigate to the data directory (<code>DLMDataDir()</code>) on your machine and examine the contents and structure of the CSV data files in MS Excel or other software.</p>
@@ -428,23 +447,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="populating-a-data-object-in-r" class="section level2">
 <h2><span class="header-section-number">19.4</span> Populating a Data Object in R</h2>
 <p>You can create a blank <code>Data</code> object and fill the slots directly in R. For example:</p>
-<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb352-1" title="1">Madeup &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;Data&#39;</span>)                             <span class="co">#  Create a blank DLM object</span></a>
-<a class="sourceLine" id="cb352-2" title="2">Madeup<span class="op">@</span>Name &lt;-<span class="st"> &#39;Test&#39;</span>                                 <span class="co">#  Name it</span></a>
-<a class="sourceLine" id="cb352-3" title="3">Madeup<span class="op">@</span>Cat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">20</span><span class="op">:</span><span class="dv">11</span><span class="op">*</span><span class="kw">rlnorm</span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="fl">0.2</span>),<span class="dt">nrow=</span><span class="dv">1</span>)   <span class="co">#  Generate fake catch data</span></a>
-<a class="sourceLine" id="cb352-4" title="4">Madeup<span class="op">@</span>Units &lt;-<span class="st"> &quot;Million metric tonnes&quot;</span>               <span class="co">#  State units of catch</span></a>
-<a class="sourceLine" id="cb352-5" title="5">Madeup<span class="op">@</span>AvC &lt;-<span class="st"> </span><span class="kw">mean</span>(Madeup<span class="op">@</span>Cat)                        <span class="co">#  Average catches for time t (DCAC)</span></a>
-<a class="sourceLine" id="cb352-6" title="6">Madeup<span class="op">@</span>t &lt;-<span class="st"> </span><span class="kw">ncol</span>(Madeup<span class="op">@</span>Cat)                          <span class="co">#  No. yrs for Av. catch (DCAC)</span></a>
-<a class="sourceLine" id="cb352-7" title="7">Madeup<span class="op">@</span>Dt &lt;-<span class="st"> </span><span class="fl">0.5</span>                                      <span class="co">#  Depletion over time t (DCAC)</span></a>
-<a class="sourceLine" id="cb352-8" title="8">Madeup<span class="op">@</span>Dep &lt;-<span class="st"> </span><span class="fl">0.5</span>                                     <span class="co">#  Depletion relative to unfished </span></a>
-<a class="sourceLine" id="cb352-9" title="9">Madeup<span class="op">@</span>vbK &lt;-<span class="st"> </span><span class="fl">0.2</span>                                     <span class="co">#  VB maximum growth rate</span></a>
-<a class="sourceLine" id="cb352-10" title="10">Madeup<span class="op">@</span>vbt0 &lt;-<span class="st"> </span>(<span class="op">-</span><span class="fl">0.5</span>)                                 <span class="co">#  VB theoretical age at zero length</span></a>
-<a class="sourceLine" id="cb352-11" title="11">Madeup<span class="op">@</span>vbLinf &lt;-<span class="st"> </span><span class="dv">200</span>                                  <span class="co">#  VB maximum length</span></a>
-<a class="sourceLine" id="cb352-12" title="12">Madeup<span class="op">@</span>Mort &lt;-<span class="st"> </span><span class="fl">0.1</span>                                    <span class="co">#  Natural mortality rate</span></a>
-<a class="sourceLine" id="cb352-13" title="13">Madeup<span class="op">@</span>Abun &lt;-<span class="st"> </span><span class="dv">200</span>                                    <span class="co">#  Current abundance</span></a>
-<a class="sourceLine" id="cb352-14" title="14">Madeup<span class="op">@</span>FMSY_M &lt;-<span class="st"> </span><span class="fl">0.75</span>                                 <span class="co">#  Ratio of FMSY/M</span></a>
-<a class="sourceLine" id="cb352-15" title="15">Madeup<span class="op">@</span>L50 &lt;-<span class="st"> </span><span class="dv">100</span>                                     <span class="co">#  Length at 50% maturity</span></a>
-<a class="sourceLine" id="cb352-16" title="16">Madeup<span class="op">@</span>L95 &lt;-<span class="st"> </span><span class="dv">120</span>                                     <span class="co">#  Length at 95% maturity</span></a>
-<a class="sourceLine" id="cb352-17" title="17">Madeup<span class="op">@</span>BMSY_B0 &lt;-<span class="st"> </span><span class="fl">0.35</span>                                <span class="co">#  BMSY relative to unfished</span></a></code></pre></div>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="creating-your-own-data-object.html#cb355-1"></a>Madeup &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;Data&#39;</span>)                             <span class="co">#  Create a blank DLM object</span></span>
+<span id="cb355-2"><a href="creating-your-own-data-object.html#cb355-2"></a>Madeup<span class="op">@</span>Name &lt;-<span class="st"> &#39;Test&#39;</span>                                 <span class="co">#  Name it</span></span>
+<span id="cb355-3"><a href="creating-your-own-data-object.html#cb355-3"></a>Madeup<span class="op">@</span>Cat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">20</span><span class="op">:</span><span class="dv">11</span><span class="op">*</span><span class="kw">rlnorm</span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="fl">0.2</span>),<span class="dt">nrow=</span><span class="dv">1</span>)   <span class="co">#  Generate fake catch data</span></span>
+<span id="cb355-4"><a href="creating-your-own-data-object.html#cb355-4"></a>Madeup<span class="op">@</span>Units &lt;-<span class="st"> &quot;Million metric tonnes&quot;</span>               <span class="co">#  State units of catch</span></span>
+<span id="cb355-5"><a href="creating-your-own-data-object.html#cb355-5"></a>Madeup<span class="op">@</span>AvC &lt;-<span class="st"> </span><span class="kw">mean</span>(Madeup<span class="op">@</span>Cat)                        <span class="co">#  Average catches for time t (DCAC)</span></span>
+<span id="cb355-6"><a href="creating-your-own-data-object.html#cb355-6"></a>Madeup<span class="op">@</span>t &lt;-<span class="st"> </span><span class="kw">ncol</span>(Madeup<span class="op">@</span>Cat)                          <span class="co">#  No. yrs for Av. catch (DCAC)</span></span>
+<span id="cb355-7"><a href="creating-your-own-data-object.html#cb355-7"></a>Madeup<span class="op">@</span>Dt &lt;-<span class="st"> </span><span class="fl">0.5</span>                                      <span class="co">#  Depletion over time t (DCAC)</span></span>
+<span id="cb355-8"><a href="creating-your-own-data-object.html#cb355-8"></a>Madeup<span class="op">@</span>Dep &lt;-<span class="st"> </span><span class="fl">0.5</span>                                     <span class="co">#  Depletion relative to unfished </span></span>
+<span id="cb355-9"><a href="creating-your-own-data-object.html#cb355-9"></a>Madeup<span class="op">@</span>vbK &lt;-<span class="st"> </span><span class="fl">0.2</span>                                     <span class="co">#  VB maximum growth rate</span></span>
+<span id="cb355-10"><a href="creating-your-own-data-object.html#cb355-10"></a>Madeup<span class="op">@</span>vbt0 &lt;-<span class="st"> </span>(<span class="op">-</span><span class="fl">0.5</span>)                                 <span class="co">#  VB theoretical age at zero length</span></span>
+<span id="cb355-11"><a href="creating-your-own-data-object.html#cb355-11"></a>Madeup<span class="op">@</span>vbLinf &lt;-<span class="st"> </span><span class="dv">200</span>                                  <span class="co">#  VB maximum length</span></span>
+<span id="cb355-12"><a href="creating-your-own-data-object.html#cb355-12"></a>Madeup<span class="op">@</span>Mort &lt;-<span class="st"> </span><span class="fl">0.1</span>                                    <span class="co">#  Natural mortality rate</span></span>
+<span id="cb355-13"><a href="creating-your-own-data-object.html#cb355-13"></a>Madeup<span class="op">@</span>Abun &lt;-<span class="st"> </span><span class="dv">200</span>                                    <span class="co">#  Current abundance</span></span>
+<span id="cb355-14"><a href="creating-your-own-data-object.html#cb355-14"></a>Madeup<span class="op">@</span>FMSY_M &lt;-<span class="st"> </span><span class="fl">0.75</span>                                 <span class="co">#  Ratio of FMSY/M</span></span>
+<span id="cb355-15"><a href="creating-your-own-data-object.html#cb355-15"></a>Madeup<span class="op">@</span>L50 &lt;-<span class="st"> </span><span class="dv">100</span>                                     <span class="co">#  Length at 50% maturity</span></span>
+<span id="cb355-16"><a href="creating-your-own-data-object.html#cb355-16"></a>Madeup<span class="op">@</span>L95 &lt;-<span class="st"> </span><span class="dv">120</span>                                     <span class="co">#  Length at 95% maturity</span></span>
+<span id="cb355-17"><a href="creating-your-own-data-object.html#cb355-17"></a>Madeup<span class="op">@</span>BMSY_B0 &lt;-<span class="st"> </span><span class="fl">0.35</span>                                <span class="co">#  BMSY relative to unfished</span></span></code></pre></div>
 </div>
 </div>
             </section>
@@ -458,11 +477,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -477,6 +498,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,13 +41,13 @@
 
 
 
-<meta property="og:title" content="Run a Management Strategy Evaluation — runMSE" />
 
+<meta property="og:title" content="Run a Management Strategy Evaluation — runMSE" />
 <meta property="og:description" content="A function that runs a Management Strategy Evaluation (closed-loop
 simulation) for a specified operating model" />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -76,7 +78,7 @@ simulation) for a specified operating model" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -89,7 +91,6 @@ simulation) for a specified operating model" />
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -111,19 +112,30 @@ simulation) for a specified operating model" />
     </div>
 
     <div class="ref-description">
-    
     <p>A function that runs a Management Strategy Evaluation (closed-loop
 simulation) for a specified operating model</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>runMSE</span>(<span class='kw'>OM</span> <span class='kw'>=</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/testOM.html'>testOM</a></span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"AvC"</span>, <span class='st'>"DCAC"</span>, <span class='st'>"FMSYref"</span>, <span class='st'>"curE"</span>,
-  <span class='st'>"matlenlim"</span>, <span class='st'>"MRreal"</span>), <span class='kw'>CheckMPs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>Hist</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>ntrials</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>fracD</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>CalcBlow</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>HZN</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>AnnualMSY</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>PPD</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>save_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>checks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>control</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>runMSE</span>(
+  <span class='kw'>OM</span> <span class='kw'>=</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/testOM.html'>testOM</a></span>,
+  <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"AvC"</span>, <span class='st'>"DCAC"</span>, <span class='st'>"FMSYref"</span>, <span class='st'>"curE"</span>, <span class='st'>"matlenlim"</span>, <span class='st'>"MRreal"</span>),
+  <span class='kw'>CheckMPs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>Hist</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>ntrials</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>fracD</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='kw'>CalcBlow</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>HZN</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+  <span class='kw'>AnnualMSY</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>PPD</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>save_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>checks</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>control</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -206,41 +218,33 @@ May differ from MSY statistics from last historical year if there are changes in
       <td><p>control options for testing and debugging</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class <a href='MSE-class.html'>MSE</a></p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
 <ul>
 <li><p><code>runMSE</code>: Default function to use.</p></li>
 </ul>
-    
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>See relevant section of the <a href='https://dlmtool.github.io/DLMtool/userguide/running-the-mse.html'>DLMtool User Guide</a> for more information.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='checkMSE.html'>joinMSE</a> <a href='checkMSE.html'>checkMSE</a> <a href='checkMSE.html'>updateMSE</a></p></div>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#functions">Functions</a></li>
-
       <li><a href="#note">Note</a></li>
-
       <li><a href="#see-also">See also</a></li>
-          </ul>
+    </ul>
 
     <h2>Author</h2>
     <p>T. Carruthers and A. Hordyk</p>

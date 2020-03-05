@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -392,7 +411,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="valid-cpars-names" class="section level2">
 <h2><span class="header-section-number">27.1</span> Valid cpars names</h2>
 <p>The <code>cpars</code> slot requires a named list containing the custom parameter values. You can see the valid names for <code>cpars</code> by typing:</p>
-<div class="sourceCode" id="cb509"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb509-1" title="1"><span class="kw">head</span>(<span class="kw">validcpars</span>())</a></code></pre></div>
+<div class="sourceCode" id="cb513"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb513-1"><a href="custom-parameters.html#cb513-1"></a><span class="kw">head</span>(<span class="kw">validcpars</span>())</span></code></pre></div>
 <pre><code>##    Var.                       Dim.                         Desc.  Type
 ## 1    R0 numeric vector length nsim            Virgin recruitment Stock
 ## 2     M numeric vector length nsim             Natural mortality Stock
@@ -409,11 +428,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>For example, if you wish to supply correlated samples of the von Bertalanffy growth parameters, you would create three vectors of length <code>nsim</code> containing the samples of Linf, K, and t0.</p>
 <p>If the vectors are shorter than <code>nsim</code> they will simply be recycled. An error message will alert you if the vectors are not the same length.</p>
 <p>As a demonstration, we will use the <code>ForceCor</code> function to generate correlated samples of <em>M</em>, <em>K</em>, <em>L50</em>, and <em>Linf</em> and examine the <code>cpars</code> slot in the resulting OM object:</p>
-<div class="sourceCode" id="cb511"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb511-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">ForceCor</span>(DLMtool<span class="op">::</span>testOM)</a></code></pre></div>
+<div class="sourceCode" id="cb515"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb515-1"><a href="custom-parameters.html#cb515-1"></a>OM &lt;-<span class="st"> </span><span class="kw">ForceCor</span>(DLMtool<span class="op">::</span>testOM)</span></code></pre></div>
 <pre><code>## Warning: Life-history correlations are now calculated using data from FishBase.
 ## Consider using `LH2OM` instead.</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-181-1.png" width="672" /></p>
-<div class="sourceCode" id="cb513"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb513-1" title="1"><span class="kw">str</span>(OM<span class="op">@</span>cpars)</a></code></pre></div>
+<div class="sourceCode" id="cb517"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb517-1"><a href="custom-parameters.html#cb517-1"></a><span class="kw">str</span>(OM<span class="op">@</span>cpars)</span></code></pre></div>
 <pre><code>## List of 4
 ##  $ M   : num [1:48] 0.382 0.39 0.396 0.353 0.4 ...
 ##  $ K   : num [1:48] 0.174 0.176 0.187 0.163 0.196 ...
@@ -422,8 +441,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>You can see that the <code>OM@cpars</code> slot is a list of length 4 and contains named vectors with 48 correlated samples of the four parameters.</p>
 <p>Because the <code>OM@cpars</code> slot contains these values, the <em>M</em>, <em>K</em>, <em>L50</em>, and <em>Linf</em> values in the OM, e.g. <code>OM@M</code> will be ignored.</p>
 <p>Any additional custom parameters can be added to <code>cpars</code> using this same approach. For example, to provide custom (in this case uncorrelated) samples of <em>t0</em>:</p>
-<div class="sourceCode" id="cb515"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb515-1" title="1">OM<span class="op">@</span>cpars<span class="op">$</span>t0 &lt;-<span class="st"> </span><span class="kw">runif</span>(OM<span class="op">@</span>cpars, <span class="dv">-1</span>, <span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb515-2" title="2"><span class="kw">str</span>(OM<span class="op">@</span>cpars)</a></code></pre></div>
+<div class="sourceCode" id="cb519"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb519-1"><a href="custom-parameters.html#cb519-1"></a>OM<span class="op">@</span>cpars<span class="op">$</span>t0 &lt;-<span class="st"> </span><span class="kw">runif</span>(OM<span class="op">@</span>cpars, <span class="dv">-1</span>, <span class="dv">0</span>)</span>
+<span id="cb519-2"><a href="custom-parameters.html#cb519-2"></a><span class="kw">str</span>(OM<span class="op">@</span>cpars)</span></code></pre></div>
 <pre><code>## List of 5
 ##  $ M   : num [1:48] 0.382 0.39 0.396 0.353 0.4 ...
 ##  $ K   : num [1:48] 0.174 0.176 0.187 0.163 0.196 ...
@@ -435,127 +454,78 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">27.3</span> Custom internal parameters</h2>
 <p>It is also possible to supply custom generated time-varing values or other values to internal parameters using the <code>cpars</code> slot. For example, time-varying natural mortality or selectivity patterns. These are referred to as <em>internal</em> custom parameters.</p>
 <p>A list of valid internal cpars can be found by using the <code>validcpars</code> function. Here, for presentation purposes, we print just the first two columns:</p>
-<div class="sourceCode" id="cb517"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb517-1" title="1">val_int &lt;-<span class="st"> </span><span class="kw">validcpars</span>(<span class="st">&#39;internal&#39;</span>)</a>
-<a class="sourceLine" id="cb517-2" title="2">val_int[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</a></code></pre></div>
-<pre><code>##           Var.
-## 1        Cbias
-## 2     CAL_bins
-## 3  CAL_binsmid
-## 4          L95
-## 5       Perr_y
-## 6  M_at_Length
-## 7        Asize
-## 8       Karray
-## 9    Linfarray
-## 10      Marray
-## 11       Krand
-## 12    Linfrand
-## 13       Mrand
-## 14        ageM
-## 15       age95
-## 16  M_ageArray
-## 17     Mat_age
-## 18      LatASD
-## 19      Wt_age
-## 20     Len_age
-## 21         mov
-## 22       initD
-## 23        Find
-## 24     dFfinal
-## 25           V
-## 26        retA
-## 27        retL
-## 28    lenMbias
-## 29       Mbias
-## 30       Kbias
-## 31      t0bias
-## 32    Linfbias
-## 33     LFCbias
-## 34    FMSYbias
-## 35  FMSY_Mbias
-## 36 BMSY_B0bias
-## 37    Irefbias
-## 38    Brefbias
-## 39    Crefbias
-## 40       Dbias
-## 41       hbias
-## 42        hsim
-## 43        Data
-## 44    CostCurr
-## 45     RevCurr
-## 46    Response
-## 47     CostInc
-## 48      RevInc
-## 49   LatentEff
-##                                                                                                          Dim.
-## 1                                                                                  numeric vector length nsim
-## 2                                                                                             numeric vector 
-## 3                                                                           numeric vector length(CAL_bins)-1
-## 4                                                                                  numeric vector length nsim
-## 5                                                      numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
-## 6                                                                        numeric matrix dim = c(n.lengths, 3)
-## 7                                                                         numeric matrix dim = c(nsim, narea)
-## 8                                                               numeric matrix dim = c(nsim, nyears+proyears)
-## 9                                                               numeric matrix dim = c(nsim, nyears+proyears)
-## 10                                                              numeric matrix dim = c(nsim, nyears+proyears)
-## 11                                                              numeric matrix dim = c(nsim, nyears+proyears)
-## 12                                                              numeric matrix dim = c(nsim, nyears+proyears)
-## 13                                                              numeric matrix dim = c(nsim, nyears+proyears)
-## 14                                                              numeric matrix dim = c(nsim, nyears+proyears)
-## 15                                                              numeric matrix dim = c(nsim, nyears+proyears)
-## 16                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
-## 17                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
-## 18                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
-## 19                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
-## 20                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
-## 21 numeric array dim = c(nsim, maxage, narea, narea) OR  dim = c(nsim, maxage, narea, narea, nyears+proyears)
-## 22                                                                                 numeric vector length nsim
-## 23                                                                       numeric matrix dim = c(nsim, nyears)
-## 24                                                                                 numeric vector length nsim
-## 25                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
-## 26                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
-## 27                                                     numeric array dim = c(nsim, nCALbins, nyears+proyears)
-## 28                                                                                 numeric vector length nsim
-## 29                                                                                 numeric vector length nsim
-## 30                                                                                 numeric vector length nsim
-## 31                                                                                 numeric vector length nsim
-## 32                                                                                 numeric vector length nsim
-## 33                                                                                 numeric vector length nsim
-## 34                                                                                 numeric vector length nsim
-## 35                                                                                 numeric vector length nsim
-## 36                                                                                 numeric vector length nsim
-## 37                                                                                 numeric vector length nsim
-## 38                                                                                 numeric vector length nsim
-## 39                                                                                 numeric vector length nsim
-## 40                                                                                 numeric vector length nsim
-## 41                                                                                 numeric vector length nsim
-## 42                                                                                 numeric vector length nsim
-## 43                                                                                       Object of class Data
-## 44                                                                                 numeric vector length nsim
-## 45                                                                                 numeric vector length nsim
-## 46                                                                                 numeric vector length nsim
-## 47                                                                                 numeric vector length nsim
-## 48                                                                                 numeric vector length nsim
-## 49                                                                                 numeric vector length nsim</code></pre>
-<p>We can see that there are 49 valid internal cpars. The internal cpars are parameters that are derived from one or more of the <code>OM</code> slots.</p>
+<div class="sourceCode" id="cb521"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb521-1"><a href="custom-parameters.html#cb521-1"></a>val_int &lt;-<span class="st"> </span><span class="kw">validcpars</span>(<span class="st">&#39;internal&#39;</span>)</span>
+<span id="cb521-2"><a href="custom-parameters.html#cb521-2"></a>val_int[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</span></code></pre></div>
+<pre><code>##           Var.                                                                                                       Dim.
+## 1        Cbias                                                                                 numeric vector length nsim
+## 2     CAL_bins                                                                                            numeric vector 
+## 3  CAL_binsmid                                                                          numeric vector length(CAL_bins)-1
+## 4          L95                                                                                 numeric vector length nsim
+## 5       Perr_y                                                     numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
+## 6  M_at_Length                                                                       numeric matrix dim = c(n.lengths, 3)
+## 7        Asize                                                                        numeric matrix dim = c(nsim, narea)
+## 8       Karray                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 9    Linfarray                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 10      Marray                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 11       Krand                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 12    Linfrand                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 13       Mrand                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 14        ageM                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 15       age95                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 16  M_ageArray                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 17     Mat_age                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 18      LatASD                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 19      Wt_age                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 20     Len_age                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 21         mov numeric array dim = c(nsim, maxage, narea, narea) OR  dim = c(nsim, maxage, narea, narea, nyears+proyears)
+## 22       initD                                                                                 numeric vector length nsim
+## 23    binWidth                                                                                  numeric value of length 1
+## 24        Find                                                                       numeric matrix dim = c(nsim, nyears)
+## 25     dFfinal                                                                                 numeric vector length nsim
+## 26           V                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 27        retA                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 28        retL                                                     numeric array dim = c(nsim, nCALbins, nyears+proyears)
+## 29    lenMbias                                                                                 numeric vector length nsim
+## 30       Mbias                                                                                 numeric vector length nsim
+## 31       Kbias                                                                                 numeric vector length nsim
+## 32      t0bias                                                                                 numeric vector length nsim
+## 33    Linfbias                                                                                 numeric vector length nsim
+## 34     LFCbias                                                                                 numeric vector length nsim
+## 35    FMSYbias                                                                                 numeric vector length nsim
+## 36  FMSY_Mbias                                                                                 numeric vector length nsim
+## 37 BMSY_B0bias                                                                                 numeric vector length nsim
+## 38    Irefbias                                                                                 numeric vector length nsim
+## 39    Brefbias                                                                                 numeric vector length nsim
+## 40    Crefbias                                                                                 numeric vector length nsim
+## 41       Dbias                                                                                 numeric vector length nsim
+## 42       hbias                                                                                 numeric vector length nsim
+## 43        hsim                                                                                 numeric vector length nsim
+## 44        Data                                                                                       Object of class Data
+## 45    CostCurr                                                                                 numeric vector length nsim
+## 46     RevCurr                                                                                 numeric vector length nsim
+## 47    Response                                                                                 numeric vector length nsim
+## 48     CostInc                                                                                 numeric vector length nsim
+## 49      RevInc                                                                                 numeric vector length nsim
+## 50   LatentEff                                                                                 numeric vector length nsim
+## 51     AddIerr                                                                     array dim nsim, n.ind, nyears+proyears
+## 52    AddIbeta                                                                            matrix nrow=nsim and ncol=n.ind</code></pre>
+<p>We can see that there are 52 valid internal cpars. The internal cpars are parameters that are derived from one or more of the <code>OM</code> slots.</p>
 <p>For example, <code>M_ageArray</code> is an internal array that describes the natural mortality rate at age for each simulation and year. Typically, this array is derived from the <code>M</code>, <code>M2</code>, <code>Mexp</code>, <code>Mgrad</code> and <code>Msd</code> slots in the <code>Stock</code> object. Using the <code>cpars</code> feature we can override these values in the <code>OM</code> and provide our own values for <em>M</em> for each simulation, age, and year.</p>
 <p>Information on the <code>M_ageArray</code> variable in cpars can be found in the output of the <code>validcpars</code> function:</p>
-<div class="sourceCode" id="cb519"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb519-1" title="1">val_int[<span class="dv">15</span>,]</a></code></pre></div>
-<pre><code>##     Var.                                          Dim.
-## 15 age95 numeric matrix dim = c(nsim, nyears+proyears)
-##                                         Desc.     Type
-## 15 Age at 95% maturity by simulation and year internal</code></pre>
+<div class="sourceCode" id="cb523"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb523-1"><a href="custom-parameters.html#cb523-1"></a>val_int[<span class="dv">15</span>,]</span></code></pre></div>
+<pre><code>##     Var.                                          Dim.                                      Desc.     Type
+## 15 age95 numeric matrix dim = c(nsim, nyears+proyears) Age at 95% maturity by simulation and year internal</code></pre>
 <p>To generate our own values of the M-at-age array we would populate <code>OM@cpars$M_ageArray</code> with an array with dimensions <code>OM@nsim</code>, <code>OM@maxage</code>, <code>OM@nyears+OM@proyears</code>.</p>
 <p>The <code>cpars</code> feature is very powerful but also somewhat complicated, especially if you are using internal custom parameters. For example, by default DLMtool uses the <code>OM@L50_95</code> slot (the increment between length at 50% maturity (<code>OM@L50</code>) and length at 95% maturity (<code>L95</code>)) to calculate the internal parameter <code>L95</code>. This is neccessary to ensure that <code>L95</code> is always greater than <code>L50</code>. Using internal parameters in <code>cpars</code> it is possible to pass values to <code>L95</code> directly, however now it is up to you to make sure that the <code>L95</code> values are greater than the corresponding <code>L50</code> values, otherwise you end up with a species where fraction mature decreases with age/size!</p>
-<div class="sourceCode" id="cb521"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb521-1" title="1">OM &lt;-<span class="st"> </span>testOM </a>
-<a class="sourceLine" id="cb521-2" title="2">OM<span class="op">@</span>cpars<span class="op">$</span>L95 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">80</span>, OM<span class="op">@</span>nsim)</a>
-<a class="sourceLine" id="cb521-3" title="3">temp &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">Hist=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb525"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb525-1"><a href="custom-parameters.html#cb525-1"></a>OM &lt;-<span class="st"> </span>testOM </span>
+<span id="cb525-2"><a href="custom-parameters.html#cb525-2"></a>OM<span class="op">@</span>cpars<span class="op">$</span>L95 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">80</span>, OM<span class="op">@</span>nsim)</span>
+<span id="cb525-3"><a href="custom-parameters.html#cb525-3"></a>temp &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">Hist=</span><span class="ot">TRUE</span>)</span></code></pre></div>
 <pre><code>## Loading operating model</code></pre>
 <pre><code>## valid custom parameters (OM@cpars) found: 
 ## L95</code></pre>
 <pre><code>## Optimizing for user-specified movement</code></pre>
 <pre><code>## Optimizing for user-specified depletion in last historical year</code></pre>
-<pre><code>## 8 simulations have final biomass that is not close to sampled depletion</code></pre>
+<pre><code>## 7 simulations have final biomass that is not close to sampled depletion</code></pre>
 <pre><code>## Re-sampling depletion, recruitment error, and fishing effort</code></pre>
 <pre><code>## Calculating historical stock and fishing dynamics</code></pre>
 <pre><code>## Calculating MSY reference points for each year</code></pre>
@@ -563,7 +533,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## Calculating reference yield - best fixed F strategy</code></pre>
 <pre><code>## Simulating observed data</code></pre>
 <pre><code>## Returning historical simulations</code></pre>
-<div class="sourceCode" id="cb534"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb534-1" title="1"><span class="kw">data.frame</span>(<span class="dt">L50=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L50, <span class="dt">L95=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L95, <span class="dt">diff=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L95 <span class="op">-</span><span class="st"> </span>temp<span class="op">@</span>SampPars<span class="op">$</span>L50)</a></code></pre></div>
+<div class="sourceCode" id="cb538"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb538-1"><a href="custom-parameters.html#cb538-1"></a><span class="kw">data.frame</span>(<span class="dt">L50=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L50, <span class="dt">L95=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L95, <span class="dt">diff=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L95 <span class="op">-</span><span class="st"> </span>temp<span class="op">@</span>SampPars<span class="op">$</span>L50)</span></code></pre></div>
 <pre><code>##         L50 L95       diff
 ## 1  89.29632  80  -9.296324
 ## 2  85.94840  80  -5.948397
@@ -613,8 +583,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 46 89.00868  80  -9.008677
 ## 47 85.91241  80  -5.912413
 ## 48 86.02250  80  -6.022501</code></pre>
-<div class="sourceCode" id="cb536"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb536-1" title="1"><span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>maxage, temp<span class="op">@</span>AtAge<span class="op">$</span>Maturity[<span class="dv">1</span>,,<span class="dv">1</span>], <span class="dt">type=</span><span class="st">&quot;l&quot;</span>, </a>
-<a class="sourceLine" id="cb536-2" title="2">     <span class="dt">xlab=</span><span class="st">&quot;Age&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Maturity&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb540"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb540-1"><a href="custom-parameters.html#cb540-1"></a><span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>maxage, temp<span class="op">@</span>AtAge<span class="op">$</span>Maturity[<span class="dv">1</span>,,<span class="dv">1</span>], <span class="dt">type=</span><span class="st">&quot;l&quot;</span>, </span>
+<span id="cb540-2"><a href="custom-parameters.html#cb540-2"></a>     <span class="dt">xlab=</span><span class="st">&quot;Age&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Maturity&quot;</span>)</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-185-1.png" width="672" /></p>
 <p>We have tried to include checks to ensure the model is simulating credible population dynamics, but as this somewhat contrived example shows, care is needed when using <code>OM@cpars</code> to specify internal parameters. We recommend first running the model with <code>Hist=TRUE</code> as in the above example and examining the generated values to ensure the parameters you have added in <code>OM@cpars</code> are being used as expected.</p>
 <p>If you find that this is a feature you wish to use but are unclear how to do it, bug us with an email!</p>
@@ -631,11 +601,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -650,6 +622,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,14 +41,14 @@
 
 
 
-<meta property="og:title" content="Beddington and Kirkwood life-history MP — BK" />
 
+<meta property="og:title" content="Beddington and Kirkwood life-history MP — BK" />
 <meta property="og:description" content="Family of management procedures that sets the TAC by approximation of Fmax
 based on the length at first capture relative to asymptotic length and the
 von Bertalanffy growth parameter K." />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -77,7 +79,7 @@ von Bertalanffy growth parameter K." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -90,7 +92,6 @@ von Bertalanffy growth parameter K." />
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -112,11 +113,9 @@ von Bertalanffy growth parameter K." />
     </div>
 
     <div class="ref-description">
-    
     <p>Family of management procedures that sets the TAC by approximation of Fmax
 based on the length at first capture relative to asymptotic length and the
 von Bertalanffy growth parameter <em>K</em>.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>BK</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
@@ -124,7 +123,7 @@ von Bertalanffy growth parameter <em>K</em>.</p>
 <span class='fu'>BK_CC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>Fmin</span> <span class='kw'>=</span> <span class='fl'>0.005</span>)
 
 <span class='fu'>BK_ML</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -150,11 +149,10 @@ von Bertalanffy growth parameter <em>K</em>.</p>
 catch-curve (interval censor).</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The TAC is calculated as:
@@ -167,7 +165,6 @@ length at first capture, and \(L_\infty\) is the von Bertalanffy asymptotic leng
 $$A = \frac{\bar{C}}{\left(1-e^{-F}\right)}$$
 where \(\bar{C}\) is the mean catch, and <em>F</em> is estimated.
 See Functions section below for the estimation of <em>F</em>.</p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -179,7 +176,6 @@ to estimate <em>Z</em> and <em>F</em>, and abundance estimated from recent catch
 <li><p><code>BK_ML</code>: Abundance is estimated using mean length
 to estimate <em>Z</em> and <em>F</em>, and abundance estimated from recent catches and <em>F</em>.</p></li>
 </ul>
-    
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>Note that the Beddington-Kirkwood method is designed to estimate \(F_\textrm{max}\),
@@ -189,7 +185,6 @@ recruitment independent of spawning biomass</em>.</p>
 recommend estimating <em>F</em> using other methods (e.g a catch curve) and comparing the
 estimated <em>F</em> to the estimated \(F_\textrm{max}\) and adjusting exploitation accordingly.
 These MPs have not been implemented that way.</p>
-    
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
@@ -200,8 +195,7 @@ These MPs have not been implemented that way.</p>
 
 <p><code>BK_CC</code>: CAA, Cat, LFC, vbK, vbLinf</p>
 
-<p><code>BK_ML</code>: CAL, Cat, LFC, Lbar, Lc, Mort, vbK, vbLinf</p>
-    
+<p><code>BK_ML</code>: CAL, Cat, Lbar, Lc, LFC, Mort, vbK, vbLinf</p>
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
     
@@ -211,13 +205,11 @@ These MPs have not been implemented that way.</p>
 
 
 
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
 potential yield and stock status using life history parameters. Philos.
 Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
@@ -236,21 +228,13 @@ Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#functions">Functions</a></li>
-
       <li><a href="#note">Note</a></li>
-
       <li><a href="#required-data">Required Data</a></li>
-
       <li><a href="#rendered-equations">Rendered Equations</a></li>
-
       <li><a href="#references">References</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

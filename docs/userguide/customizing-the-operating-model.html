@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <title>Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.2)</title>
   <meta name="description" content="User guide for the DLMtool R package" />
-  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta property="og:title" content="Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
+  <meta name="twitter:title" content="Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-09-19" />
+<meta name="date" content="2020-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -40,6 +40,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -50,9 +53,9 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 pre.sourceCode { margin: 0; }
@@ -61,14 +64,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -77,9 +82,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -362,6 +367,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+<li class="chapter" data-level="E.1" data-path="changes.html"><a href="changes.html#bio-economic-model"><i class="fa fa-check"></i><b>E.1</b> Bio-Economic Model</a></li>
+<li class="chapter" data-level="E.2" data-path="changes.html"><a href="changes.html#key-bio-economic-parameters"><i class="fa fa-check"></i><b>E.2</b> Key Bio-Economic Parameters</a><ul>
+<li class="chapter" data-level="E.2.1" data-path="changes.html"><a href="changes.html#current-cost-and-revenue"><i class="fa fa-check"></i><b>E.2.1</b> Current Cost and Revenue</a></li>
+<li class="chapter" data-level="E.2.2" data-path="changes.html"><a href="changes.html#fishing-effort-responsiveness"><i class="fa fa-check"></i><b>E.2.2</b> Fishing Effort Responsiveness</a></li>
+</ul></li>
+<li class="chapter" data-level="E.3" data-path="changes.html"><a href="changes.html#changes-in-cost-and-revenue"><i class="fa fa-check"></i><b>E.3</b> Changes in Cost and Revenue</a></li>
+<li class="chapter" data-level="E.4" data-path="changes.html"><a href="changes.html#bio-economic-model-mps"><i class="fa fa-check"></i><b>E.4</b> Bio-Economic Model &amp; MPs</a><ul>
+<li class="chapter" data-level="E.4.1" data-path="changes.html"><a href="changes.html#with-a-tac"><i class="fa fa-check"></i><b>E.4.1</b> With a TAC</a></li>
+<li class="chapter" data-level="E.4.2" data-path="changes.html"><a href="changes.html#with-a-tae"><i class="fa fa-check"></i><b>E.4.2</b> With a TAE</a></li>
+<li class="chapter" data-level="E.4.3" data-path="changes.html"><a href="changes.html#without-tac-or-tae"><i class="fa fa-check"></i><b>E.4.3</b> Without TAC or TAE</a></li>
+</ul></li>
+<li class="chapter" data-level="E.5" data-path="changes.html"><a href="changes.html#some-examples"><i class="fa fa-check"></i><b>E.5</b> Some Examples</a></li>
+<li class="chapter" data-level="E.6" data-path="changes.html"><a href="changes.html#future-developments"><i class="fa fa-check"></i><b>E.6</b> Future Developments</a></li>
+<li class="chapter" data-level="E.7" data-path="changes.html"><a href="changes.html#plotting-code"><i class="fa fa-check"></i><b>E.7</b> Plotting Code</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
@@ -376,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.2)</a>
           </h1>
         </div>
 
@@ -396,13 +415,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Suppose that we know the fishery began in 1950, and fishing effort increased slowly over the next decade, was relatively stable between 1960 and 1970, then increased dramatically over the next 10 years. We also know that, while fishing effort stayed relatively constant from 1980 to around 2000, there has been a general decline in fishing effort in recent years.</p>
 <p>This information can be included in the Operating Model by using the <code>ChooseEffort</code> function. The <code>ChooseEffort</code> function takes an existing Fleet object as its first argument, and allows the user to manually map out the range for the historical trend in fishing effort. The <code>ChooseEffort</code> function then returns the updated Fleet object.</p>
 <p>A second optional argument can be used to specify the historical years. If used, this will replace the <code>nyears</code> in the Fleet object with the length of the <code>Years</code> vector.</p>
-<div class="sourceCode" id="cb436"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb436-1" title="1">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseEffort</span>(MyFleet, <span class="dt">Years=</span><span class="dv">1950</span><span class="op">:</span><span class="dv">2016</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb440"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb440-1"><a href="customizing-the-operating-model.html#cb440-1"></a>MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseEffort</span>(MyFleet, <span class="dt">Years=</span><span class="dv">1950</span><span class="op">:</span><span class="dv">2016</span>)</span></code></pre></div>
 <!-- ```{r, include=FALSE} -->
 <!-- MyFleet@EffYears <- c(1950, 1960, 1970, 1978, 1998, 2016) -->
 <!-- MyFleet@EffLower <- c(0, 0.15, 0.15, 0.75, 0.85, 0.65) -->
 <!-- MyFleet@EffUpper <- c(0, 0.3, 0.3, 1, 1, 0.8) -->
 <!-- ``` -->
-<p><img src="images/EffortTraj.png" /><!-- --></p>
+<p><img src="images/EffortTraj.png" width="482" /></p>
 <p>If we take a look at the <code>MyFleet</code> object, we will see that three slots <code>EffYears</code>, <code>EffLower</code> and <code>EffUpper</code> have been replaced with the new values.</p>
 <p>Note that the trajectory that is mapped out here represents the bounds on the relative fishing mortality for each year. In this example, the fishing mortality rate was highest (on average) between 1980 and 2000, and is currently around 65 - 80% of this maximum level.</p>
 </div>
@@ -411,8 +430,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Suppose that we may knew there had been changes in the selectivity pattern of the fishery over time. This information can be included in the Operating Model by using the <code>ChooseSelect</code> function.</p>
 <p>Like the <code>ChooseEffort</code> function described above, the <code>ChooseSelection</code> function takes a Fleet object as it’s first argument, and returns an updated Fleet object.</p>
 <p>Suppose the selectivity pattern changed in 1970 and then again in 1990, perhaps because of changes in fishing regulations. These change points in the selectivity curve can be mapped by the following command:</p>
-<div class="sourceCode" id="cb437"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb437-1" title="1">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseSelect</span>(MyFleet, <span class="dt">FstYr=</span><span class="dv">1950</span>, <span class="dt">SelYears=</span><span class="kw">c</span>(<span class="dv">1970</span>, <span class="dv">1990</span>))</a></code></pre></div>
-<p><img src="images/Select.png" /><!-- --></p>
+<div class="sourceCode" id="cb441"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb441-1"><a href="customizing-the-operating-model.html#cb441-1"></a>MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseSelect</span>(MyFleet, <span class="dt">FstYr=</span><span class="dv">1950</span>, <span class="dt">SelYears=</span><span class="kw">c</span>(<span class="dv">1970</span>, <span class="dv">1990</span>))</span></code></pre></div>
+<p><img src="images/Select.png" width="482" /></p>
 <p>Note that the first year (<code>FstYr</code>) must also be specified, and the selectivity pattern is mapped for this year as well.</p>
 <p>When <code>ChooseSelect</code> is used, the <code>L5Lower</code>, <code>L5Upper</code>, <code>LFSLower</code>, <code>LFSUpper</code>, <code>VmaxLower</code>, <code>VmaxUpper</code>, and <code>SelYears</code> slots are updated in the <em>Fleet</em> object. If these slots are populated, the values in the <code>L5</code>, <code>LFS</code>, and <code>Vmaxlen</code> slots are ignored in the operating model.</p>
 </div>
@@ -423,17 +442,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 followed by fraction of area open to fishing for each area. i.e. each row represents a change and the number of columns is <code>nareas</code> (default is 2) + 1.</p>
 <p>The spatial closures are assumed to remain in place for the future projections unless changed by a MP. Default (if left blank) is all areas are open to fishing in historical period.</p>
 <p>For example:</p>
-<div class="sourceCode" id="cb438"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb438-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_Fleet, Perfect_Info, Perfect_Imp)</a>
-<a class="sourceLine" id="cb438-2" title="2"></a>
-<a class="sourceLine" id="cb438-3" title="3"><span class="co">## 50% of Area 1 was closed 30 years ago </span></a>
-<a class="sourceLine" id="cb438-4" title="4">cl1 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-30</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb438-5" title="5"><span class="co">## 80% of Area 1 was closed 15 years ago</span></a>
-<a class="sourceLine" id="cb438-6" title="6">cl2 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-15</span>, <span class="fl">0.2</span>, <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb438-7" title="7"><span class="co">## 100% of Area 1 was closed last year</span></a>
-<a class="sourceLine" id="cb438-8" title="8">cl3 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-1</span>, <span class="dv">0</span>, <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb438-9" title="9"></a>
-<a class="sourceLine" id="cb438-10" title="10">OM<span class="op">@</span>MPA &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(cl1, cl2, cl3), <span class="dt">ncol=</span><span class="dv">3</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb438-11" title="11"><span class="kw">plotMPA</span>(OM)</a></code></pre></div>
+<div class="sourceCode" id="cb442"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb442-1"><a href="customizing-the-operating-model.html#cb442-1"></a>OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_Fleet, Perfect_Info, Perfect_Imp)</span>
+<span id="cb442-2"><a href="customizing-the-operating-model.html#cb442-2"></a></span>
+<span id="cb442-3"><a href="customizing-the-operating-model.html#cb442-3"></a><span class="co">## 50% of Area 1 was closed 30 years ago </span></span>
+<span id="cb442-4"><a href="customizing-the-operating-model.html#cb442-4"></a>cl1 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-30</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)</span>
+<span id="cb442-5"><a href="customizing-the-operating-model.html#cb442-5"></a><span class="co">## 80% of Area 1 was closed 15 years ago</span></span>
+<span id="cb442-6"><a href="customizing-the-operating-model.html#cb442-6"></a>cl2 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-15</span>, <span class="fl">0.2</span>, <span class="dv">1</span>)</span>
+<span id="cb442-7"><a href="customizing-the-operating-model.html#cb442-7"></a><span class="co">## 100% of Area 1 was closed last year</span></span>
+<span id="cb442-8"><a href="customizing-the-operating-model.html#cb442-8"></a>cl3 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-1</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb442-9"><a href="customizing-the-operating-model.html#cb442-9"></a></span>
+<span id="cb442-10"><a href="customizing-the-operating-model.html#cb442-10"></a>OM<span class="op">@</span>MPA &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(cl1, cl2, cl3), <span class="dt">ncol=</span><span class="dv">3</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)</span>
+<span id="cb442-11"><a href="customizing-the-operating-model.html#cb442-11"></a><span class="kw">plotMPA</span>(OM)</span></code></pre></div>
 <pre><code>## Warning: &#39;plotMPA&#39; is deprecated.
 ## Use &#39;plot(&quot;MPA&quot;, Fleet, Stock&#39; instead.
 ## See help(&quot;Deprecated&quot;)</code></pre>
@@ -457,8 +476,8 @@ where <span class="math inline">\(M_w\)</span> is the natural mortality at weigh
 <p><span class="math display">\[M_a = M\left(\frac{W_a}{W_\infty}\right)^b\]</span>
 where <span class="math inline">\(M_a\)</span> is natural mortality at age <span class="math inline">\(a\)</span> and <span class="math inline">\(W_a\)</span> is the mean weight at age <span class="math inline">\(a\)</span>. <em>M</em>-at-age is then rescaled so that the mean <em>M</em> of adult age classes (mean age of maturity and greater) is equal to the natural mortality rate sampled from the stock object (<code>Stock@M</code>).</p>
 <p>The <code>plotM</code> function can be used to visually inspect samples of the <em>M</em>-at-age, -length, and -weight that are generated by the model:</p>
-<div class="sourceCode" id="cb440"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb440-1" title="1">Mackerel<span class="op">@</span>Mexp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">0.315</span>, <span class="fl">-0.261</span>)</a>
-<a class="sourceLine" id="cb440-2" title="2"><span class="kw">plotM</span>(Mackerel)</a></code></pre></div>
+<div class="sourceCode" id="cb444"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb444-1"><a href="customizing-the-operating-model.html#cb444-1"></a>Mackerel<span class="op">@</span>Mexp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">0.315</span>, <span class="fl">-0.261</span>)</span>
+<span id="cb444-2"><a href="customizing-the-operating-model.html#cb444-2"></a><span class="kw">plotM</span>(Mackerel)</span></code></pre></div>
 <pre><code>## Warning: &#39;plotM&#39; is deprecated.
 ## Use &#39;plot(&quot;M&quot;, Stock&#39; instead.
 ## See help(&quot;Deprecated&quot;)</code></pre>
@@ -467,16 +486,16 @@ where <span class="math inline">\(M_a\)</span> is natural mortality at age <span
 <div id="map-age-specific-m" class="section level3">
 <h3><span class="header-section-number">25.2.3</span> Map Age-Specific M</h3>
 <p>Usually the <code>M</code> slot contains two values, a lower and upper bound for the constant <em>M</em>-at-age. Users who wish for more control of <em>M</em>-at-age can use the <code>M</code> and <code>M2</code> slots in the <code>Stock</code> object to directly input values for <em>M</em>-at-age (<code>M</code> for lower bound and <code>M2</code> for upper bound). <code>maxage</code> values of <em>M</em> must be supplied for slots <code>M</code> and <code>M2</code>. One way to do this is to use the <code>ChooseM</code> function to map out the bounds for age-specific <em>M</em>:</p>
-<div class="sourceCode" id="cb442"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb442-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Blue_shark, Generic_FlatE, Generic_Obs, Perfect_Imp)</a>
-<a class="sourceLine" id="cb442-2" title="2">OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM)</a></code></pre></div>
-<p><img src="images/chooseM_age.png" /><!-- --></p>
+<div class="sourceCode" id="cb446"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb446-1"><a href="customizing-the-operating-model.html#cb446-1"></a>OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Blue_shark, Generic_FlatE, Generic_Obs, Perfect_Imp)</span>
+<span id="cb446-2"><a href="customizing-the-operating-model.html#cb446-2"></a>OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM)</span></code></pre></div>
+<p><img src="images/chooseM_age.png" width="390" /></p>
 <p>Click <a href="images/chooseM_age.png">here</a> for a larger version of the image.</p>
 <p>Alternatively, users can input the values directly into the <code>M</code> and <code>M2</code> slots (must be length <code>maxage</code>):</p>
-<div class="sourceCode" id="cb443"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb443-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)</a>
-<a class="sourceLine" id="cb443-2" title="2">OM<span class="op">@</span>M &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.7</span>, <span class="fl">0.65</span>, <span class="fl">0.60</span>, <span class="fl">0.55</span>, <span class="fl">0.61</span>, <span class="fl">0.68</span>, <span class="fl">0.75</span>, <span class="fl">0.63</span>, <span class="fl">0.51</span>, <span class="fl">0.39</span>, <span class="fl">0.27</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>)</a>
-<a class="sourceLine" id="cb443-3" title="3">OM<span class="op">@</span>M2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.85</span>, <span class="fl">0.8</span>, <span class="fl">0.75</span>, <span class="fl">0.7</span>, <span class="fl">0.76</span>, <span class="fl">0.83</span>, <span class="fl">0.9</span>, <span class="fl">0.78</span>, <span class="fl">0.66</span>, <span class="fl">0.54</span>, <span class="fl">0.42</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb447"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb447-1"><a href="customizing-the-operating-model.html#cb447-1"></a>OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)</span>
+<span id="cb447-2"><a href="customizing-the-operating-model.html#cb447-2"></a>OM<span class="op">@</span>M &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.7</span>, <span class="fl">0.65</span>, <span class="fl">0.60</span>, <span class="fl">0.55</span>, <span class="fl">0.61</span>, <span class="fl">0.68</span>, <span class="fl">0.75</span>, <span class="fl">0.63</span>, <span class="fl">0.51</span>, <span class="fl">0.39</span>, <span class="fl">0.27</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>)</span>
+<span id="cb447-3"><a href="customizing-the-operating-model.html#cb447-3"></a>OM<span class="op">@</span>M2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.85</span>, <span class="fl">0.8</span>, <span class="fl">0.75</span>, <span class="fl">0.7</span>, <span class="fl">0.76</span>, <span class="fl">0.83</span>, <span class="fl">0.9</span>, <span class="fl">0.78</span>, <span class="fl">0.66</span>, <span class="fl">0.54</span>, <span class="fl">0.42</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>)</span></code></pre></div>
 <p>The <code>plotM</code> function can then be used to visually display samples of the resulting <em>M</em> at age and size:</p>
-<div class="sourceCode" id="cb444"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb444-1" title="1"><span class="kw">plotM</span>(OM)</a></code></pre></div>
+<div class="sourceCode" id="cb448"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb448-1"><a href="customizing-the-operating-model.html#cb448-1"></a><span class="kw">plotM</span>(OM)</span></code></pre></div>
 <pre><code>## Warning: &#39;plotM&#39; is deprecated.
 ## Use &#39;plot(&quot;M&quot;, Stock&#39; instead.
 ## See help(&quot;Deprecated&quot;)</code></pre>
@@ -485,19 +504,19 @@ where <span class="math inline">\(M_a\)</span> is natural mortality at age <span
 <div id="map-length-specific-m" class="section level3">
 <h3><span class="header-section-number">25.2.4</span> Map Length-Specific M</h3>
 <p>There is also the option to map length-specific <em>M</em> using the plotting tool:</p>
-<div class="sourceCode" id="cb446"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb446-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)</a>
-<a class="sourceLine" id="cb446-2" title="2">OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class="st">&quot;length&quot;</span>)</a></code></pre></div>
-<p><img src="images/chooseM_length.png" /><!-- --></p>
+<div class="sourceCode" id="cb450"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb450-1"><a href="customizing-the-operating-model.html#cb450-1"></a>OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)</span>
+<span id="cb450-2"><a href="customizing-the-operating-model.html#cb450-2"></a>OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class="st">&quot;length&quot;</span>)</span></code></pre></div>
+<p><img src="images/chooseM_length.png" width="390" /></p>
 <p>Click <a href="images/chooseM_length.png">here</a> for a larger version of the image.</p>
 <p>This option uses the <a href="custom-parameters.html#custom-parameters">Custom Parameters</a> feature of DLMtool:</p>
-<div class="sourceCode" id="cb447"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb447-1" title="1"><span class="kw">str</span>(OM<span class="op">@</span>cpars)</a></code></pre></div>
+<div class="sourceCode" id="cb451"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb451-1"><a href="customizing-the-operating-model.html#cb451-1"></a><span class="kw">str</span>(OM<span class="op">@</span>cpars)</span></code></pre></div>
 <pre><code>## List of 1
 ##  $ M_at_Length:&#39;data.frame&#39;: 42 obs. of  3 variables:
 ##   ..$ Lens: int [1:42] 0 5 10 15 20 25 30 35 40 45 ...
 ##   ..$ M1  : num [1:42] 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.725 ...
 ##   ..$ M2  : num [1:42] 0.9 0.9 0.9 0.9 0.9 ...</code></pre>
 <p>Again, samples of the resulting <em>M</em> at age and size can be plotted:</p>
-<div class="sourceCode" id="cb449"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb449-1" title="1"><span class="kw">plotM</span>(OM)</a></code></pre></div>
+<div class="sourceCode" id="cb453"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb453-1"><a href="customizing-the-operating-model.html#cb453-1"></a><span class="kw">plotM</span>(OM)</span></code></pre></div>
 <pre><code>## Warning: &#39;plotM&#39; is deprecated.
 ## Use &#39;plot(&quot;M&quot;, Stock&#39; instead.
 ## See help(&quot;Deprecated&quot;)</code></pre>
@@ -514,8 +533,8 @@ where <span class="math inline">\(M_a\)</span> is natural mortality at age <span
 <h3><span class="header-section-number">25.3.1</span> Fishery Selection Curve</h3>
 <p>The fishery selection or vulnerability to the fishing gear in DLMtool is modelled using a double-normal curve and the parameters in the <code>Fleet</code> object: <code>L5</code> - smallest length at 5% selection, <code>LFS</code> - smallest length at full selection, and <code>Vmaxlen</code> the vulnerability of the largest length class (defined as expected length at maximum age <code>Stock@maxage</code>).</p>
 <p>Here we set up a Operating Model with dome-shaped selectivity and plot a sample of the selectivity-at-age and -length using the <code>plotSelect</code> function:</p>
-<div class="sourceCode" id="cb452"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb452-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, FlatE_Dom, Generic_Obs, Perfect_Imp, <span class="dt">nsim=</span><span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb452-2" title="2"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="customizing-the-operating-model.html#cb456-1"></a>OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, FlatE_Dom, Generic_Obs, Perfect_Imp, <span class="dt">nsim=</span><span class="dv">5</span>)</span>
+<span id="cb456-2"><a href="customizing-the-operating-model.html#cb456-2"></a><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## Warning: &#39;plotSelect&#39; is deprecated.
 ## Use &#39;plot(&quot;Selectivity&quot;, Fleet, Stock&#39; instead.
 ## See help(&quot;Deprecated&quot;)</code></pre>
@@ -531,18 +550,18 @@ where <span class="math inline">\(M_a\)</span> is natural mortality at age <span
 <li><code>Rmaxlen</code> - the retention of the largest size class (defined as expected length at maximum age <code>Stock@maxage</code>).</li>
 </ul>
 <p>The default values for these parameters are:</p>
-<div class="sourceCode" id="cb454"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb454-1" title="1">OM<span class="op">@</span>LR5</a></code></pre></div>
+<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="customizing-the-operating-model.html#cb458-1"></a>OM<span class="op">@</span>LR5</span></code></pre></div>
 <pre><code>## [1] 0 0</code></pre>
-<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb456-1" title="1">OM<span class="op">@</span>LFR</a></code></pre></div>
+<div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb460-1"><a href="customizing-the-operating-model.html#cb460-1"></a>OM<span class="op">@</span>LFR</span></code></pre></div>
 <pre><code>## [1] 0 0</code></pre>
-<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb458-1" title="1">OM<span class="op">@</span>Rmaxlen</a></code></pre></div>
+<div class="sourceCode" id="cb462"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb462-1"><a href="customizing-the-operating-model.html#cb462-1"></a>OM<span class="op">@</span>Rmaxlen</span></code></pre></div>
 <pre><code>## [1] 1 1</code></pre>
 <p>meaning that the default assumption is that all size classes are fully retained by the fishery.</p>
 <p>The retention curve can be modified by providing values for these slots:</p>
-<div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb460-1" title="1">OM<span class="op">@</span>LR5 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.6</span>, <span class="fl">0.7</span>)</a>
-<a class="sourceLine" id="cb460-2" title="2">OM<span class="op">@</span>LFR &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.9</span>, <span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb464"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb464-1"><a href="customizing-the-operating-model.html#cb464-1"></a>OM<span class="op">@</span>LR5 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.6</span>, <span class="fl">0.7</span>)</span>
+<span id="cb464-2"><a href="customizing-the-operating-model.html#cb464-2"></a>OM<span class="op">@</span>LFR &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.9</span>, <span class="dv">1</span>)</span></code></pre></div>
 <p>Note that the values in the <code>LR5</code> and <code>LFR</code> slots must be in the same units as those in the <code>L5</code> and <code>LFS</code> slots. Here we are specifying the values relative to the size of maturity, and assuming that the fishery discards the smaller sized fish:</p>
-<div class="sourceCode" id="cb461"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb461-1" title="1"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb465-1"><a href="customizing-the-operating-model.html#cb465-1"></a><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## Warning: &#39;plotSelect&#39; is deprecated.
 ## Use &#39;plot(&quot;Selectivity&quot;, Fleet, Stock&#39; instead.
 ## See help(&quot;Deprecated&quot;)</code></pre>
@@ -553,8 +572,8 @@ where <span class="math inline">\(M_a\)</span> is natural mortality at age <span
 <div id="discard-mortality" class="section level3">
 <h3><span class="header-section-number">25.3.3</span> Discard Mortality</h3>
 <p>The assumption of 100% survival of discarded fish may be unrealistic in many situations. Discard mortality can be specified by the <code>Fdisc</code> slot in the <code>Stock</code> or <code>OM</code> object. The <code>Fdisc</code> slot represents the fraction of discarded fish that die, or <span class="math inline">\(1-\text{survival}\)</span>. Here we assume that between 30 and 50% of discarded fish suffer fishing mortality:</p>
-<div class="sourceCode" id="cb463"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb463-1" title="1">OM<span class="op">@</span>Fdisc &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.3</span>, <span class="fl">0.5</span>)</a>
-<a class="sourceLine" id="cb463-2" title="2"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb467"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb467-1"><a href="customizing-the-operating-model.html#cb467-1"></a>OM<span class="op">@</span>Fdisc &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.3</span>, <span class="fl">0.5</span>)</span>
+<span id="cb467-2"><a href="customizing-the-operating-model.html#cb467-2"></a><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## Warning: &#39;plotSelect&#39; is deprecated.
 ## Use &#39;plot(&quot;Selectivity&quot;, Fleet, Stock&#39; instead.
 ## See help(&quot;Deprecated&quot;)</code></pre>
@@ -568,9 +587,9 @@ where <span class="math inline">\(M_a\)</span> is natural mortality at age <span
 <h3><span class="header-section-number">25.3.4</span> General Discarding</h3>
 <p>General discarding across all age or size classes can be included using the discarding rate slot <code>DR</code> in the <code>Fleet</code> or <code>OM</code> object.</p>
 <p>For example, here we assume that between 10 and 20% of all age/size classes are discarded by the fishery:</p>
-<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb465-1" title="1">OM<span class="op">@</span>DR &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb469"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb469-1"><a href="customizing-the-operating-model.html#cb469-1"></a>OM<span class="op">@</span>DR &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>)</span></code></pre></div>
 <p>Plotting the selectivity and retention curves shows that a proportion of all age and size classes are now discarded, with the survival rate determined by the <code>Fdisc</code> parameter:</p>
-<div class="sourceCode" id="cb466"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb466-1" title="1"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb470"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb470-1"><a href="customizing-the-operating-model.html#cb470-1"></a><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## Warning: &#39;plotSelect&#39; is deprecated.
 ## Use &#39;plot(&quot;Selectivity&quot;, Fleet, Stock&#39; instead.
 ## See help(&quot;Deprecated&quot;)</code></pre>
@@ -590,11 +609,13 @@ where <span class="math inline">\(M_a\)</span> is natural mortality at age <span
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -609,6 +630,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },

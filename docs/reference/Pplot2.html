@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,12 +41,12 @@
 
 
 
+
 <meta property="og:title" content="A projection by projection plot of F/FMSY, B/BMSY, B/B0, and yield — Pplot2" />
-
 <meta property="og:description" content="A projection by projection plot of F/FMSY, B/BMSY, B/B0, and yield" />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -75,7 +77,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -88,7 +90,6 @@
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -110,20 +111,41 @@
     </div>
 
     <div class="ref-description">
-    
     <p>A projection by projection plot of F/FMSY, B/BMSY, B/B0, and yield</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>Pplot2</span>(<span class='no'>MSEobj</span>, <span class='kw'>YVar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"F_FMSY"</span>, <span class='st'>"SSB_SSBMSY"</span>), <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>sims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>traj</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"quant"</span>, <span class='st'>"both"</span>), <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>,
-  <span class='fl'>0.9</span>), <span class='kw'>incquant</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quantcol</span> <span class='kw'>=</span> <span class='st'>"lightgray"</span>, <span class='kw'>RefYield</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"lto"</span>,
-  <span class='st'>"curr"</span>), <span class='kw'>LastYr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ref.lines</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='kw'>maxMP</span> <span class='kw'>=</span> <span class='fl'>6</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>60</span>, <span class='kw'>cex.axis</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>cex.lab</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>YLab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>incMP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>MPcex</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>MPcol</span> <span class='kw'>=</span> <span class='st'>"black"</span>, <span class='kw'>incLeg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>cex.leg</span> <span class='kw'>=</span> <span class='fl'>1.5</span>, <span class='kw'>legPos</span> <span class='kw'>=</span> <span class='st'>"topleft"</span>, <span class='kw'>yline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>xline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>parOR</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>xaxis</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>yaxis</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>oneIt</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>Pplot2</span>(
+  <span class='no'>MSEobj</span>,
+  <span class='kw'>YVar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"F_FMSY"</span>, <span class='st'>"SSB_SSBMSY"</span>),
+  <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>sims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>traj</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"quant"</span>, <span class='st'>"both"</span>),
+  <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>, <span class='fl'>0.9</span>),
+  <span class='kw'>incquant</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>quantcol</span> <span class='kw'>=</span> <span class='st'>"lightgray"</span>,
+  <span class='kw'>RefYield</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"lto"</span>, <span class='st'>"curr"</span>),
+  <span class='kw'>LastYr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>ref.lines</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>1</span>, <span class='fl'>1.5</span>),
+  <span class='kw'>maxMP</span> <span class='kw'>=</span> <span class='fl'>6</span>,
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>60</span>,
+  <span class='kw'>cex.axis</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>cex.lab</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>YLab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>incMP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>MPcex</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>MPcol</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
+  <span class='kw'>incLeg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>cex.leg</span> <span class='kw'>=</span> <span class='fl'>1.5</span>,
+  <span class='kw'>legPos</span> <span class='kw'>=</span> <span class='st'>"topleft"</span>,
+  <span class='kw'>yline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>xline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>parOR</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>xaxis</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>yaxis</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>oneIt</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -249,14 +271,14 @@ projections?</p></td>
       <td><p>Additional arguments to be passed to plotting functions</p></td>
     </tr>
     </table>
-    
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+    </ul>
 
     <h2>Author</h2>
     <p>T. Carruthers &amp; A.Hordyk</p>

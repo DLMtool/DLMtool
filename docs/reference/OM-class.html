@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,13 +41,13 @@
 
 
 
-<meta property="og:title" content="Class <code>'OM'</code> — OM-class" />
 
+<meta property="og:title" content="Class <code>'OM'</code> — OM-class" />
 <meta property="og:description" content="An object containing all the parameters needed to control the MSE which can
 be build from component Stock, Fleet, Obs, and Imp objects." />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -76,7 +78,7 @@ be build from component Stock, Fleet, Obs, and Imp objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -89,7 +91,6 @@ be build from component Stock, Fleet, Obs, and Imp objects." />
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -111,18 +112,16 @@ be build from component Stock, Fleet, Obs, and Imp objects." />
     </div>
 
     <div class="ref-description">
-    
     <p>An object containing all the parameters needed to control the MSE which can
 be build from component Stock, Fleet, Obs, and Imp objects.</p>
-    
     </div>
 
-        
+
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Almost all of these inputs are a vector of length 2 which describes the upper and lower
 bounds of a uniform distribution from which to sample the parameter.</p>
-    
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
@@ -346,12 +345,10 @@ the data inputs is used.</p></dd>
 <dt><code>SizeLimSD</code></dt><dd><p>Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.</p></dd>
 
 </dl>
-    
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
 
     <p>Objects can be created by calls of the form
 <code>new('OM', Stock, Fleet, Obs, Imp)</code>.</p>
-    
     <h2 class="hasAnchor" id="mpa-slot"><a class="anchor" href="#mpa-slot"></a>MPA slot</h2>
 
     
@@ -360,21 +357,16 @@ the data inputs is used.</p></dd>
 followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1.
 The spatial closures are assumed to remain in place for the future projections unless changed by a MP.
 Default (if left blank) is all areas are open to fishing in historical period.</p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      
       <li><a href="#details">Details</a></li>
-
       <li><a href="#slots">Slots</a></li>
-
       <li><a href="#objects-from-the-class">Objects from the Class</a></li>
-
       <li><a href="#mpa-slot">MPA slot</a></li>
-          </ul>
+    </ul>
 
     <h2>Author</h2>
     <p>T. Carruthers and A. Hordyk</p>

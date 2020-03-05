@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,12 +41,12 @@
 
 
 
+
 <meta property="og:title" content="Age-based Catch Curve — CC" />
-
 <meta property="og:description" content="Age-based Catch Curve" />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -75,7 +77,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -88,7 +90,6 @@
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -110,13 +111,11 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Age-based Catch Curve</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>CC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -137,36 +136,33 @@
       <td><p>Logical. Show the plot?</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A vector of length <code>reps</code> of samples of the negative slope of the catch-curve (Z)</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;   [1] 0.3087529 0.2513138 0.3315656 0.2734200 0.2671164 0.2106778 0.2469770
-#&gt;   [8] 0.2948065 0.2274772 0.3020330 0.2530146 0.3394051 0.1940842 0.3833410
-#&gt;  [15] 0.3029107 0.3000766 0.3429953 0.2836129 0.3408975 0.4214914 0.2981424
-#&gt;  [22] 0.2411100 0.3049570 0.3831515 0.2387619 0.3796515 0.2568971 0.2952371
-#&gt;  [29] 0.2568859 0.2548658 0.2289216 0.2691837 0.2215380 0.4229820 0.2096390
-#&gt;  [36] 0.3347975 0.2764522 0.2272610 0.3967305 0.2581131 0.2558908 0.2378610
-#&gt;  [43] 0.4390807 0.3174795 0.3597091 0.2610908 0.2502367 0.3336016 0.3064026
-#&gt;  [50] 0.3844563 0.3626430 0.3053813 0.2496505 0.3787696 0.2384597 0.3561656
-#&gt;  [57] 0.2766224 0.2135649 0.2106937 0.3154106 0.3044222 0.3797026 0.3293696
-#&gt;  [64] 0.2800827 0.2598043 0.2621430 0.3324060 0.2776998 0.2912049 0.2923277
-#&gt;  [71] 0.1887135 0.1815187 0.2120383 0.2925095 0.4063634 0.3552670 0.2676576
-#&gt;  [78] 0.3709918 0.2783905 0.2907690 0.1663361 0.2147506 0.3208709 0.3229963
-#&gt;  [85] 0.4004785 0.2566564 0.2870833 0.1992959 0.2400917 0.1859248 0.2007720
-#&gt;  [92] 0.2896759 0.3110398 0.3345223 0.2689965 0.3391227 0.3165248 0.1981878
-#&gt;  [99] 0.2549103 0.3406834</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;   [1] 0.3770974 0.3318176 0.3950808 0.3492442 0.3442750 0.2997839 0.3283989
+#&gt;   [8] 0.3661033 0.3130271 0.3718000 0.3331584 0.4012608 0.2867031 0.4358959
+#&gt;  [15] 0.3724919 0.3702578 0.4040910 0.3572793 0.4024373 0.4659702 0.3687331
+#&gt;  [22] 0.3237739 0.3741051 0.4357465 0.3219229 0.4329874 0.3362190 0.3664428
+#&gt;  [29] 0.3362102 0.3346177 0.3141657 0.3459046 0.3083451 0.4671452 0.2989651
+#&gt;  [36] 0.3976286 0.3516345 0.3128566 0.4464510 0.3371777 0.3354258 0.3212127
+#&gt;  [43] 0.4798360 0.3839766 0.4172667 0.3395249 0.3309686 0.3966858 0.3752447
+#&gt;  [50] 0.4367751 0.4195795 0.3744396 0.3305064 0.4322922 0.3216847 0.4144732
+#&gt;  [57] 0.3517687 0.3020599 0.2997965 0.3823458 0.3736835 0.4330277 0.3933497
+#&gt;  [64] 0.3544964 0.3385108 0.3403544 0.3957434 0.3526180 0.3632641 0.3641493
+#&gt;  [71] 0.2824693 0.2767976 0.3008564 0.3642926 0.4540447 0.4137649 0.3447016
+#&gt;  [78] 0.4261609 0.3531624 0.3629206 0.2648290 0.3029945 0.3866502 0.3883256
+#&gt;  [85] 0.4494055 0.3360293 0.3600151 0.2908115 0.3229712 0.2802709 0.2919751
+#&gt;  [92] 0.3620588 0.3789002 0.3974117 0.3457571 0.4010382 0.3832241 0.2899380
+#&gt;  [99] 0.3346528 0.4022685</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

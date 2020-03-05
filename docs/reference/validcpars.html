@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,12 +41,12 @@
 
 
 
+
 <meta property="og:title" content="Valid custom parameters (cpars) — validcpars" />
-
 <meta property="og:description" content="Valid custom parameters (cpars)" />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -75,7 +77,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -88,7 +90,6 @@
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -110,14 +111,14 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Valid custom parameters (cpars)</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>validcpars</span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"Stock"</span>, <span class='st'>"Fleet"</span>, <span class='st'>"Obs"</span>, <span class='st'>"Imp"</span>, <span class='st'>"internal"</span>),
-  <span class='kw'>valid</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>validcpars</span>(
+  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"Stock"</span>, <span class='st'>"Fleet"</span>, <span class='st'>"Obs"</span>, <span class='st'>"Imp"</span>, <span class='st'>"internal"</span>),
+  <span class='kw'>valid</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -130,457 +131,23 @@
       <td><p>Logical. Show valid cpars?</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a dataframe with variable name, description and type of valid/invalid
-cpars</p>
-    
+    <p>a HTML datatable with variable name, description and type of valid cpars</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>validcpars</span>() <span class='co'># all valid cpars</span></div><div class='output co'>#&gt;             Var.
-#&gt; 1             R0
-#&gt; 2              M
-#&gt; 3           Mexp
-#&gt; 4            Msd
-#&gt; 5          Mgrad
-#&gt; 6              h
-#&gt; 7          SRrel
-#&gt; 8           Perr
-#&gt; 9             AC
-#&gt; 10        Period
-#&gt; 11     Amplitude
-#&gt; 12          Linf
-#&gt; 13             K
-#&gt; 14            t0
-#&gt; 15         LenCV
-#&gt; 16           Ksd
-#&gt; 17         Kgrad
-#&gt; 18        Linfsd
-#&gt; 19      Linfgrad
-#&gt; 20           L50
-#&gt; 21        L50_95
-#&gt; 22             D
-#&gt; 23   Size_area_1
-#&gt; 24   Frac_area_1
-#&gt; 25  Prob_staying
-#&gt; 26         Fdisc
-#&gt; 27     Spat_targ
-#&gt; 28           Esd
-#&gt; 29          qinc
-#&gt; 30           qcv
-#&gt; 31            L5
-#&gt; 32           LFS
-#&gt; 33       Vmaxlen
-#&gt; 34           LR5
-#&gt; 35           LFR
-#&gt; 36       Rmaxlen
-#&gt; 37            DR
-#&gt; 38          Cobs
-#&gt; 39     CAA_nsamp
-#&gt; 40       CAA_ESS
-#&gt; 41     CAL_nsamp
-#&gt; 42       CAL_ESS
-#&gt; 43          Iobs
-#&gt; 44         Btobs
-#&gt; 45      Btbiascv
-#&gt; 46          beta
-#&gt; 47          Dobs
-#&gt; 48     Recbiascv
-#&gt; 49       TACFrac
-#&gt; 50         TACSD
-#&gt; 51       TAEFrac
-#&gt; 52         TAESD
-#&gt; 53   SizeLimFrac
-#&gt; 54     SizeLimSD
-#&gt; 55         Cbias
-#&gt; 56      CAL_bins
-#&gt; 57   CAL_binsmid
-#&gt; 58           L95
-#&gt; 59        Perr_y
-#&gt; 60   M_at_Length
-#&gt; 61         Asize
-#&gt; 62        Karray
-#&gt; 63     Linfarray
-#&gt; 64        Marray
-#&gt; 65         Krand
-#&gt; 66      Linfrand
-#&gt; 67         Mrand
-#&gt; 68          ageM
-#&gt; 69         age95
-#&gt; 70    M_ageArray
-#&gt; 71       Mat_age
-#&gt; 72        LatASD
-#&gt; 73        Wt_age
-#&gt; 74       Len_age
-#&gt; 75           mov
-#&gt; 76         initD
-#&gt; 77          Find
-#&gt; 78       dFfinal
-#&gt; 79             V
-#&gt; 80          retA
-#&gt; 81          retL
-#&gt; 82      lenMbias
-#&gt; 83         Mbias
-#&gt; 84         Kbias
-#&gt; 85        t0bias
-#&gt; 86      Linfbias
-#&gt; 87       LFCbias
-#&gt; 88      FMSYbias
-#&gt; 89    FMSY_Mbias
-#&gt; 90   BMSY_B0bias
-#&gt; 91      Irefbias
-#&gt; 92      Brefbias
-#&gt; 93      Crefbias
-#&gt; 94         Dbias
-#&gt; 95         hbias
-#&gt; 96          hsim
-#&gt; 97          Data
-#&gt; 98      CostCurr
-#&gt; 99       RevCurr
-#&gt; 100     Response
-#&gt; 101      CostInc
-#&gt; 102       RevInc
-#&gt; 103    LatentEff
-#&gt;                                                                                                           Dim.
-#&gt; 1                                                                                   numeric vector length nsim
-#&gt; 2                                                                                   numeric vector length nsim
-#&gt; 3                                                                                   numeric vector length nsim
-#&gt; 4                                                                                   numeric vector length nsim
-#&gt; 5                                                                                   numeric vector length nsim
-#&gt; 6                                                                                   numeric vector length nsim
-#&gt; 7                                                                                   numeric vector length nsim
-#&gt; 8                                                                                   numeric vector length nsim
-#&gt; 9                                                                                   numeric vector length nsim
-#&gt; 10                                                                                  numeric vector length nsim
-#&gt; 11                                                                                  numeric vector length nsim
-#&gt; 12                                                                                  numeric vector length nsim
-#&gt; 13                                                                                  numeric vector length nsim
-#&gt; 14                                                                                  numeric vector length nsim
-#&gt; 15                                                                                  numeric vector length nsim
-#&gt; 16                                                                                  numeric vector length nsim
-#&gt; 17                                                                                  numeric vector length nsim
-#&gt; 18                                                                                  numeric vector length nsim
-#&gt; 19                                                                                  numeric vector length nsim
-#&gt; 20                                                                                  numeric vector length nsim
-#&gt; 21                                                                                  numeric vector length nsim
-#&gt; 22                                                                                  numeric vector length nsim
-#&gt; 23                                                                                  numeric vector length nsim
-#&gt; 24                                                                                  numeric vector length nsim
-#&gt; 25                                                                                  numeric vector length nsim
-#&gt; 26                                                                                  numeric vector length nsim
-#&gt; 27                                                                                  numeric vector length nsim
-#&gt; 28                                                                                  numeric vector length nsim
-#&gt; 29                                                                                  numeric vector length nsim
-#&gt; 30                                                                                  numeric vector length nsim
-#&gt; 31                                                                                  numeric vector length nsim
-#&gt; 32                                                                                  numeric vector length nsim
-#&gt; 33                                                                                  numeric vector length nsim
-#&gt; 34                                                                                  numeric vector length nsim
-#&gt; 35                                                                                  numeric vector length nsim
-#&gt; 36                                                                                  numeric vector length nsim
-#&gt; 37                                                                                  numeric vector length nsim
-#&gt; 38                                                                                  numeric vector length nsim
-#&gt; 39                                                                                  numeric vector length nsim
-#&gt; 40                                                                                  numeric vector length nsim
-#&gt; 41                                                                                  numeric vector length nsim
-#&gt; 42                                                                                  numeric vector length nsim
-#&gt; 43                                                                                  numeric vector length nsim
-#&gt; 44                                                                                  numeric vector length nsim
-#&gt; 45                                                                                  numeric vector length nsim
-#&gt; 46                                                                                  numeric vector length nsim
-#&gt; 47                                                                                  numeric vector length nsim
-#&gt; 48                                                                                  numeric vector length nsim
-#&gt; 49                                                                                  numeric vector length nsim
-#&gt; 50                                                                                  numeric vector length nsim
-#&gt; 51                                                                                  numeric vector length nsim
-#&gt; 52                                                                                  numeric vector length nsim
-#&gt; 53                                                                                  numeric vector length nsim
-#&gt; 54                                                                                  numeric vector length nsim
-#&gt; 55                                                                                  numeric vector length nsim
-#&gt; 56                                                                                             numeric vector 
-#&gt; 57                                                                           numeric vector length(CAL_bins)-1
-#&gt; 58                                                                                  numeric vector length nsim
-#&gt; 59                                                      numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
-#&gt; 60                                                                        numeric matrix dim = c(n.lengths, 3)
-#&gt; 61                                                                         numeric matrix dim = c(nsim, narea)
-#&gt; 62                                                               numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 63                                                               numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 64                                                               numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 65                                                               numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 66                                                               numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 67                                                               numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 68                                                               numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 69                                                               numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 70                                                        numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 71                                                        numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 72                                                        numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 73                                                        numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 74                                                        numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 75  numeric array dim = c(nsim, maxage, narea, narea) OR  dim = c(nsim, maxage, narea, narea, nyears+proyears)
-#&gt; 76                                                                                  numeric vector length nsim
-#&gt; 77                                                                        numeric matrix dim = c(nsim, nyears)
-#&gt; 78                                                                                  numeric vector length nsim
-#&gt; 79                                                        numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 80                                                        numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 81                                                      numeric array dim = c(nsim, nCALbins, nyears+proyears)
-#&gt; 82                                                                                  numeric vector length nsim
-#&gt; 83                                                                                  numeric vector length nsim
-#&gt; 84                                                                                  numeric vector length nsim
-#&gt; 85                                                                                  numeric vector length nsim
-#&gt; 86                                                                                  numeric vector length nsim
-#&gt; 87                                                                                  numeric vector length nsim
-#&gt; 88                                                                                  numeric vector length nsim
-#&gt; 89                                                                                  numeric vector length nsim
-#&gt; 90                                                                                  numeric vector length nsim
-#&gt; 91                                                                                  numeric vector length nsim
-#&gt; 92                                                                                  numeric vector length nsim
-#&gt; 93                                                                                  numeric vector length nsim
-#&gt; 94                                                                                  numeric vector length nsim
-#&gt; 95                                                                                  numeric vector length nsim
-#&gt; 96                                                                                  numeric vector length nsim
-#&gt; 97                                                                                        Object of class Data
-#&gt; 98                                                                                  numeric vector length nsim
-#&gt; 99                                                                                  numeric vector length nsim
-#&gt; 100                                                                                 numeric vector length nsim
-#&gt; 101                                                                                 numeric vector length nsim
-#&gt; 102                                                                                 numeric vector length nsim
-#&gt; 103                                                                                 numeric vector length nsim
-#&gt;                                                                                                     Desc.
-#&gt; 1                                                                                      Virgin recruitment
-#&gt; 2                                                                                       Natural mortality
-#&gt; 3                                                                              Lorenzen M-weight exponent
-#&gt; 4                                                                           Inter-annual variability in M
-#&gt; 5                                                                                           Gradient in M
-#&gt; 6                                                                                               Steepness
-#&gt; 7                                                                              Stock-Recruit Relationship
-#&gt; 8                                                                               Recruitment process error
-#&gt; 9                                                                            Recruitment auto-correlation
-#&gt; 10                                                       Period for cyclical recruitment pattern in years
-#&gt; 11                     Amplitude in deviation from long-term average recruitment during recruitment cycle
-#&gt; 12                                                                                von B asymptotic length
-#&gt; 13                                                                               von B growth coefficient
-#&gt; 14                                                                                               von B t0
-#&gt; 15                                                                           Variability in length-at-age
-#&gt; 16                                                                          Inter-annual variability in K
-#&gt; 17                                                                                         Gradient in K 
-#&gt; 18                                                                       Inter-annual variability in Linf
-#&gt; 19                                                                                      Gradient in Linf 
-#&gt; 20                                                                                 Length at 50% maturity
-#&gt; 21                                                                          Increment between L95 and L50
-#&gt; 22                                                                                              Depletion
-#&gt; 23                                                                      Size of Area 1 relative to Area 2
-#&gt; 24                                                                            Fraction of Stock in Area 1
-#&gt; 25                                                         Probablity of staying in Area 1 in 1 time-step
-#&gt; 26                                                                           Discard mortality (fraction)
-#&gt; 27                                                                                      Spatial targeting
-#&gt; 28                                                                          Inter-annual variability in F
-#&gt; 29                                                                               Gradient in catchability
-#&gt; 30                                                               Inter-annual variability in catchability
-#&gt; 31                                                   First length at 5% selection (isRel must be 'FALSE')
-#&gt; 32                                                 First length at full selection (isRel must be 'FALSE')
-#&gt; 33                                             Vulnerability at asymptotic length (isRel must be 'FALSE')
-#&gt; 34                                                   First length at 5% retention (isRel must be 'FALSE')
-#&gt; 35                                                 First length at full retention (isRel must be 'FALSE')
-#&gt; 36                                                 Retention at asymptotic length (isRel must be 'FALSE')
-#&gt; 37                                                                                          Discard ratio
-#&gt; 38                                                                sampled catch obs error (log-normal sd)
-#&gt; 39                                                                                        CAA sample size
-#&gt; 40                                                                              CAA effective sample size
-#&gt; 41                                                                                        CAL sample size
-#&gt; 42                                                                              CAL effective sample size
-#&gt; 43                                                              Abundance index obs error (log normal sd)
-#&gt; 44                                                                         Observation error on Abundance
-#&gt; 45                              Uniform-log bounds for sampling persistent bias in current stock biomass.
-#&gt; 46                                                    Parameter controlling hyperstability/hyperdepletion
-#&gt; 47  Log-normal coefficient of variation controlling error in observations of stock depletion among years.
-#&gt; 48        Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength
-#&gt; 49                                                                                       TAC imp fraction
-#&gt; 50                                                                                    TAC imp variability
-#&gt; 51                                                                                       TAE imp fraction
-#&gt; 52                                                                                    TAE imp variability
-#&gt; 53                                                                                      Size imp fraction
-#&gt; 54                                                                                   Size imp variability
-#&gt; 55                                                                                 Bias in observed catch
-#&gt; 56                                                                       CAL bins. Largest must be &gt; Linf
-#&gt; 57                                                                                 Mid-points of CAL bins
-#&gt; 58                                                                                 Length at 95% maturity
-#&gt; 59                    Recruitment process error by simulation and year (plus maxage for initial age comp)
-#&gt; 60         Data frame with column 1 lengths in absolute units, and colums 2:3 lower and upper bounds on M
-#&gt; 61                                                                            Size of areas by simulation
-#&gt; 62                                                von B K by simulation and year. No variability is added
-#&gt; 63                                             von B Linf by simulation and year. No variability is added
-#&gt; 64                                                      M by simulation and year. No variability is added
-#&gt; 65                                                   Inter-annual variability in K by simulation and year
-#&gt; 66                                                Inter-annual variability in Linf by simulation and year
-#&gt; 67                                                   Inter-annual variability in M by simulation and year
-#&gt; 68                                                             Age at 50% maturity by simulation and year
-#&gt; 69                                                             Age at 95% maturity by simulation and year
-#&gt; 70                                                 M by simulation, age and year. No variability is added
-#&gt; 71                                                                  Maturity by simulation, age and year.
-#&gt; 72                                                                    standard deviation of length-at-age
-#&gt; 73                                                             Weight-at-age by simulation, age, and year
-#&gt; 74                                                             Length-at-age by simulation, age, and year
-#&gt; 75                            Movement matrix by simulation, age, and area (to and from) Optional by year
-#&gt; 76                                                             Stock depletion in initial year (Year = 1)
-#&gt; 77                                                  Historical normalized F/Effort by simulation and year
-#&gt; 78                                                                    Final gradient in fishing mortality
-#&gt; 79                                                               Selectivity by simulation, age, and year
-#&gt; 80                                                                 Retention by simulation, age, and year
-#&gt; 81                                                              Retention by simulation, length, and year
-#&gt; 82                                                                    Bias in observed length-at-maturity
-#&gt; 83                                                                                     Bias in observed M
-#&gt; 84                                                                                     Bias in observed K
-#&gt; 85                                                                                    Bias in observed t0
-#&gt; 86                                                                                  Bias in observed Linf
-#&gt; 87                                                                                   Bias in observed LFC
-#&gt; 88                                                                                  Bias in observed FMSY
-#&gt; 89                                                                                Bias in observed FMSY_M
-#&gt; 90                                                                               Bias in observed BMSY_B0
-#&gt; 91                                                                                  Bias in observed Iref
-#&gt; 92                                                                                  Bias in observed Bref
-#&gt; 93                                                                                  Bias in observed Cref
-#&gt; 94                                                                                     Bias in observed D
-#&gt; 95                                                                                     Bias in observed h
-#&gt; 96                                                        Actual h values to pass directly to Data object
-#&gt; 97                                                  Data object used to condition index observation error
-#&gt; 98                                                                                 Cost of current effort
-#&gt; 99                                                                               Revenue of current catch
-#&gt; 100                                                     Responsiveness of fishing effort to profitability
-#&gt; 101                                                     Annual increase in cost-per-unit-effort (percent)
-#&gt; 102                                                     Annual increase in price-per-unit-catch (percent)
-#&gt; 103           Limited entry fishery - fraction of total allowable effort that is not currently being used
-#&gt;         Type
-#&gt; 1      Stock
-#&gt; 2      Stock
-#&gt; 3      Stock
-#&gt; 4      Stock
-#&gt; 5      Stock
-#&gt; 6      Stock
-#&gt; 7      Stock
-#&gt; 8      Stock
-#&gt; 9      Stock
-#&gt; 10     Stock
-#&gt; 11     Stock
-#&gt; 12     Stock
-#&gt; 13     Stock
-#&gt; 14     Stock
-#&gt; 15     Stock
-#&gt; 16     Stock
-#&gt; 17     Stock
-#&gt; 18     Stock
-#&gt; 19     Stock
-#&gt; 20     Stock
-#&gt; 21     Stock
-#&gt; 22     Stock
-#&gt; 23     Stock
-#&gt; 24     Stock
-#&gt; 25     Stock
-#&gt; 26     Stock
-#&gt; 27     Fleet
-#&gt; 28     Fleet
-#&gt; 29     Fleet
-#&gt; 30     Fleet
-#&gt; 31     Fleet
-#&gt; 32     Fleet
-#&gt; 33     Fleet
-#&gt; 34     Fleet
-#&gt; 35     Fleet
-#&gt; 36     Fleet
-#&gt; 37     Fleet
-#&gt; 38       Obs
-#&gt; 39       Obs
-#&gt; 40       Obs
-#&gt; 41       Obs
-#&gt; 42       Obs
-#&gt; 43       Obs
-#&gt; 44       Obs
-#&gt; 45       Obs
-#&gt; 46       Obs
-#&gt; 47       Obs
-#&gt; 48       Obs
-#&gt; 49       Imp
-#&gt; 50       Imp
-#&gt; 51       Imp
-#&gt; 52       Imp
-#&gt; 53       Imp
-#&gt; 54       Imp
-#&gt; 55  internal
-#&gt; 56  internal
-#&gt; 57  internal
-#&gt; 58  internal
-#&gt; 59  internal
-#&gt; 60  internal
-#&gt; 61  internal
-#&gt; 62  internal
-#&gt; 63  internal
-#&gt; 64  internal
-#&gt; 65  internal
-#&gt; 66  internal
-#&gt; 67  internal
-#&gt; 68  internal
-#&gt; 69  internal
-#&gt; 70  internal
-#&gt; 71  internal
-#&gt; 72  internal
-#&gt; 73  internal
-#&gt; 74  internal
-#&gt; 75  internal
-#&gt; 76  internal
-#&gt; 77  internal
-#&gt; 78  internal
-#&gt; 79  internal
-#&gt; 80  internal
-#&gt; 81  internal
-#&gt; 82  internal
-#&gt; 83  internal
-#&gt; 84  internal
-#&gt; 85  internal
-#&gt; 86  internal
-#&gt; 87  internal
-#&gt; 88  internal
-#&gt; 89  internal
-#&gt; 90  internal
-#&gt; 91  internal
-#&gt; 92  internal
-#&gt; 93  internal
-#&gt; 94  internal
-#&gt; 95  internal
-#&gt; 96  internal
-#&gt; 97  internal
-#&gt; 98  internal
-#&gt; 99  internal
-#&gt; 100 internal
-#&gt; 101 internal
-#&gt; 102 internal
-#&gt; 103 internal</div><div class='input'>
-<span class='fu'>validcpars</span>(<span class='st'>"Obs"</span>, <span class='fl'>FALSE</span>) <span class='co'># invalid Obs cpars</span></div><div class='output co'>#&gt;             Var.              Desc. Type
-#&gt; 1        Cbiascv     Not stochastic  Obs
-#&gt; 2        Ibiascv Not currently used  Obs
-#&gt; 3     LenMbiascv       Use lenMbias  Obs
-#&gt; 4        Mbiascv          Use Mbias  Obs
-#&gt; 5        Kbiascv          Use Kbias  Obs
-#&gt; 6       t0biascv         Use t0bias  Obs
-#&gt; 7     Linfbiascv       Use Linfbias  Obs
-#&gt; 8      LFCbiascv        Use LFCbias  Obs
-#&gt; 9      LFSbiascv        Use LFSbias  Obs
-#&gt; 10    FMSYbiascv       Use FMSYbias  Obs
-#&gt; 11  FMSY_Mbiascv     Use FMSY_Mbias  Obs
-#&gt; 12 BMSY_B0biascv    Use BMSY_B0bias  Obs
-#&gt; 13    Irefbiascv       Use Irefbias  Obs
-#&gt; 14    Brefbiascv       Use Brefbias  Obs
-#&gt; 15    Crefbiascv       Use Crefbias  Obs
-#&gt; 16       Dbiascv          Use Dbias  Obs
-#&gt; 17       hbiascv          Use hbias  Obs</div><div class='input'>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'>validcpars</span>() <span class='co'># all valid cpars</span>
+
+<span class='fu'>validcpars</span>(<span class='st'>"Obs"</span>, <span class='fl'>FALSE</span>) <span class='co'># invalid Obs cpars</span>
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

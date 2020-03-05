@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,12 +41,12 @@
 
 
 
+
 <meta property="og:title" content="Create a table of Performance Limits and Performance Objectives — PMLimit" />
-
 <meta property="og:description" content="Create a table of Performance Limits and Performance Objectives" />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -75,7 +77,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -88,7 +90,6 @@
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -110,24 +111,51 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Create a table of Performance Limits and Performance Objectives</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>PMLimit</span>(<span class='no'>MSE</span>, <span class='no'>...</span>, <span class='kw'>Prob</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>FeaseMPs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>out.file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>output_format</span> <span class='kw'>=</span> <span class='st'>"html_document"</span>, <span class='kw'>openFile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>RMDfile</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fl'>14</span>,
-  <span class='kw'>auto_width</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>enableSearch</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>PMlist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>build</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>PMLimit</span>(
+  <span class='no'>MSE</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>Prob</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>FeaseMPs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>out.file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>output_format</span> <span class='kw'>=</span> <span class='st'>"html_document"</span>,
+  <span class='kw'>openFile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>RMDfile</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fl'>14</span>,
+  <span class='kw'>auto_width</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>enableSearch</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>PMlist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>build</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
 
-<span class='fu'>PMObj</span>(<span class='no'>MSE</span>, <span class='no'>...</span>, <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>out.file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>output_format</span> <span class='kw'>=</span> <span class='st'>"html_document"</span>, <span class='kw'>openFile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>RMDfile</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fl'>14</span>, <span class='kw'>use.colors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>show.legend</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>auto_width</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>enableSearch</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>PMlist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>build</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cex.tex</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
-  <span class='kw'>inc.title</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"Legend"</span>)</pre>
-    
+<span class='fu'>PMObj</span>(
+  <span class='no'>MSE</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>Labels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>out.file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>output_format</span> <span class='kw'>=</span> <span class='st'>"html_document"</span>,
+  <span class='kw'>openFile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>RMDfile</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>font_size</span> <span class='kw'>=</span> <span class='fl'>14</span>,
+  <span class='kw'>use.colors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>show.legend</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>auto_width</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>enableSearch</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>PMlist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>build</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>cex.tex</span> <span class='kw'>=</span> <span class='fl'>0.75</span>,
+  <span class='kw'>inc.title</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>"Legend"</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -220,11 +248,10 @@
       <td><p>Title for the legend</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>PMLimit</code> invisibly returns names of MPs that pass all performance limits</p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -232,7 +259,6 @@
 <li><p><code>PMLimit</code>: Create a table of Performance Limits</p></li>
 <li><p><code>PMObj</code>: Create a table of Performance Objectives.</p></li>
 </ul>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
@@ -245,11 +271,8 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#functions">Functions</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

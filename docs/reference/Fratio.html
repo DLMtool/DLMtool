@@ -15,11 +15,13 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -39,17 +41,17 @@
 
 
 
-<meta property="og:title" content="FMSY/M ratio methods — Fratio" />
 
+<meta property="og:title" content="FMSY/M ratio methods — Fratio" />
 <meta property="og:description" content="Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 current estimate of abundance.
 A simple method that tends to outperform many other approaches alarmingly
 often even when current biomass is relatively poorly known. The low stock
 crash potential is largely due to the quite large difference between Fmax
 and FMSY for most stocks." />
-
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -80,7 +82,7 @@ and FMSY for most stocks." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.2</span>
       </span>
     </div>
 
@@ -93,7 +95,6 @@ and FMSY for most stocks." />
   <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -115,14 +116,12 @@ and FMSY for most stocks." />
     </div>
 
     <div class="ref-description">
-    
     <p>Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 current estimate of abundance.</p>
 <p>A simple method that tends to outperform many other approaches alarmingly
 often even when current biomass is relatively poorly known. The low stock
 crash potential is largely due to the quite large difference between Fmax
 and FMSY for most stocks.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>Fratio</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
@@ -134,7 +133,7 @@ and FMSY for most stocks.</p>
 <span class='fu'>Fratio_CC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>Fmin</span> <span class='kw'>=</span> <span class='fl'>0.005</span>)
 
 <span class='fu'>Fratio_ML</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -159,11 +158,10 @@ and FMSY for most stocks.</p>
       <td><p>Minimum current fishing mortality rate for the catch-curve analysis</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The TAC is calculated as:
@@ -171,7 +169,6 @@ $$\textrm{TAC} = F_{\textrm{MSY}} A$$
 where \(F_{\textrm{MSY}}\) is calculated as \(\frac{F_\textrm{MSY}}{M} M\) and
 <em>A</em> is estimate of current abundance.</p>
 <p>The MP variants differ in the assumption of current abundance (see Functions section below)</p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -184,7 +181,6 @@ stock depletion (made-up for this package).</p></li>
 <li><p><code>Fratio_CC</code>: Current abundance is estimated using average catch and estimate of F from an age-based catch curve</p></li>
 <li><p><code>Fratio_ML</code>: Current abundance is estimated using average catch and estimate of F from mean lengths</p></li>
 </ul>
-    
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
@@ -200,7 +196,6 @@ stock depletion (made-up for this package).</p></li>
 <p><code>Fratio_CC</code>: CAA, Cat, FMSY_M, Mort</p>
 
 <p><code>Fratio_ML</code>: CAL, Cat, FMSY_M, Lbar, Lc, Mort, vbK, vbLinf</p>
-    
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
     
@@ -214,47 +209,37 @@ stock depletion (made-up for this package).</p></li>
 
 
 
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Gulland, J.A., 1971. The fish resources of the ocean. Fishing
 News Books, West Byfleet, UK.</p>
 <p>Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
 and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other Fmsy/M methods: <code><a href='DynF.html'>DynF</a></code>,
-  <code><a href='Fadapt.html'>Fadapt</a></code></p></div>
-    
+    <div class='dont-index'><p>Other Fmsy/M methods: 
+<code><a href='DynF.html'>DynF</a>()</code>,
+<code><a href='Fadapt.html'>Fadapt</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>Fratio</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/Data-class-objects.html'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
 #&gt;     3.952135 </div><div class='input'><span class='fu'>Fratio4010</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/Data-class-objects.html'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
 #&gt;     2.071028 </div><div class='input'><span class='fu'>Fratio_CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     4609.515 </div><div class='input'><span class='fu'>Fratio_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     727.1018 </div><div class='input'>
+#&gt;     4779.662 </div><div class='input'><span class='fu'>Fratio_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/SimulatedData.html'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     351.1016 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#functions">Functions</a></li>
-
       <li><a href="#required-data">Required Data</a></li>
-
       <li><a href="#rendered-equations">Rendered Equations</a></li>
-
       <li><a href="#references">References</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
