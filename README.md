@@ -18,7 +18,7 @@ install.packages("DLMtool")
 This GitHub repository contains the development version of DLMtool. The development version may be unstable, and it is not recommended  for analyses. 
 
 ## User Guide 
-A User Guide for the DLMtool package are now available: [https://dlmtool.github.io/DLMtool/userguide/introduction.html](https://dlmtool.github.io/DLMtool/userguide/introduction.html). 
+A User Guide for the DLMtool package is available: [https://dlmtool.github.io/DLMtool/userguide/introduction.html](https://dlmtool.github.io/DLMtool/userguide/introduction.html). 
 
  
 ## Bugs and Issues
