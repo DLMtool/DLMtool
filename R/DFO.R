@@ -408,6 +408,12 @@ add_zones<-function(textpos){
 }
 
 encircle<-function(x,y,col="red",perc=0.05,xrange=NA,yrange=NA,log=F,lty=1,lwd=1,labels=NA,drawlabels=F){
+  
+  if (!requireNamespace("MASS", quietly = TRUE)) {
+    stop("Package \"MASS\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   nsim<-length(x)
   
   if(log){
@@ -946,6 +952,11 @@ SubCpars<-function(OM,sims){
 #' @export DFO_report
 DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA,maxMPs=15){
   
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("Package \"rmarkdown\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   if(is.na(output_file))output_file=paste0(getwd(),"/DFO MSE report.html")
   if(is.na(title))title=paste0("DFO Generic MSE Report for",MSEobj@Name)
   params<-new('list')
@@ -963,6 +974,11 @@ DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=N
 #' to inform COSEWIC processes in Canadian fish stocks).  
 #' @export COSEWIC_report
 COSEWIC_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA){
+  
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("Package \"rmarkdown\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   
   if(is.na(output_file))output_file=paste0(getwd(),"/DFO COSEWIC report.html")
   if(is.na(title))title=paste0("DFO Generic COSEWIC Report for",MSEobj@Name)
@@ -1062,6 +1078,14 @@ DFO_tab_formatted<-function(Ptab1,thresh=c(30,     50,     40,    60,    50,  20
     
     return(thresh)
   }else{
+    if (!requireNamespace("knitr", quietly = TRUE)) {
+      stop("Package \"knitr\" needed for this function to work. Please install it.",
+           call. = FALSE)
+    }
+    if (!requireNamespace("kableExtra", quietly = TRUE)) {
+      stop("Package \"kableExtra\" needed for this function to work. Please install it.",
+           call. = FALSE)
+    }
     
     # save(Ptab1,file="Ptab1")
     MPs<-as.character(Ptab1$MP)
@@ -1107,50 +1131,50 @@ DFO_tab_formatted<-function(Ptab1,thresh=c(30,     50,     40,    60,    50,  20
     Ptab2 %>%
       mutate(
         #MP = row.names(.),
-        MP =  cell_spec(MP, "html", color = MPcols, bold = T),
-        MP_Type =  cell_spec(MP_Type, "html", bold = T),
+        MP =  kableExtra::cell_spec(MP, "html", color = MPcols, bold = T),
+        MP_Type =  kableExtra::cell_spec(MP_Type, "html", bold = T),
         Crit_S = ifelse(Crit_S < thresh[1],
-                        cell_spec(Crit_S, "html", color = "green",italic = T),
-                        cell_spec(Crit_S, "html", color = "red", italic = T)),
+                        kableExtra::cell_spec(Crit_S, "html", color = "green",italic = T),
+                        kableExtra::cell_spec(Crit_S, "html", color = "red", italic = T)),
         Caut_S = ifelse(Caut_S < thresh[2],
-                        cell_spec(Caut_S, "html", color = "green", italic = T),
-                        cell_spec(Caut_S, "html", color = "red", italic = T)),
+                        kableExtra::cell_spec(Caut_S, "html", color = "green", italic = T),
+                        kableExtra::cell_spec(Caut_S, "html", color = "red", italic = T)),
         Health_S = ifelse(Health_S >= thresh[3],
-                       cell_spec(Health_S, "html", color = "green", italic = T),
-                       cell_spec(Health_S, "html", color = "red", italic = T)),
+                          kableExtra::cell_spec(Health_S, "html", color = "green", italic = T),
+                          kableExtra::cell_spec(Health_S, "html", color = "red", italic = T)),
         OvFish_S = ifelse(OvFish_S < thresh[4],
-                         cell_spec(OvFish_S, "html", color = "green", italic = T),
-                         cell_spec(OvFish_S, "html", color = "red", italic = T)),
+                          kableExtra::cell_spec(OvFish_S, "html", color = "green", italic = T),
+                          kableExtra::cell_spec(OvFish_S, "html", color = "red", italic = T)),
         Yield_S = ifelse(Yield_S >= thresh[5],
-                        cell_spec(Yield_S, "html", color = "green", italic = T),
-                        cell_spec(Yield_S, "html", color = "red", italic = T)),
+                         kableExtra::cell_spec(Yield_S, "html", color = "green", italic = T),
+                         kableExtra::cell_spec(Yield_S, "html", color = "red", italic = T)),
         Crit = ifelse(Crit < thresh[6],
-                        cell_spec(Crit, "html", color = "green", italic = T),
-                        cell_spec(Crit, "html", color = "red", italic = T)),
+                      kableExtra::cell_spec(Crit, "html", color = "green", italic = T),
+                      kableExtra::cell_spec(Crit, "html", color = "red", italic = T)),
         Caut = ifelse(Caut < thresh[7],
-                        cell_spec(Caut, "html", color = "green", italic = T),
-                        cell_spec(Caut, "html", color = "red", italic = T)),
+                      kableExtra::cell_spec(Caut, "html", color = "green", italic = T),
+                      kableExtra::cell_spec(Caut, "html", color = "red", italic = T)),
         Health = ifelse(Health > thresh[8],
-                     cell_spec(Health, "html", color = "green", italic = T),
-                     cell_spec(Health, "html", color = "red", italic = T)),
+                        kableExtra::cell_spec(Health, "html", color = "green", italic = T),
+                        kableExtra::cell_spec(Health, "html", color = "red", italic = T)),
         OvFish = ifelse(OvFish < thresh[9],
-                         cell_spec(OvFish, "html", color = "green", italic = T),
-                         cell_spec(OvFish, "html", color = "red", italic = T)),
+                        kableExtra::cell_spec(OvFish, "html", color = "green", italic = T),
+                        kableExtra::cell_spec(OvFish, "html", color = "red", italic = T)),
         Yield = ifelse(Yield >= thresh[10],
-                       cell_spec(Yield, "html", color = "green", italic = T),
-                       cell_spec(Yield, "html", color = "red", italic = T)),
+                       kableExtra::cell_spec(Yield, "html", color = "green", italic = T),
+                       kableExtra::cell_spec(Yield, "html", color = "red", italic = T)),
         AAVY = ifelse(AAVY < thresh[11],
-                         cell_spec(AAVY, "html", color = "green", italic = T),
-                         cell_spec(AAVY, "html", color = "red", italic = T)),
+                      kableExtra::cell_spec(AAVY, "html", color = "green", italic = T),
+                      kableExtra::cell_spec(AAVY, "html", color = "red", italic = T)),
         Reb = ifelse(Reb >= thresh[12],
-                       cell_spec(Reb, "html", color = "green", italic = T),
-                       cell_spec(Reb, "html", color = "red", italic = T))
+                     kableExtra::cell_spec(Reb, "html", color = "green", italic = T),
+                     kableExtra::cell_spec(Reb, "html", color = "red", italic = T))
       )%>%
       #select(everything())%>%
       knitr::kable("html", escape = F,align = "c") %>%
-      kable_styling("striped", full_width = F)%>%
-      column_spec(5, width = "3cm")  %>%
-      add_header_above(c(" ", " ","First 10 years of MSE projection" = 5, "Last 10 years of MSE projection" = 5,
+      kableExtra::kable_styling("striped", full_width = F)%>%
+      kableExtra::column_spec(5, width = "3cm")  %>%
+      kableExtra::add_header_above(c(" ", " ","First 10 years of MSE projection" = 5, "Last 10 years of MSE projection" = 5,
                          "",""))
   } #if not ret_thresh
 }
@@ -1162,6 +1186,11 @@ DFO_tab_formatted<-function(Ptab1,thresh=c(30,     50,     40,    60,    50,  20
 #' 
 #' @export 
 DFO_spider<-function(MSEobj){
+  
+  if (!requireNamespace("fmsb", quietly = TRUE)) {
+    stop("fmsb is needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   
   shortterm<-1:min(10,MSEobj@proyears)
   P_Cr_S<-apply(MSEobj@B_BMSY[,,shortterm]<0.4,2,mean)*100
@@ -1203,7 +1232,7 @@ DFO_spider<-function(MSEobj){
   data<-rbind(c(150,150,100),c(0,0,0),data)
   coly<-c("red","green","blue")
   tcoly=makeTransparent(coly,95)
-  radarchart(data,pcol=tcoly,plwd=3,plty=rep(1,3))
+  fmsb::radarchart(data,pcol=tcoly,plwd=3,plty=rep(1,3))
   legend('topleft',legend=tab[,1],text.col=coly,bty='n')
 
 }
@@ -1228,7 +1257,6 @@ DFO_spider<-function(MSEobj){
 #' @param Ptab1 A DFO performance table made by DFO_tab()
 #' @author T. Carruthers
 #' @importFrom dplyr %>% mutate
-#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
 #' 
 #' @export 
 Thresh_tab<-function(Ptab1){
@@ -1238,29 +1266,35 @@ Thresh_tab<-function(Ptab1){
   names(Ptab2)<-c("MP","MP_Type","Crit_S","Caut_S","Health_S","OvFish_S","Yield_S","Crit","Caut","Health","OvFish","Yield","AAVY","Reb")
   
   
+  if (!requireNamespace("kableExtra", quietly = TRUE)) {
+    stop("Package \"kableExtra\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
+  
   Ptab2 %>%
     mutate(
       #MP = row.names(.),
-      MP =   cell_spec(MP, "html", color = "white"),
-      MP_Type =   cell_spec(MP_Type, "html", color = "white"),
-      Crit_S =   cell_spec(Crit_S, "html", color = "black"),
-      Caut_S =   cell_spec(Caut_S, "html", color = "black"),
-      Health_S = cell_spec(Health_S, "html", color = "black"),
-      OvFish_S = cell_spec(OvFish_S, "html", color = "black"),
-      Yield_S =  cell_spec(Yield_S, "html", color = "black"),
-      Crit =     cell_spec(Crit, "html", color = "black"),
-      Caut =     cell_spec(Caut, "html", color = "black"),
-      Health =   cell_spec(Health, "html", color = "black"),
-      OvFish =   cell_spec(OvFish, "html", color = "black"),
-      Yield =    cell_spec(Yield, "html", color = "black"),
-      AAVY =     cell_spec(AAVY, "html", color = "black"),
-      Reb =      cell_spec(Reb, "html", color = "black")
+      MP =   kableExtra::cell_spec(MP, "html", color = "white"),
+      MP_Type =  kableExtra::cell_spec(MP_Type, "html", color = "white"),
+      Crit_S =   kableExtra::cell_spec(Crit_S, "html", color = "black"),
+      Caut_S =   kableExtra::cell_spec(Caut_S, "html", color = "black"),
+      Health_S = kableExtra::cell_spec(Health_S, "html", color = "black"),
+      OvFish_S = kableExtra::cell_spec(OvFish_S, "html", color = "black"),
+      Yield_S =  kableExtra::cell_spec(Yield_S, "html", color = "black"),
+      Crit =     kableExtra::cell_spec(Crit, "html", color = "black"),
+      Caut =     kableExtra::cell_spec(Caut, "html", color = "black"),
+      Health =   kableExtra::cell_spec(Health, "html", color = "black"),
+      OvFish =   kableExtra::cell_spec(OvFish, "html", color = "black"),
+      Yield =    kableExtra::cell_spec(Yield, "html", color = "black"),
+      AAVY =     kableExtra::cell_spec(AAVY, "html", color = "black"),
+      Reb =      kableExtra::cell_spec(Reb, "html", color = "black")
     )%>%
     #select(everything())%>%
     knitr::kable("html", escape = F,align = "c") %>%
-    kable_styling("striped", full_width = F)%>%
-    column_spec(5, width = "3cm")  %>%
-    add_header_above(c("","","Thresholds" = 12))
+    kableExtra::kable_styling("striped", full_width = F)%>%
+    kableExtra::column_spec(5, width = "3cm")  %>%
+    kableExtra::add_header_above(c("","","Thresholds" = 12))
 }
 
 
@@ -1371,6 +1405,11 @@ COSEWIC_tab_formatted<-function(Ptab1,thresh=c(20,     40,     40,    20,       
   if(ret_thresh){
     return(thresh)
   }else{
+    if (!requireNamespace("kableExtra", quietly = TRUE)) {
+      stop("Package \"kableExtra\" needed for this function to work. Please install it.",
+           call. = FALSE)
+    }
+    
     MP <- P_Cr <- P_Ct <- P_H <- P_Cr_MSY <- P_Ct_MSY <- P_H_MSY <- P_A1 <- P_A2 <- Blow <- NULL # hack for CRAN checks
     names(Ptab1)<-c("MP","P_Cr","P_Ct","P_H","P_Cr_MSY","P_Ct_MSY","P_H_MSY","P_A1","P_A2","Blow")
     
@@ -1383,40 +1422,40 @@ COSEWIC_tab_formatted<-function(Ptab1,thresh=c(20,     40,     40,    20,       
     Ptab1 %>%
       mutate(
         #MP = row.names(.),
-        MP =  cell_spec(MP, "html",color=MPcols, bold = T),
+        MP =  kableExtra::cell_spec(MP, "html",color=MPcols, bold = T),
         P_Cr = ifelse(P_Cr < thresh[1],
-                        cell_spec(P_Cr, "html", color = "green",italic = T),
-                        cell_spec(P_Cr, "html", color = "red", italic = T)),
+                      kableExtra::cell_spec(P_Cr, "html", color = "green",italic = T),
+                      kableExtra::cell_spec(P_Cr, "html", color = "red", italic = T)),
         P_Ct = ifelse(P_Ct < thresh[2],
-                        cell_spec(P_Ct, "html", color = "green", italic = T),
-                        cell_spec(P_Ct, "html", color = "red", italic = T)),
+                      kableExtra::cell_spec(P_Ct, "html", color = "green", italic = T),
+                      kableExtra::cell_spec(P_Ct, "html", color = "red", italic = T)),
         P_H = ifelse(P_H >= thresh[3],
-                          cell_spec(P_H, "html", color = "green", italic = T),
-                          cell_spec(P_H, "html", color = "red", italic = T)),
+                     kableExtra::cell_spec(P_H, "html", color = "green", italic = T),
+                     kableExtra::cell_spec(P_H, "html", color = "red", italic = T)),
         P_Cr_MSY = ifelse(P_Cr_MSY < thresh[4],
-                          cell_spec(P_Cr_MSY, "html", color = "green", italic = T),
-                          cell_spec(P_Cr_MSY, "html", color = "red", italic = T)),
+                          kableExtra::cell_spec(P_Cr_MSY, "html", color = "green", italic = T),
+                          kableExtra::cell_spec(P_Cr_MSY, "html", color = "red", italic = T)),
         P_Ct_MSY = ifelse(P_Ct_MSY < thresh[5],
-                         cell_spec(P_Ct_MSY, "html", color = "green", italic = T),
-                         cell_spec(P_Ct_MSY, "html", color = "red", italic = T)),
+                          kableExtra::cell_spec(P_Ct_MSY, "html", color = "red", italic = T),
+                          kableExtra::cell_spec(P_Ct_MSY, "html", color = "green", italic = T)),
         P_H_MSY = ifelse(P_H_MSY > thresh[6],
-                      cell_spec(P_H_MSY, "html", color = "green", italic = T),
-                      cell_spec(P_H_MSY, "html", color = "red", italic = T)),
+                         kableExtra::cell_spec(P_H_MSY, "html", color = "green", italic = T),
+                         kableExtra::cell_spec(P_H_MSY, "html", color = "red", italic = T)),
         P_A1 = ifelse(P_A1 < thresh[7],
-                      cell_spec(P_A1, "html", color = "green", italic = T),
-                      cell_spec(P_A1, "html", color = "red", italic = T)),
+                      kableExtra::cell_spec(P_A1, "html", color = "green", italic = T),
+                      kableExtra::cell_spec(P_A1, "html", color = "red", italic = T)),
         P_A2 = ifelse(P_A2 < thresh[8],
-                        cell_spec(P_A2, "html", color = "green", italic = T),
-                        cell_spec(P_A2, "html", color = "red", italic = T)),
+                      kableExtra::cell_spec(P_A2, "html", color = "green", italic = T),
+                      kableExtra::cell_spec(P_A2, "html", color = "red", italic = T)),
         Blow = ifelse(Blow < thresh[9],
-                        cell_spec(Blow, "html", color = "green", italic = T),
-                        cell_spec(Blow, "html", color = "red", italic = T))
+                      kableExtra::cell_spec(Blow, "html", color = "green", italic = T),
+                      kableExtra::cell_spec(Blow, "html", color = "red", italic = T))
         
       )%>%
       knitr::kable("html", escape = F,align = "c") %>%
-      kable_styling("striped", full_width = F)%>%
-      column_spec(5, width = "3cm")  %>%
-      add_header_above(c(" ", "Relative to unfished" = 3, "Relative to BMSY" = 3,"COSEWIC indicators"=2,"Extinction risk"))
+      kableExtra::kable_styling("striped", full_width = F)%>%
+      kableExtra::column_spec(5, width = "3cm")  %>%
+      kableExtra::add_header_above(c(" ", "Relative to unfished" = 3, "Relative to BMSY" = 3,"COSEWIC indicators"=2,"Extinction risk"))
   } # if not ret_thresh
 }
 
@@ -1426,34 +1465,42 @@ COSEWIC_tab_formatted<-function(Ptab1,thresh=c(20,     40,     40,    20,       
 #' @param Ptab1 A COSEWIC performance table made by COSEWIC_tab()
 #' @author T. Carruthers
 #' @importFrom dplyr %>% mutate
-#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
 #' 
 #' @export 
 Cos_thresh_tab<-function(Ptab1){
+  if (!requireNamespace("kableExtra", quietly = TRUE)) {
+    stop("Package \"kableExtra\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("knitr", quietly = TRUE)) {
+    stop("Package \"knitr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   MP <- P_Cr <- P_Ct <- P_H <- P_Cr_MSY <- P_Ct_MSY <- P_H_MSY <- P_A1 <- P_A2 <- Blow <- NULL # cran check hacks
   thresh<-COSEWIC_tab_formatted(Ptab1,ret_thresh=T)
   Ptab2<-as.data.frame(matrix(c("NANANANANA",thresh),nrow=1))
   names(Ptab2)<-c("MP","P_Cr","P_Ct","P_H","P_Cr_MSY","P_Ct_MSY","P_H_MSY","P_A1","P_A2","Blow")
  
   Ptab2 %>%
-    mutate(
+    dplyr::mutate(
       #MP = row.names(.),
-      MP =   cell_spec(MP, "html", color = "white"),
-      P_Cr =   cell_spec(P_Cr, "html", color = "black"),
-      P_Ct =   cell_spec(P_Ct, "html", color = "black"),
-      P_H = cell_spec(P_H, "html", color = "black"),
-      P_Cr_MSY = cell_spec(P_Cr_MSY, "html", color = "black"),
-      P_Ct_MSY =  cell_spec(P_Ct_MSY, "html", color = "black"),
-      P_H_MSY =     cell_spec(P_H_MSY, "html", color = "black"),
-      P_A1 =     cell_spec(P_A1, "html", color = "black"),
-      P_A2 =   cell_spec(P_A2, "html", color = "black"),
-      Blow =   cell_spec(Blow, "html", color = "black")
+      MP =   kableExtra::cell_spec(MP, "html", color = "white"),
+      P_Cr =   kableExtra::cell_spec(P_Cr, "html", color = "black"),
+      P_Ct =   kableExtra::cell_spec(P_Ct, "html", color = "black"),
+      P_H = kableExtra::cell_spec(P_H, "html", color = "black"),
+      P_Cr_MSY = kableExtra::cell_spec(P_Cr_MSY, "html", color = "black"),
+      P_Ct_MSY =  kableExtra::cell_spec(P_Ct_MSY, "html", color = "black"),
+      P_H_MSY =     kableExtra::cell_spec(P_H_MSY, "html", color = "black"),
+      P_A1 =     kableExtra::cell_spec(P_A1, "html", color = "black"),
+      P_A2 =   kableExtra::cell_spec(P_A2, "html", color = "black"),
+      Blow =   kableExtra::cell_spec(Blow, "html", color = "black")
     )%>%
     #select(everything())%>%
     knitr::kable("html", escape = F,align = "c") %>%
-    kable_styling("striped", full_width = F)%>%
-    column_spec(5, width = "3cm")  %>%
-    add_header_above(c("","Thresholds" = 9))
+    kableExtra::kable_styling("striped", full_width = F)%>%
+    kableExtra::column_spec(5, width = "3cm")  %>%
+    kableExtra::add_header_above(c("","Thresholds" = 9))
 }
 
 

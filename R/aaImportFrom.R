@@ -1,22 +1,12 @@
 #' @importFrom abind abind
-#' @importFrom devtools install_github
 #' @importFrom dplyr %>%  arrange filter group_by left_join mutate select summarize
-#' @importFrom DT datatable formatStyle styleInterval 
-#' @importFrom fmsb radarchart
 #' @importFrom ggplot2 aes element_blank expand_limits facet_wrap geom_boxplot ggplot ggplotGrob geom_rect geom_point labs theme theme_classic xlim ylim xlab ylab   
-#' @importFrom ggrepel geom_text_repel
 #' @importFrom graphics abline arrows axis axTicks barplot boxplot contour hist identify layout legend
 #'  lines matplot mtext par plot plot.new points polygon segments text title text
 #' @importFrom grDevices col2rgb colorRampPalette dev.off jpeg rainbow rgb xy.coords
-#' @importFrom gridExtra arrangeGrob
 #' @importFrom grid unit.c unit grid.newpage grid.draw
-#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above 
-#' @importFrom knitr kable
-#' @importFrom MASS mvrnorm kde2d
 #' @importFrom methods getClassDef getSlots .hasSlot new show slot slot<- slotNames
-#' @importFrom mvtnorm rmvnorm
 #' @importFrom parallel detectCores 
-#' @importFrom shiny incProgress
 #' @importFrom snowfall sfClusterEval sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
 #' @importFrom stats acf approx coef cor dbeta density dnorm dlnorm lm loess loess.smooth nls setNames SSasympOff
 #' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta

@@ -24,6 +24,11 @@ plot.MSE <- function(x, ...) {
 #' @note modified from https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
 join_plots <- function(plots, ncol = length(plots), nrow = 1, position = c("right", "bottom"),
                        legend=TRUE) {
+  if (!requireNamespace("gridExtra", quietly = TRUE)) {
+    stop("Package \"gridExtra\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   position <- match.arg(position)
   if (legend) {
     g <- ggplot2::ggplotGrob(plots[[1]] + ggplot2::theme(legend.position = position))$grobs

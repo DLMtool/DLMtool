@@ -1455,10 +1455,14 @@ validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal")
   
   dfout$Type <- as.factor(dfout$Type)
   dfout$Var. <- as.factor(dfout$Var.)
-  DT::datatable(dfout, filter = 'top', options = list(
-    columnDefs = list(list(searchable = FALSE, targets = c(2,3))),
-    pageLength = 25, autoWidth = TRUE))
-
+  if (requireNamespace("DT", quietly = TRUE)) {
+    return(DT::datatable(dfout, filter = 'top', options = list(
+      columnDefs = list(list(searchable = FALSE, targets = c(2,3))),
+      pageLength = 25, autoWidth = TRUE)))
+  } else {
+    message("Install package `DT` to display dataframe as HTML table")
+    return(dfout)
+  }
 }
 
 

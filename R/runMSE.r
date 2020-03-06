@@ -21,7 +21,11 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
 
 # change messages to blue text instead of default red
 message <- function(...) {
-  base::message(crayon::blue(..., sep=""))
+  if (requireNamespace("crayon", quietly = TRUE)) {
+    return(base::message(crayon::blue(..., sep="")))
+  } else {
+    return(base::message(...))
+  }
 }
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -1272,13 +1276,16 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           message('Used TAC_y = TAC_y-1')  
         }
       }
-      
       if (!parallel) 
         if("progress"%in%names(control))
-          if(control$progress) 
-            shiny::incProgress(1/nMP, detail = round(mm*100/nMP))
-
-    }, silent=TRUE)
+          if(control$progress) {
+            if (requireNamespace("shiny", quietly = TRUE)) {
+              shiny::incProgress(1/nMP, detail = round(mm*100/nMP))
+            } else {
+              warning('package `shiny` needs to be installed for progress bar')
+            }
+          } 
+      }, silent=TRUE)
     # end try
     # , error=function(e) {
       # message("Note: ", MPs[mm], " failed. Skipping this MP.")

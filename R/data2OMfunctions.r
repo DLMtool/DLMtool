@@ -42,6 +42,12 @@
 #' estPars <- Growth2OM(data)
 #' 
 Growth2OM <- function(data=NULL, OM=NULL, nsim=48, seed=101, plot=TRUE, msg=TRUE) {
+  
+  if (!requireNamespace("boot", quietly = TRUE)) {
+    stop("Package \"boot\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   om <- TRUE
   if (all(!inherits(OM,'OM'))) om <- FALSE
   if (om) {

@@ -51,6 +51,11 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
   if(class(MSEobj) != "MSE") stop("MSEobj must be object of class 'MSE'", call.=FALSE)
   if(MSEobj@nMPs <2) stop("Converge requires more than 1 MP in the MSE object", call.=FALSE)
   
+  if (!requireNamespace("ggrepel", quietly = TRUE)) {
+    stop("Package \"ggrepel\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   nPMs <- length(PMs)
   
   if (mode(PMs) == 'character') {
@@ -152,8 +157,13 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
     }
     
     if (inc.leg) join_plots(plist, nrow=nrow, ncol=ncol, position="right")
-    if (!inc.leg) gridExtra::grid.arrange(grobs=plist, nrow=nrow, ncol=ncol) 
-    
+    if (!inc.leg) {
+      if (!requireNamespace("gridExtra", quietly = TRUE)) {
+        stop("Package \"gridExtra\" needed for this function to work. Please install it.",
+             call. = FALSE)
+      }
+      gridExtra::grid.arrange(grobs=plist, nrow=nrow, ncol=ncol) 
+    }
     st <- st + maxMP 
     end <- min(end + maxMP, MSEobj@nMPs)
   

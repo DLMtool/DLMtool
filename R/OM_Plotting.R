@@ -6,6 +6,15 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
   
   SampCpars <- list() # empty list
   
+  if (!requireNamespace("knitr", quietly = TRUE)) {
+    stop("Package \"knitr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("Package \"rmarkdown\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   if (is.null(plotPars)) plotPars <- list(breaks=10, col="darkgray", axes=FALSE, 
                                           cex.main=1, lwd=2)
  

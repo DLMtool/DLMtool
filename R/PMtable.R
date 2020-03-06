@@ -35,6 +35,26 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
                       quiet=TRUE, dir=NULL, RMDfile=NULL, font_size=14,
                       auto_width=FALSE, enableSearch=TRUE, PMlist=NULL, build=TRUE) {
 
+  if (!requireNamespace("DT", quietly = TRUE)) {
+    stop("DT is needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("kableExtra", quietly = TRUE)) {
+    stop("kableExtra is needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("knitr", quietly = TRUE)) {
+    stop("Package \"knitr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("Package \"rmarkdown\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("tidyr", quietly = TRUE)) {
+    stop("Package \"tidyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   MP <- prob <- Feasible <- NULL # hacks for cran checks
   if (class(MSE) != 'MSE') stop("Object is not class 'MSE'", call. = FALSE)
   nMPs <- MSE@nMPs
@@ -157,6 +177,26 @@ PMObj <- function(MSE, ..., Labels=NULL, out.file=NULL,
   
   MP <- prob <- NULL # hacks for cran checks
   
+  if (!requireNamespace("DT", quietly = TRUE)) {
+    stop("DT is needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("kableExtra", quietly = TRUE)) {
+    stop("kableExtra is needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("knitr", quietly = TRUE)) {
+    stop("Package \"knitr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("Package \"rmarkdown\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("tidyr", quietly = TRUE)) {
+    stop("Package \"tidyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   if (class(MSE) != 'MSE') stop("Object is not class 'MSE'", call. = FALSE)
   nMPs <- MSE@nMPs
 

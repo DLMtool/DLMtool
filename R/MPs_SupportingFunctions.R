@@ -46,6 +46,11 @@ DCAC_plot <- function(x, Data, dcac, TAC, Bt_K, yrs, lwd=3, cex.lab=1.25) {
 }
 
 BK_plot <- function(DF) {
+  if (!requireNamespace("gridExtra", quietly = TRUE)) {
+    stop("Package \"gridExtra\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   vars <- vals <- NULL # R check hack
   DF2 <- DF %>% dplyr::filter(vars %in% c("Lc/Linf", "K", "Fmax"))
   p1 <- ggplot(DF2, aes(x=vars, y=vals)) + geom_boxplot() + 

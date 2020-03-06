@@ -2,7 +2,7 @@ Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
 Version: 5.4.2
-Date: 2020-03-05
+Date: 2020-03-06
 Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
     person("Adrian", "Hordyk", , "a.hordyk@oceans.ubc.ca", "aut"),
@@ -22,37 +22,37 @@ Depends:
     snowfall
 Imports:
     abind,
-    boot,
-    broom,
-    crayon,
-    devtools,
-    DT,
     dplyr,
-    fmsb,
     methods,
     grDevices,
     ggplot2,
-    gridExtra,
-    ggrepel,
-    kableExtra,
-    knitr,
-    MASS,
-    mvtnorm,
-    openxlsx,
     parallel,
-    purrr,
-    readxl,
-    rfishbase,
-    rmarkdown,
     stats,
-    shiny,
-    tidyr,
     utils
 LazyData: yes
 LazyLoad: yes
 Encoding: UTF-8
 Suggests:
-    testthat
+    boot,
+    broom,
+    crayon,
+    devtools,
+    DT,
+    fmsb,
+    ggrepel,
+    gridExtra,
+    kableExtra,
+    knitr,
+    MASS,
+    mvtnorm,
+    openxlsx,
+    purrr,
+    readxl,
+    rfishbase,
+    rmarkdown,
+    shiny,
+    testthat,
+    tidyr
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.0.2
 URL: http://www.datalimitedtoolkit.org/

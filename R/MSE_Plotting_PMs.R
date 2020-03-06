@@ -51,6 +51,13 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
                       Yrs=NULL
                       ) {
   if (class(MSEobj) != 'MSE') stop("Object must be class `MSE`", call.=FALSE)
+  
+  if (!requireNamespace("ggrepel", quietly = TRUE)) {
+    stop("Package \"ggrepel\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
+  
   if (is.null(PMlist)) {
     PMlist <- unlist(list(...))
   } else {
@@ -320,6 +327,12 @@ Cplot <- function(MSEobj, MPs = NA, lastYrs = 5,
                   axis.text.size=10,
                   legend.title.size=12) {
   if (!all(is.na(MPs))) MSEobj <- Sub(MSEobj, MPs = MPs)
+  
+  if (!requireNamespace("ggrepel", quietly = TRUE)) {
+    stop("Package \"ggrepel\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   mp <- Catch <- Biomass <- mB <- mC <- NULL # cran check hacks 
   nsim <- MSEobj@nsim
   nMPs <- MSEobj@nMPs
@@ -430,6 +443,19 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   # cran check 
   key <- data <- fit <- var <- .fitted <- desc <- value <- NULL
   MSEobj <- Sub(MSE, MPs=MP)
+  
+  if (!requireNamespace("broom", quietly = TRUE)) {
+    stop("Package \"broom\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("purrr", quietly = TRUE)) {
+    stop("Package \"purrr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("tidyr", quietly = TRUE)) {
+    stop("Package \"tidyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   
   type <- match.arg(type)
   

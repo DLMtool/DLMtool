@@ -91,6 +91,11 @@ DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NUL
 #' MyData <- XL2Data("MyData.xlsx")
 #' }
 XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
+  if (!requireNamespace("readxl", quietly = TRUE)) {
+    stop("Package \"readxl\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   dec <- match.arg(dec)
   dir <- dirname(name)
   if (dir ==".") {
@@ -1706,6 +1711,15 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     Data <- XL2Data(Data)
   }
   
+  if (!requireNamespace("knitr", quietly = TRUE)) {
+    stop("Package \"knitr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("Package \"rmarkdown\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   # Load md documentation
   if (is.null(md)) {
     message("No Data Documentation file provided")
@@ -2246,6 +2260,10 @@ makeDF <- function(Data, slot, i ) {
 }
 
 ts_plots <- function(Data, i=1, fignum=1) {
+  if (!requireNamespace("tidyr", quietly = TRUE)) {
+    stop("Package \"tidyr\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
   Year <- y <- dw <- up <- X <- Ind <- value <- key <- NA
   DF <- makeDF(Data, "Cat", i)
   DF <- rbind(DF, makeDF(Data, "Ind", i))

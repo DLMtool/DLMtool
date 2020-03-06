@@ -1232,6 +1232,7 @@ class(DBSRA4010) <- "MP"
 #' @export
 #' @keywords internal
 DD_ <- function(x, Data, reps = 100, hcr=NULL) {
+  
   Winf <- Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
   age <- 1:Data@MaxAge
   la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
@@ -1269,7 +1270,13 @@ DD_ <- function(x, Data, reps = 100, hcr=NULL) {
                C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
   
   if (reps > 1) {
-    samps <- mvtnorm::rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log  
+    if (requireNamespace("mvtnorm", quietly = TRUE)) {
+      samps <- mvtnorm::rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log  
+    } else {
+      warning('package `mvtnorm` needs to be installed for reps>1. Using MLE estimates')
+      samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = reps)
+    }
+    
   } else {
     samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
   }
