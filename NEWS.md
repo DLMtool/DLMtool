@@ -9,6 +9,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 - `Converge` now returns a summary table of convergence diagnostics (thanks to Sarah Valencia)
 - add total removals (catch plus discards) to `MSE@Misc$Removals`
 - units of `Data@AddInd` can now be specified with `cpars$AddIUnits`: numeric vector of length `n.ind` with 1 specifying biomass (default) and 0 abundance by numbers.
+- moved all non-essential packages to `Suggests`
+- removed deprecated function `ForceCor`, use `LH2OM` instead
 
 ### Fixes
 - fix bug where CAL_bins wasn't calculated when only CAL_mids was provided in Data
