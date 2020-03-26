@@ -383,7 +383,8 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
       } else {
         ind <- 1:itsim[i]
       }
-      fixed_size_cpars <- c("CAL_bins", "CAL_binsmid", "binWidth", "M_at_length", "plusgroup", "Data", "AddIunits")
+      fixed_size_cpars <- c("CAL_bins", "CAL_binsmid", "binWidth", "M_at_length", "plusgroup", "Data", "AddIunits",
+                            'control')
       for (x in 1:length(cpars)) {
         if (!names(cpars)[x] %in% fixed_size_cpars) {
           dd <- dim(cpars[[x]])
@@ -415,6 +416,10 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
                     HZN, Bfrac, AnnualMSY, silent, PPD=PPD, control=control, parallel=parallel)
   return(mse)
 }
+
+
+
+
 
 assign_DLMenv <- function() {
   DLMenv_list <- snowfall::sfClusterEval(mget(ls(DLMenv), envir = DLMenv)) # Grab objects from cores' DLMenv
