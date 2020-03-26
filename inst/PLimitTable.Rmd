@@ -121,12 +121,7 @@ DT::datatable(TabDF, escape=FALSE, filter='top',
   class = 'cell-border stripe', 
   options = list(
     dom = 'Blfrtip',
-     buttons = 
-      list('copy', 'print', list(
-        extend = 'collection',
-        buttons = c('csv', 'excel', 'pdf'),
-        text = 'Download'
-      )),
+      buttons = list('copy', 'print'),,
     columnDefs = list(list(targets = 2, visible = FALSE)),
     lengthMenu = list(c(10,20, 50, 100, -1), list('10', '20', '50','100', 'All')),
     pageLength = 20, 
