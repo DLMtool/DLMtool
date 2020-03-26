@@ -1,5 +1,11 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.4.999 - development version
+
+### Fixes
+- fix bug when optimizing for vulnerable depletion in parallel mode
+- fix issue where latest version of `DT` package broke `PMObj` and `PMLimit` tables
+
 ## DLMtool 5.4.2 
 
 ## Minor changes
