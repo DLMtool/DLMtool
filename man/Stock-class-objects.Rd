@@ -16,7 +16,31 @@
 \alias{Toothfish}
 \alias{Stock-class-objects}
 \title{Stock class objects}
-\format{An object of class \code{Stock} of length 1.}
+\format{
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+
+An object of class \code{Stock} of length 1.
+}
 \usage{
 Albacore
 

@@ -4,7 +4,9 @@
 \name{ObsDescription}
 \alias{ObsDescription}
 \title{ObsDescription}
-\format{An object of class \code{data.frame} with 29 rows and 2 columns.}
+\format{
+An object of class \code{data.frame} with 29 rows and 2 columns.
+}
 \usage{
 ObsDescription
 }

@@ -10,7 +10,19 @@
 \alias{Precise_Unbiased}
 \alias{Obs-class-objects}
 \title{Obs class objects}
-\format{An object of class \code{Obs} of length 1.}
+\format{
+An object of class \code{Obs} of length 1.
+
+An object of class \code{Obs} of length 1.
+
+An object of class \code{Obs} of length 1.
+
+An object of class \code{Obs} of length 1.
+
+An object of class \code{Obs} of length 1.
+
+An object of class \code{Obs} of length 1.
+}
 \usage{
 Generic_Obs
 

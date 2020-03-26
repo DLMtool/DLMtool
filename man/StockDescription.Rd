@@ -4,7 +4,9 @@
 \name{StockDescription}
 \alias{StockDescription}
 \title{StockDescription}
-\format{An object of class \code{data.frame} with 34 rows and 2 columns.}
+\format{
+An object of class \code{data.frame} with 34 rows and 2 columns.
+}
 \usage{
 StockDescription
 }

@@ -12,7 +12,23 @@
 \alias{Simulation_1}
 \alias{Data-class-objects}
 \title{Data class objects}
-\format{An object of class \code{Data} of length 1.}
+\format{
+An object of class \code{Data} of length 1.
+
+An object of class \code{Data} of length 1.
+
+An object of class \code{Data} of length 1.
+
+An object of class \code{Data} of length 1.
+
+An object of class \code{Data} of length 1.
+
+An object of class \code{Data} of length 1.
+
+An object of class \code{Data} of length 1.
+
+An object of class \code{Data} of length 1.
+}
 \usage{
 Atlantic_mackerel
 

@@ -6,7 +6,11 @@
 \alias{Perfect_Imp}
 \alias{Imp-class-objects}
 \title{Imp class objects}
-\format{An object of class \code{Imp} of length 1.}
+\format{
+An object of class \code{Imp} of length 1.
+
+An object of class \code{Imp} of length 1.
+}
 \usage{
 Overages
 

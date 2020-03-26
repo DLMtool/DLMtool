@@ -4,7 +4,9 @@
 \name{LHdatabase}
 \alias{LHdatabase}
 \title{LHdatabase}
-\format{An object of class \code{list} of length 3.}
+\format{
+An object of class \code{list} of length 3.
+}
 \source{
 \url{https://github.com/James-Thorson/FishLife/}
 }

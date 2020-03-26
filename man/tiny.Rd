@@ -4,7 +4,9 @@
 \name{tiny}
 \alias{tiny}
 \title{tiny}
-\format{An object of class \code{numeric} of length 1.}
+\format{
+An object of class \code{numeric} of length 1.
+}
 \usage{
 tiny
 }

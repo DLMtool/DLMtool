@@ -19,7 +19,37 @@
 \alias{Targeting_Small_Fish}
 \alias{Fleet-class-objects}
 \title{Fleet class objects}
-\format{An object of class \code{Fleet} of length 1.}
+\format{
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+
+An object of class \code{Fleet} of length 1.
+}
 \usage{
 DecE_Dom
 
