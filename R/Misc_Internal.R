@@ -798,7 +798,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBr
       
       simcatch <- apply(CBret, c(1,3), sum)
       
-      Cbias <- matrix(apply(simcatch, 1, mean) / apply(Data@Cat, 1, mean),
+      Cbias <- matrix(apply(Data@Cat, 1, mean)/apply(simcatch, 1, mean),
                       nrow=nsim, ncol=nyears+proyears)
       
       Cerr <- Data@Cat/(simcatch/Cbias[,1:nyears])
