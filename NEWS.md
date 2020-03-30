@@ -5,6 +5,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 ### Fixes
 - fix bug when optimizing for vulnerable depletion in parallel mode
 - fix issue where latest version of `DT` package broke `PMObj` and `PMLimit` tables
+- fix catch bias for projections when conditioning on real data
+- fix retention-at-age when retention-at-length passed in `OM@cpars`
 
 ## DLMtool 5.4.2 
 
