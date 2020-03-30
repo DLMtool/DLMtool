@@ -661,8 +661,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
 #' @return A named list of sampled Fleet parameters
 #' @export
 #'
-SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=NULL, cpars=NULL, msg=TRUE) {
-   if (class(Fleet) != "Fleet" & class(Fleet) != "OM") 
+SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, 
+                            proyears=NULL, cpars=NULL, msg=TRUE) {
+  if (class(Fleet) != "Fleet" & class(Fleet) != "OM") 
     stop("First argument must be class 'Fleet' or 'OM'")
   
   if (class(Fleet) != "OM" & class(Stock) != "Stock" & class(Stock) != "list") 
@@ -685,23 +686,24 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   }
   
   Fleet <- updateMSE(Fleet) # update to add missing slots with default values
+  
   if (class(Stock) == "Stock") {
     Stock <- updateMSE(Stock) # update to add missing slots with default values
     # Sample Stock Pars - need some to calculate selectivity at age and length  
     StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, cpars, msg=msg)
     for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   } 
-  if (class(Stock) == "list") for (X in 1:length(Stock)) assign(names(Stock)[X], Stock[[X]])
+  if (class(Stock) == "list") for (X in 1:length(Stock)) 
+    assign(names(Stock)[X], Stock[[X]])
   
   Fleetout <- list()
   
-  # == Sample Historical Fishing Effort =====
-  if (!exists("Esd", inherits = FALSE)) Esd <- myrunif(nsim, Fleet@Esd[1], Fleet@Esd[2])  # interannual variability in fishing effort (log normal sd)
+  # --- Sample Historical Fishing Effort ----
+  if (!exists("Esd", inherits = FALSE)) 
+    Esd <- myrunif(nsim, Fleet@Esd[1], Fleet@Esd[2])
   if (!exists("EffLower", inherits = FALSE)) EffLower <- Fleet@EffLower
   if (!exists("EffUpper", inherits = FALSE)) EffUpper <- Fleet@EffUpper 
   if (!exists("EffYears", inherits = FALSE)) EffYears <- Fleet@EffYears
-
-  # if (max(EffYears) != nyears && max(EffYears) != 1) stop("Maximum EffYears (", max(EffYears), ") not equal to nyears (", nyears, ")")
   
   if (!exists("Find", inherits = FALSE)) {
     if (any(is.na(EffLower)) || any(is.na(EffUpper)) || any(is.na(EffYears))) {
@@ -709,11 +711,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       Find <- matrix(NA, nsim, nyears)
       Deriv <- list(Find, rep(NA, nsim))
     } else {
-      Deriv <- getEffhist(Esd, nyears, EffYears = EffYears, EffLower = EffLower, EffUpper = EffUpper)  # Historical fishing effort  
+      Deriv <- getEffhist(Esd, nyears, EffYears = EffYears, EffLower = EffLower, 
+                          EffUpper = EffUpper)  # Historical fishing effort  
       Find <- Deriv[[1]]  # Calculate fishing effort rate    
     }
-    
-  }   
+  }
   
   if (!exists("dFfinal", inherits = FALSE)) {
     if (exists("Deriv", inherits = FALSE)) {
@@ -722,20 +724,25 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       dFfinal <- rep(NA, nsim)
     }
   }
-  if (any(dim(Find) != c(nsim, nyears))) stop("Find must be matrix with dimensions: nsim (", nsim, "), nyears (", nyears, ") but is: ", paste(dim(Find), ""))
+  if (any(dim(Find) != c(nsim, nyears))) 
+    stop("Find must be matrix with dimensions: nsim (", nsim, "), nyears (", nyears, ") but is: ", paste(dim(Find), ""))
   
   Fleetout$Esd <- Esd
   Fleetout$Find <- Find
   Fleetout$dFfinal <- dFfinal
   
   # === Spatial Targetting ====
-  if (!exists("Spat_targ", inherits = FALSE))  Spat_targ <- myrunif(nsim, Fleet@Spat_targ[1], Fleet@Spat_targ[2])  # spatial targetting Ba^targetting param 
-  
-  Fleetout$Spat_targ <- Spat_targ
+  if (!exists("Spat_targ", inherits = FALSE))
+    # spatial targetting Ba^targetting param 
+    Fleetout$Spat_targ <- Spat_targ <- myrunif(nsim, Fleet@Spat_targ[1], Fleet@Spat_targ[2])  
   
   # === Sample fishing efficiency parameters ====
-  if (!exists("qinc", inherits = FALSE)) qinc <- myrunif(nsim, Fleet@qinc[1], Fleet@qinc[2])
-  if (!exists("qcv", inherits = FALSE)) qcv <- myrunif(nsim, Fleet@qcv[1], Fleet@qcv[2])  # interannual variability in catchability
+  # interannual variability in catchability
+  if (!exists("qinc", inherits = FALSE)) 
+    qinc <- myrunif(nsim, Fleet@qinc[1], Fleet@qinc[2])
+  if (!exists("qcv", inherits = FALSE)) 
+    qcv <- myrunif(nsim, Fleet@qcv[1], Fleet@qcv[2])  
+  
   
   # === Simulate future variability in fishing efficiency ====
   qmu <- -0.5 * qcv^2  # Mean
@@ -752,10 +759,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     Fleet@isRel <- 'FALSE'
   }
   
-  
-  Selnyears <- length(Fleet@SelYears)
   # are selectivity parameters relative to size at maturity?
-  
   chk <- class(Fleet@isRel)
   if (length(Fleet@isRel) < 1) Fleet@isRel <- "true"
   if (chk == "character") {
@@ -771,10 +775,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     if (Fleet@isRel) multi <- L50
     if (!Fleet@isRel) multi <- 1
   }
- 
+  
   if (exists("L5", inherits = FALSE) | exists("LFS", inherits = FALSE) | 
       exists("Vmaxlen", inherits = FALSE) | exists("V", inherits=FALSE)) {
-    if (all(multi != 1)) stop("Selectivity parameters provided in cpars must be absolute values. Is Fleet@isRel == 'FALSE'?")
+    if (all(multi != 1))
+      stop("Selectivity parameters provided in cpars must be absolute values. Is Fleet@isRel == 'FALSE'?")
   }
   
   if (!exists("L5", inherits = FALSE)) L5 <- myrunif(nsim, Fleet@L5[1], Fleet@L5[2]) * multi  # length at 0.05% selectivity ascending
@@ -782,8 +787,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (!exists("Vmaxlen", inherits = FALSE)) Vmaxlen <- myrunif(nsim, Fleet@Vmaxlen[1], Fleet@Vmaxlen[2])  # selectivity at maximum length
   
   Vmaxlen[Vmaxlen<=0] <- tiny
-  L5s <- LFSs <- Vmaxlens <- NULL  # initialize 
   
+  # --- time-varying selectivity ----
+  L5s <- LFSs <- Vmaxlens <- NULL  # initialize 
+  Selnyears <- length(Fleet@SelYears)
   if (Selnyears > 1) {   # change of selectivity in historical years 
     # length at 0.05% selectivity ascending
     L5s <- mapply(runif, n = nsim, min = Fleet@L5Lower, max = Fleet@L5Upper) * multi
@@ -798,104 +805,70 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Fleetout$LFSs <- LFSs
   Fleetout$Vmaxlens <- Vmaxlens
   
-  # == Calculate Selectivity at Length ====
+  # ---- Calculate selectivity-at-length (SLarray) ---- 
+  # V has been passed in with custompars 
   nCALbins <- length(CAL_binsmid)
   SLarray <- array(NA, dim=c(nsim, nCALbins, nyears+proyears)) # Selectivity-at-length 
   CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
-  if (exists("V", inherits=FALSE)) { # V has been passed in with custompars
-    if(dim(V)[3] != proyears + nyears) V<-abind::abind(V,array(V[,,nyears],c(nsim,maxage,proyears)),along=3) # extend future Vulnerabiliy according to final historical vulnerability
-    # assign L5, LFS and Vmaxlen - dodgy loop 
-    # could calculate length at 5% selectivity from vB
+  if (exists("V", inherits=FALSE)) { 
+    # extend future Vulnerabiliy according to final historical vulnerability
+    if(dim(V)[3] != proyears + nyears) V<-abind::abind(V,array(V[,,nyears],c(nsim,maxage,proyears)),along=3) 
+    
+    
     L5 <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
     LFS <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
     Vmaxlen <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
     
+    VB <- function(Linf, K, t0, age) Linf * (1-exp(-K*(age-t0)))
+    
     for (yr in 1:(nyears+proyears)) {
       for (s in 1:nsim) {
-        ind <- min(which(V[s,,yr] >=0.05))
-        L5[yr, s] <- Len_age[s, ind, yr]
-        ind2 <- which.max(V[s,,yr]) # min(which(V[s,,yr] >=0.50))
-        if (ind2 == ind) ind2 <- ind + 1
-        LFS[yr, s] <- Len_age[s, ind2, yr]
-        Vmaxlen[yr, s] <- V[s, maxage, yr]
-        # SLarray[s,, yr] <- SelectFun(s, SL0.05=L5[yr, ], SL1=LFS[yr, ], MaxSel=Vmaxlen[yr, ], 
-        # maxlens=Len_age[, maxage, nyears], Lens=CAL_binsm
+        age5 <- min(which(V[s,,yr] >=0.05)) # age at 5% selection 
+        L5[yr,s] <- VB(Linfarray[s,yr], Karray[s,yr], t0array[s,yr], age5)
         
+        ageFS <- which.max(V[s,,yr])
+        if (ageFS == age5) ageFS <- age5 + 1
+        LFS[yr, s] <- VB(Linfarray[s,yr], Karray[s,yr], t0array[s,yr], ageFS)
+        Vmaxlen[yr, s] <- V[s, maxage, yr]
       }
-      srs <- (Linf - LFS[yr,]) / ((-log(Vmaxlen[yr,drop=FALSE],2))^0.5) # selectivity parameters are constant for all years
+      
+      srs <- (Linf - LFS[yr,]) / ((-log(Vmaxlen[yr,drop=FALSE],2))^0.5) 
       srs[!is.finite(srs)] <- Inf
       sls <- (LFS[yr,] - L5[yr, ]) /((-log(0.05,2))^0.5)
       SLarray[,, yr] <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFS[yr, ], sls=sls, srs=srs))
-      
     }
-    
   }
   
   # == Calculate Selectivity at Age and Length ====
   CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
   if (!exists("V", inherits=FALSE)) { # don't run if V has been passed in with custompars 
-    if (Selnyears <= 1) {    
+    if (Selnyears <= 1) { # selectivity same for all years
       L5 <- matrix(L5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
       LFS <- matrix(LFS, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
       Vmaxlen <- matrix(Vmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE) 
-      
-      # ind <- which(LFS/matrix(Linf, nrow = proyears + nyears, ncol = nsim, byrow = TRUE) > 1, arr.ind = T)
-      # if (length(ind) > 0) {
-      # message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = 0.9 Linf for the affected simulations")
-      # LFS[ind] <- Linf[ind[, 2]] * 0.9
-      # } 
-      
-      
-      # Calculate selectivity-at-age  curve 
       V <- array(NA, dim = c(nsim, maxage, nyears + proyears)) 
-      # s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-      #                                           LFS = LFS[1, i], L0.05 = L5[1,i])$minimum)	
-      # if (all(Vmaxlen >= 0.99)) s2 <- rep(1E5, nsim)
-      # Vmaxlen[Vmaxlen ==0] <- 0.001 # fix for when Vmaxlen == 0 
-      # if (!all(Vmaxlen >= 0.99)) 
-      #   s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-      #                                             LFS = LFS[1,i], s1=s1[i], maxlen=maxlen[i], 
-      #                                             MaxSel=Vmaxlen[1, i])$minimum)
-      
       srs <- (Linf - LFS[1,]) / ((-log(Vmaxlen[1,],2))^0.5) # selectivity parameters are constant for all years
       sls <- (LFS[1,] - L5[1, ]) /((-log(0.05,2))^0.5)
-      
-      
-      # Calculate selectivity at length class 
-      
       if (nsim>1) SelLength <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFS[1, ], sls=sls, srs=srs))
       if (nsim == 1) SelLength <- getsel(1, lens=CAL_binsmidMat, lfs=LFS[1, ], sls=sls, srs=srs)
       
       for (yr in 1:(nyears+proyears)) {
-        
-        # Calculate selectivity at age class 
-        # V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=Len_age[i,,yr])))
         if(nsim>1) V[ , , yr] <- t(sapply(1:nsim, getsel, lens=Len_age[,,yr], lfs=LFS[1,], sls=sls, srs=srs))
-        
-        if(nsim == 1) V[ , , yr] <- getsel(x=1, lens=t(matrix(Len_age[,,yr])), lfs=LFS[1,], sls=sls, srs=srs)
-        # Calculate selectivity at length class 
-        # SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid)))
+        if(nsim == 1) V[ , , yr] <- getsel(x=1, lens=t(matrix(Len_age[,,yr])), lfs=LFS[1,], sls=sls, srs=srs) 
         SLarray[,, yr] <- SelLength
-      }	 
-      
-    }
-    
-    if (Selnyears > 1) {
-      # More than one break point in historical selection pattern
+      }
+    } else {
+      # time-varying selectivity 
       L5 <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
       LFS <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
       Vmaxlen <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
       SelYears <- Fleet@SelYears
-      
       ind <- which(LFSs/ matrix(Linf, nrow=nsim, ncol=Selnyears) > 1, arr.ind = T)
       if (length(ind) > 0) {
         message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = 0.9 Linf for the affected simulations")
         LFSs[ind] <- Linf[ind[, 1]] * 0.9
-      }     
-      
-      
-      # Calculate selectivity-at-age  curve 
-      V <- array(NA, dim = c(nsim, maxage, nyears + proyears))     
+      }  
+      V <- array(NA, dim = c(nsim, maxage, nyears + proyears))  
       
       for (X in 1:(Selnyears - 1)) {	
         bkyears <- SelYears[X]:SelYears[X + 1]
@@ -907,29 +880,16 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
           LFS[bkyears, ] <- matrix(rep((LFSs[X]), length(bkyears)), ncol = nsim, byrow = TRUE)
           Vmaxlen[bkyears, ] <- matrix(rep((Vmaxlens[X]), length(bkyears)), ncol = nsim, byrow = TRUE)
           L5[bkyears, ] <- matrix(rep((L5s[X]), length(bkyears)), ncol = nsim, byrow = TRUE)
-          
         }
-        
         srs <- (Linf - LFS[bkyears[1],]) / ((-log(Vmaxlen[bkyears[1],],2))^0.5) #
         sls <- (LFS[bkyears[1],] - L5[bkyears[1], ]) /((-log(0.05,2))^0.5)
-        
-        # Calculate selectivity at length class 
         SelLength <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFS[bkyears[1],], sls=sls, srs=srs))
         
-        
-        # s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-        #                                           LFS = LFSs[i, X], L0.05 = L5s[i, X])$minimum)
-        # s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-        #                                           LFS = LFSs[i, X], s1=s1[i], maxlen=maxlen[i], 
-        #                                           MaxSel=Vmaxlens[i, X])$minimum)	
         for (yr in bkyears) {
-          # V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))
-          # SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid)))   
           V[ , , yr] <-  t(sapply(1:nsim, getsel, lens=Len_age[,,yr], lfs=LFS[yr,], sls=sls, srs=srs))
           SLarray[,, yr] <- SelLength 
         }
       }
-      
       restYears <- max(SelYears):(nyears + proyears)
       if (nsim>1) {
         L5[restYears, ] <- matrix(rep((L5s[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
@@ -940,36 +900,20 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
         LFS[restYears, ] <- matrix(rep((LFSs[Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
         Vmaxlen[restYears, ] <- matrix(rep((Vmaxlens[Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
       }
-      
-      
-      # s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-      #                                           LFS = LFSs[i, Selnyears], L0.05 = L5s[i, Selnyears])$minimum)
-      # s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-      #                                           LFS = LFSs[i, Selnyears], s1=s1[i], maxlen=maxlen[i], 
-      #                                           MaxSel=Vmaxlens[i, Selnyears])$minimum)	
-      
       srs <- (Linf - LFS[restYears[1],]) / ((-log(Vmaxlen[restYears[1],],2))^0.5) #
       srs[!is.finite(srs)] <- Inf
-      
       sls <- (LFS[restYears[1],] - L5[restYears[1], ]) /((-log(0.05,2))^0.5)
-      
-      # Calculate selectivity at length class 
       SelLength <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFS[restYears[1],], sls=sls, srs=srs))
-      
       for (yr in restYears) { 
-        # V[ , , restYears] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))		
-        # SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid))) 
         V[ , , yr] <- t(sapply(1:nsim, getsel, lens=Len_age[,,yr], lfs=LFS[yr,], sls=sls, srs=srs))
         SLarray[,, yr] <- SelLength
-        
-      }	 
+      }
     }
-  } # end of 'if V exists'
+  } # end of 'if !exists V'
   
   # Check LFS is greater than L5 
   chk <- sum(apply(L5 > LFS, 2, prod) != 0)
   if (chk > 0) stop("L5 is greater than LFS in ", chk, ' simulations')
-  
   
   if (any((dim(V) != c(nsim, maxage, proyears+nyears)))) 
     stop("V must have dimensions: nsim (", nsim,") maxage (", maxage, 
@@ -977,12 +921,58 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
          dim(V)[1], " ", dim(V)[2], " ", dim(V)[3], call.=FALSE)
   
   
-  # == Sample Retention Parameters ====
-  if(!exists("LR5", inherits = FALSE)) LR5 <- runif(nsim, min(Fleet@LR5), max(Fleet@LR5)) * multi
-  if(!exists("LFR", inherits = FALSE)) LFR <- runif(nsim, min(Fleet@LFR), max(Fleet@LFR)) * multi
-  if(!exists("Rmaxlen", inherits = FALSE)) Rmaxlen <- runif(nsim, min(Fleet@Rmaxlen), max(Fleet@Rmaxlen))
-  if(!exists("DR", inherits = FALSE)) DR <- runif(nsim, min(Fleet@DR), max(Fleet@DR))
+  # == Retention Parameters ====
+  if (exists('retA', inherits = FALSE)) { # retention at age passed in cpars 
+    # check dimensions 
+    if (any((dim(retA) != c(nsim, maxage, proyears+nyears)))) 
+      stop("retA must have dimensions: nsim (", nsim,") maxage (", maxage, 
+           ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
+           dim(retA)[1], " ", dim(retA)[2], " ", dim(retA)[3], call.=FALSE) 
+    
+    stop("retA not currently supported in cpars - bug me with a msg to fix it!")
+  }
   
+  # retention at length passed in cpars 
+  if (exists('retL', inherits = FALSE)) { # calculate LR5, LFR & Rmaxlen
+    if (any((dim(retL) != c(nsim, nCALbins, proyears+nyears)))) 
+      stop("retL must have dimensions: nsim (", nsim,") nCALbins (", nCALbins, 
+           ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
+           dim(retL)[1], " ", dim(retL)[2], " ", dim(retL)[3], call.=FALSE) 
+    
+    LR5 <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
+    LFR <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
+    Rmaxlen <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
+    
+    for (yr in 1:(nyears+proyears)) {
+      for (s in 1:nsim) {
+        ind <- min(which(retL[s,,yr] >=0.05))
+        LR5[yr, s] <- CAL_binsmid[ind]
+        ind2 <- which.max(retL[s,,yr]) 
+        if (ind2 == ind) ind2 <- ind + 1
+        LFR[yr, s] <- CAL_binsmid[ind2]
+        ind3 <- which.min(abs(CAL_binsmid - Linf[s]))
+        Rmaxlen[yr, s] <- retL[s, ind3, yr]
+      }
+    }
+  }
+  if(!exists("LR5", inherits = FALSE)) {
+    LR5 <- runif(nsim, min(Fleet@LR5), max(Fleet@LR5)) * multi
+    LR5 <- matrix(LR5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+  if(!exists("LFR", inherits = FALSE)) {
+    LFR <- runif(nsim, min(Fleet@LFR), max(Fleet@LFR)) * multi
+    LFR <- matrix(LFR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+  if(!exists("Rmaxlen", inherits = FALSE)) {
+    Rmaxlen <- runif(nsim, min(Fleet@Rmaxlen), max(Fleet@Rmaxlen))
+    Rmaxlen <- matrix(Rmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+  if(!exists("DR", inherits = FALSE)) {
+    DR <- runif(nsim, min(Fleet@DR), max(Fleet@DR))
+    DR <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+  
+  Rmaxlen[Rmaxlen<=0] <- tiny 
   if (any(LR5 > LFR)) {
     if (all(LFR<0.001)) {
       LFR <- LR5 + LFR
@@ -990,63 +980,30 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       stop('LR5 is greater than LFR', call.=FALSE)   
     }
   }
-  # == Calculate Retention Curve ====
-  Rmaxlen[Rmaxlen<=0] <- tiny 
-  LR5 <- matrix(LR5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-  LFR <- matrix(LFR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-  Rmaxlen <- matrix(Rmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-  DR <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   
-  
-  # s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-  #                                           LFS = LFR[1, i], L0.05 = LR5[1,i])$minimum)
-  # if (all(Rmaxlen >= 0.99)) s2 <- rep(1E5, nsim)
-  # if (!all(Rmaxlen >= 0.99)) 
-  #   s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-  #                                             LFS = LFR[1,i], s1=s1[i], maxlen=maxlen[i], 
-  #                                             MaxSel=Rmaxlen[1, i])$minimum)
-  
-  srs <- (Linf - LFR[1,]) / ((-log(Rmaxlen[1,],2))^0.5) # selectivity parameters are constant for all years
-  sls <- (LFR[1,] - LR5[1,]) /((-log(0.05,2))^0.5)
-  
-  srs[!is.finite(srs)] <- Inf
-  
-  
-  RetLength <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFR[1,], sls=sls, srs=srs))
-  
-  if (!exists("retA", inherits=FALSE)) {
-    retA <- array(NA, dim = c(nsim, maxage, nyears + proyears)) # retention at age
-    for (yr in 1:(nyears+proyears)) {
-      # Calculate retention at age class 
-      # retA[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFR[yr,i], s1[i], s2[i], lens=Len_age[i,,yr])))
-      if (nsim>1) retA[ , , yr] <- t(sapply(1:nsim, getsel, lens=Len_age[,,yr], lfs=LFR[1,], sls=sls, srs=srs))
-      if (nsim == 1) retA[ , , yr] <- getsel(1, lens=t(matrix(Len_age[,,yr])), lfs=LFR[1,], sls=sls, srs=srs)
-      
-    } 
-  } else {
-    # check dimensions 
-    if (any((dim(retA) != c(nsim, maxage, proyears+nyears)))) 
-      stop("retA must have dimensions: nsim (", nsim,") maxage (", maxage, 
-           ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
-           dim(retA)[1], " ", dim(retA)[2], " ", dim(retA)[3], call.=FALSE) 
+  # calculate retention-at-age 
+  retA <- array(NA, dim = c(nsim, maxage, nyears + proyears)) # retention at age
+  for (yr in 1:(nyears+proyears)) {
+    srs <- (Linf - LFR) / ((-log(Rmaxlen[yr,drop=FALSE],2))^0.5) 
+    srs[!is.finite(srs)] <- Inf
+    sls <- (LFR[yr,] - LR5[yr, ]) /((-log(0.05,2))^0.5)
+    
+    # Calculate retention at age class
+    if (nsim>1) retA[ , , yr] <- t(sapply(1:nsim, getsel, lens=Len_age[,,yr], lfs=LFR[yr,], sls=sls, srs=srs))
+    if (nsim == 1) retA[ , , yr] <- getsel(1, lens=t(matrix(Len_age[,,yr])), lfs=LFR[yr,], sls=sls, srs=srs)
   }
   
-  # 
-  if (!exists("retL", inherits=FALSE)) {
+  # --- Calculate retention-at-length ---- 
+  if (!exists('retL', inherits = FALSE)) {
     retL <- array(NA, dim = c(nsim, nCALbins, nyears + proyears)) # retention at length
+    
     for (yr in 1:(nyears+proyears)) {
-      # Calculate retention at length class 
-      # retL[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFR[yr,i], s1[i], s2[i], lens=CAL_binsmid)))   
-      retL[,, yr] <- RetLength
+      srs <- (Linf - LFR[yr,]) / ((-log(Rmaxlen[yr,],2))^0.5) 
+      sls <- (LFR[yr,] - LR5[yr,]) /((-log(0.05,2))^0.5)
+      srs[!is.finite(srs)] <- Inf
+      retL[,, yr] <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFR[yr,], sls=sls, srs=srs))  
     }
-  } else {
-    # check dimensions 
-    if (any((dim(retL) != c(nsim, nCALbins, proyears+nyears)))) 
-      stop("retL must have dimensions: nsim (", nsim,") nCALbins (", nCALbins, 
-           ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
-           dim(retL)[1], " ", dim(retL)[2], " ", dim(retL)[3], call.=FALSE) 
   }
-  
   
   V2 <- V
   SLarray2 <- SLarray
@@ -1087,6 +1044,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Fleetout$SLarray <- SLarray # realized vulnerability-at-length
   Fleetout$V2 <- V2 # original vulnerablity-at-age curve 
   Fleetout$SLarray2 <- SLarray2 # original vulnerablity-at-length curve 
+  
   
   # check V 
   if (sum(apply(V, c(1,3), max) <0.01)) {
