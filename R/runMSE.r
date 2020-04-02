@@ -652,6 +652,19 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
  
   Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0
   
+  # Calculate unfished N-at-age
+  histYrs_unfished <- sapply(1:nsim, function(x) 
+    popdynCPP(nareas, maxage, Ncurr=N[x,,1,], nyears,  
+              M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
+              Vuln=V[x,,], Retc=retA[x,,], Prec=Perr_y[x,], movc=split.along.dim(mov[x,,,,],4), 
+              SRrelc=SRrel[x], 
+              Effind=rep(0, nyears),  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+              SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], Fapic=0, MPA=MPA, maxF=maxF, 
+              control=1, SSB0c=SSB0[x], plusgroup=plusgroup))
+  N_unfished <- aperm(array(as.numeric(unlist(histYrs_unfished[1,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
+  N_unfished <- apply(N_unfished, 1:3, sum)
+  
+  
   # Check that depletion is correct
   if (checks) {
     if (prod(round(D, 2)/ round(Depletion,2)) != 1) {
@@ -837,8 +850,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                           Maturity=Mat_age, N.Mortality=M_ageArray,
                           Nage=apply(N, 1:3, sum),
                           SSBage=apply(SSB, 1:3, sum),
-                          FM=FM
-                           )
+                          FM=FM,
+                          N_unfished=N_unfished)
     nout <- t(apply(N, c(1, 3), sum)) 
     vb <- t(apply(VBiomass, c(1, 3), sum))
     b <- t(apply(Biomass, c(1, 3), sum))
