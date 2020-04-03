@@ -1129,7 +1129,7 @@ class(LBSPR) <- 'MP'
 LBSPR_MLL <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, n=5, smoother=TRUE, R=0.2) {
 
   Rec <- new("Rec")
-  if (length(Data@Misc)<1) Data@Misc <- list(rep(NULL,x))
+  if (length(Data@Misc)<=1) Data@Misc <- vector('list', x)
 
   if (is.null(Data@Misc[[x]]) || length(Data@Misc[[x]])<1 ||is.null(Data@Misc[[x]]$MLLset)) {
     runLBSPR <- LBSPR_(x, Data, reps, n, smoother, R=R)
