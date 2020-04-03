@@ -111,13 +111,14 @@ Blow_opt<-function(lnq, N, Asize_c, SSBMSYc,SSBpRc, MPA, SSB0c, nareas, retAc,
                    SRrelc,aRc,bRc,Bfrac,maxF, mode=1, plusgroup=0){
   
   pyears <- nyears + MGThorizonc
+  n_age <- maxage + 1
 
   # Life history parameters fixed at current values for projection years
   M_age <- Mc[,c(1:nyears, rep(nyears, MGThorizonc))]
   MatAge <- Mac[,c(1:nyears, rep(nyears, MGThorizonc))]
   WtAge <- Wac[,c(1:nyears, rep(nyears, MGThorizonc))]
 
-  Prec <- c(Perrc[1:(nyears+maxage)], rep(1, MGThorizonc)) # no recruitment variability in projection
+  Prec <- c(Perrc[1:(nyears+maxage+1)], rep(1, MGThorizonc)) # no recruitment variability in projection
   Effind <- c(Fc, rep(0, MGThorizonc)) # no fishing mortality in futute
 
   Vuln <- Vc[,c(1:nyears, rep(nyears, MGThorizonc))]
@@ -125,7 +126,7 @@ Blow_opt<-function(lnq, N, Asize_c, SSBMSYc,SSBpRc, MPA, SSB0c, nareas, retAc,
   
   MPA <- MPA[c(1:nyears, rep(nyears, MGThorizonc)),]
 
-  movcx <- array(movc[,,,nyears], dim=c(maxage, nareas, nareas, pyears)) # current movement pattern
+  movcx <- array(movc[,,,nyears], dim=c(n_age, nareas, nareas, pyears)) # current movement pattern
 
   simpop <- popdynCPP(nareas, maxage, N, pyears, M_age, Asize_c,
                       MatAge, WtAge, Vuln, Retc, Prec, split.along.dim(movcx,4), 

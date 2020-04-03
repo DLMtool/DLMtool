@@ -574,17 +574,16 @@ userguide_link <- function(url, ref=NULL) {
 #'
 #' @param nsim Number of simulations
 #' @param yrs Number of years 
-#' @param maxage Maximum age
-#' @param Cret Retained Catch at age in numbers - array(sim, years, maxage)
+#' @param n_age Number of age classes 
+#' @param Cret Retained Catch at age in numbers - array(sim, years, maxage+1)
 #' @param CAA_ESS CAA effective sample size 
 #' @param CAA_nsamp CAA sample size
 #'
 #' @return CAA array 
-simCAA <- function(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp) {
+simCAA <- function(nsim, yrs, n_age, Cret, CAA_ESS, CAA_nsamp) {
   # generate CAA from retained catch-at-age 
-  
-  CAA <- array(NA, dim = c(nsim, yrs, maxage))  # Catch  at age array
-  
+  CAA <- array(NA, dim = c(nsim, yrs, n_age))  # Catch  at age array
+
   # a multinomial observation model for catch-at-age data
   for (i in 1:nsim) {
     for (j in 1:yrs) {
@@ -1016,7 +1015,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBr
 
 # calculate average unfished ref points over first A50 years
 CalcUnfishedRefs <- function(x, ageM, N0_a, SSN0_a, SSB0_a, B0_a, VB0_a, SSBpRa, SSB0a_a) {
-  avg.ind <- 1:ceiling(ageM[x,1]) # unfished eq ref points averaged over these years 
+  avg.ind <- 1:(ceiling(ageM[x,1])+1) # unfished eq ref points averaged over these years 
   nyears <- dim(N0_a)[2]
   if (length(avg.ind) > nyears) avg.ind <- 1:nyears
   

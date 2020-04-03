@@ -15,6 +15,9 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.4.3 
 
+### Major changes
+- Age accounting now starts from age-0 instead of age-1
+
 ### Minor changes
 - Added spatial sampling for some data. Set the fraction of sampling within each area 
 as a named list in `OM@cpars$control$Sample_Area`; e.g., `OM@cpars$control$Sample_Area$Catch`
