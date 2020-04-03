@@ -17,6 +17,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - fix to calculation of retained and total catch - thanks to K. Sys for picking this up.
 
 ## DLMtool 5.4.3 
+
 ### Minor changes
 - Added spatial sampling for some data. Set the fraction of sampling within each area 
 as a named list in `OM@cpars$control$Sample_Area`; e.g., `OM@cpars$control$Sample_Area$Catch`

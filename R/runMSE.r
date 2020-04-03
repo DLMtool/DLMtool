@@ -375,6 +375,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SY <- SAYR[, c(1, 3)]
   Sa[,2]<- n_age-Sa[,2] + 1 # This is the process error index for initial year
 
+  #### TO DO ####
   # Calculate initial distribution if mov provided in cpars
   if(!exists('initdist', inherits = FALSE)) { # movement matrix has been provided in cpars
     # Pinitdist is created in SampleStockPars instead of initdist if 

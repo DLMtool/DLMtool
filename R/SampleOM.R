@@ -135,21 +135,20 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     StockOut$hs <- hs
   }
   if (any(StockOut$hs > 1 | StockOut$hs < 0.2)) stop("Steepness (OM@h) must be between 0.2 and 1", call.=FALSE)
-  
+ 
   # == Recruitment Deviations ====
   if (exists("Perr", inherits = FALSE)) {
     procsd <- Perr
   }
   
+  
   if (!exists("Perr_y", inherits=FALSE)) {
-    
     if (!exists("procsd", inherits=FALSE)) {
       StockOut$procsd <- procsd <- myrunif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
     } else {
       StockOut$procsd <- procsd
     }
     
-
     if (!exists("AC", inherits=FALSE)) {
       StockOut$AC <- AC <- myrunif(nsim, Stock@AC[1], Stock@AC[2]) 
       # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
@@ -157,7 +156,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       StockOut$AC <- AC 
       # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
     }
-
+    
     # All recruitment Deviations
     # Add cycle (phase shift) to recruitment deviations - if specified
     if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
@@ -175,18 +174,20 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     } else {
       recMulti <- 1 
     }
-    
-    StockOut$procmu <- procmu <- -0.5 * procsd^2  * (1 - AC)/sqrt(1 - AC^2) #  
-    # adjusted log normal mean http://dx.doi.org/10.1139/cjfas-2016-0167
+    StockOut$procmu <- procmu <- -0.5 * procsd^2  * (1 - AC)/sqrt(1 - AC^2) #  # adjusted log normal mean http://dx.doi.org/10.1139/cjfas-2016-0167
     
     Perr_y <- array(rnorm((nyears + proyears+n_age-1) * nsim, rep(procmu, nyears + proyears+n_age-1), 
                           rep(procsd, nyears + proyears+n_age-1)), c(nsim, nyears + proyears+n_age-1))
-    for (y in 2:(nyears + proyears+n_age-1)) Perr_y[, y] <- AC * Perr_y[, y - 1] + Perr_y[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
-
+    for (y in 2:(nyears + proyears+n_age-1)) Perr_y[, y] <- AC * Perr_y[, y - 1] + Perr_y[, y] * (1 - AC * AC)^0.5  
+    #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
+    
+    StockOut$Perr_y <- Perr_y <- exp(Perr_y) * recMulti # normal space (mean 1 on average) 
+    
   } else {
     StockOut$Perr_y <- Perr_y
     StockOut$procsd <- apply(Perr_y, 1, sd)
   }
+ 
 
   # if (nsim > 1) {
   #   cumlRecDev <- apply(Perr[, 1:(nyears+maxage-1)], 1, prod)
@@ -492,7 +493,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     M_ageArray <- temp2 * M_ageArray
     # M is calculated as mean M of mature ages
     M <- rep(NA, nsim)
-
     for (sim in 1:nsim) M[sim] <- mean(Mage[sim,(round(ageM[sim],0)+1):n_age])
   }
   
@@ -530,7 +530,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       Winf <- Stock@a * Linf^Stock@b
       ind <- as.matrix(expand.grid(1:nsim, 1:n_age, 1:(nyears+proyears)))
       M_ageArray[ind] <- Marray[ind[,c(1,3)]] * (Wt_age[ind]/Winf[ind[,1]]) ^ Mexp[ind[,1]]  
-    }  
+    } 
     
     
     # == Scale M at age so that mean M of mature ages is equal to sampled M ====
@@ -822,6 +822,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
     } 
     
     # selectivity at maximum length
+    # selectivity at maximum length
     Vmaxlens <- mapply(runif, n = nsim, min = Fleet@VmaxLower, max = Fleet@VmaxUpper)
     
     # update selectivity parameters 
@@ -862,7 +863,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
         V <- abind::abind(V, v2, along=3)
       }
       if(any(dim(V)!= c(nsim, n_age, nyears + proyears)))
-         stop('V must be dimensions: nsim, n_age, nyears + proyears')
+        stop('V must be dimensions: nsim, n_age, nyears + proyears')
       
       VB <- function(Linf, K, t0, age) Linf * (1-exp(-K*(age-t0)))
       for (yr in 1:(nyears+proyears)) {
@@ -898,11 +899,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   if (!exists("V", inherits = FALSE)) {
     # calculate selectivity-at-age from selectivity-at-length
     VList <- lapply(1:nsim, calcV, Len_age=Len_age, LenCV=LenCV, SLarray=SLarray, 
-           n_age=n_age, nyears=nyears, proyears=proyears, CAL_binsmid=CAL_binsmid)
+                    n_age=n_age, nyears=nyears, proyears=proyears, CAL_binsmid=CAL_binsmid)
     V <- aperm(array(as.numeric(unlist(VList, use.names=FALSE)), dim=c(n_age, nyears+proyears, nsim)), c(3,1,2))
   }
   
-
   # ---- Retention Curve ---- 
   if(!exists("LR5", inherits = FALSE)) LR5 <- runif(nsim, min(Fleet@LR5), max(Fleet@LR5)) * multi
   if(!exists("LFR", inherits = FALSE)) LFR <- runif(nsim, min(Fleet@LFR), max(Fleet@LFR)) * multi
