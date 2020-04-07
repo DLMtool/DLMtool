@@ -1052,7 +1052,7 @@ CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, OM) {
 }
 
 
-calcV <- function(x, Len_age, LenCV, SLarray, n_age, nyears, proyears) {
+calcV <- function(x, Len_age, LenCV, SLarray, n_age, nyears, proyears, CAL_binsmid) {
   len_at_age <- Len_age[x,,]
   len_aa_sd <- LenCV[x] * len_at_age
   sel_at_length <- SLarray[x,,]
