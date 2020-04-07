@@ -1051,6 +1051,22 @@ CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, OM) {
   data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, BMSY=BMSY, VBMSY=VBMSY)
 }
 
+
+calcV <- function(x, Len_age, LenCV, SLarray, n_age, nyears, proyears) {
+  len_at_age <- Len_age[x,,]
+  len_aa_sd <- LenCV[x] * len_at_age
+  sel_at_length <- SLarray[x,,]
+  v <- matrix(0, n_age, nyears+proyears)
+  for (yr in 1:(nyears+proyears)) {
+    ALK <- mapply(dnorm, mean=len_at_age[,yr], sd=len_aa_sd[,yr], MoreArgs=list(x=CAL_binsmid))
+    ALK_t <- matrix(colSums(ALK), nrow=nrow(ALK), ncol=ncol(ALK), byrow = TRUE)
+    ALK <- t(ALK/ALK_t)
+    sela <- ALK %*% sel_at_length[,yr] 
+    v[,yr] <- sela[,1]
+  }
+  v
+}
+
 # 
 # makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,
 #                           CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp, 
