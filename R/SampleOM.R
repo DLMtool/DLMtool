@@ -341,8 +341,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     if (any(dim(Wt_age) != c(nsim, n_age, nyears + proyears))) 
       stop("'Wt_age' must be array with dimensions: nsim, maxage+1, nyears + proyears (", paste(c(nsim, maxage+1, nyears + proyears), ""), ") but has ", paste(dim(Wt_age), "")) 
     # Estimate length-weight parameters from the Wt_age data
-    logL <- log(as.numeric(Len_age))
-    logW <- log(as.numeric(Wt_age))
+    logL <- log(as.numeric(Len_age)+tiny)
+    logW <- log(as.numeric(Wt_age)+tiny)
     mod  <- lm(logW ~ logL)
     EstVar <- summary(mod)$sigma^2
     Wa <- as.numeric(exp(coef(mod)[1]) * exp((EstVar)/2))
@@ -492,7 +492,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     M_ageArray <- temp2 * M_ageArray
     # M is calculated as mean M of mature ages
     M <- rep(NA, nsim)
-    for (sim in 1:nsim) M[sim] <- mean(Mage[sim,round(ageM[sim],0):maxage]) # mean adult M 
+
+    for (sim in 1:nsim) M[sim] <- mean(Mage[sim,(round(ageM[sim],0)+1):n_age])
   }
   
   # == Mean Natural mortality by simulation and year ====
@@ -507,7 +508,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     Marray <- matrix(NA, nsim, nyears+proyears)
     for (yr in 1:(nyears+proyears)) {
       for (sim in 1:nsim) {
-        Marray[sim, yr] <- mean(M_ageArray[sim, round(ageM[sim,yr],0):maxage,yr])
+        Marray[sim, yr] <- mean(M_ageArray[sim, (ageM[sim,yr]+1):n_age,yr])
       }
     }
   }
@@ -522,7 +523,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!exists("M_ageArray", inherits=FALSE)) { # only calculate M_ageArray if it hasn't been specified in cpars
     M_ageArray <- array(NA, dim=c(nsim, n_age, nyears + proyears))
     if (exists("Mage", inherits=FALSE)) { # M-at-age has been provided
-      temp1 <- Mage/ matrix(apply(Mage, 1, mean), nsim, maxage, byrow=FALSE)
+      temp1 <- Mage/ matrix(apply(Mage, 1, mean), nsim, n_age, byrow=FALSE)
       ind <- as.matrix(expand.grid(1:nsim, 1:n_age, 1:(nyears+proyears)))
       M_ageArray[ind] <- temp1[ind[,1:2]] * Marray[ind[,c(1,3)]]
     } else { # M-at-age calculated from Lorenzen curve 
@@ -535,12 +536,12 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     # == Scale M at age so that mean M of mature ages is equal to sampled M ====
     tempM_ageArray <- M_ageArray
     for (sim in 1:nsim) {
-      matyrs <- ageM[sim, nyears]:n_age
+      matyrs <- (ageM[sim, nyears]+1):n_age
       if (length(matyrs) >1) {
         # scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean) 
         scale <- Marray[sim,]/ (apply(tempM_ageArray[sim,matyrs,], 2, sum)/length(matyrs)) # this is about 4 times faster
       } else if (length(matyrs)==1){
-        scale <- Marray[sim,]/ tempM_ageArray[sim,ageM[sim]:n_age,]  
+        scale <- Marray[sim,]/ tempM_ageArray[sim,(ageM[sim]+1):n_age,]  
       } 
       
       M_ageArray[sim,,] <- M_ageArray[sim,,] * matrix(scale, n_age, nyears+proyears, byrow=TRUE)
@@ -853,6 +854,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   } else {
     if (exists("V", inherits = FALSE)) {
       # update selectivity parameters
+      if (dim(V)[3] == nyears) {
+        Dims <- dim(V)
+        v2 <- array(V[,,nyears], dim=c(Dims[1], Dims[2], proyears))
+        V <- abind::abind(V, v2, along=3)
+      }
       if(any(dim(V)!= c(nsim, n_age, nyears + proyears)))
          stop('V must be dimensions: nsim, n_age, nyears + proyears')
       
@@ -972,6 +978,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   V2 <- V
   SLarray2 <- SLarray
   
+ 
   # Apply general discard rate 
   dr <- aperm(abind::abind(rep(list(DR_y), n_age), along=3), c(2,3,1))
   retA <- (1-dr) * retA
@@ -1009,6 +1016,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   Fleetout$V2 <- V2 # original vulnerablity-at-age curve 
   Fleetout$SLarray2 <- SLarray2 # original vulnerablity-at-length curve 
   
+
   
   # check V 
   if (sum(apply(V, c(1,3), max) <0.01)) {
