@@ -258,6 +258,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if("seed"%in%slotNames(OM)) set.seed(OM@seed) # set seed for reproducibility 
   
   OM <- updateMSE(OM)
+  
   if (OM@nsim <=1) stop("OM@nsim must be > 1", call.=FALSE)
   tiny <- 1e-15  # define tiny variable
   
@@ -310,7 +311,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
 
   # Fleet Parameters & assign to function environment
-  FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, 
+  FleetPars <- SampleFleetPars(Fleet=SubOM(OM, "Fleet"), Stock=StockPars, nsim, 
                                nyears, proyears, cpars=SampCpars)
   for (X in 1:length(FleetPars)) assign(names(FleetPars)[X], FleetPars[[X]])
   
@@ -375,7 +376,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SY <- SAYR[, c(1, 3)]
   Sa[,2]<- n_age-Sa[,2] + 1 # This is the process error index for initial year
 
-  #### TO DO ####
   # Calculate initial distribution if mov provided in cpars
   if(!exists('initdist', inherits = FALSE)) { # movement matrix has been provided in cpars
     # Pinitdist is created in SampleStockPars instead of initdist if 
@@ -422,10 +422,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
            Perr=Perr_yp, mov=movp, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
            R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, MPA=noMPA, maxF=maxF,
            Nyrs)
-    Neq1 <- aperm(array(as.numeric(unlist(runProj)), dim=c(maxage, nareas, nsim)), c(3,1,2))  # unpack the list 
+    Neq1 <- aperm(array(as.numeric(unlist(runProj)), dim=c(n_age, nareas, nsim)), c(3,1,2))  # unpack the list 
   
     # --- Equilibrium spatial / age structure (initdist by SAR)
-    initdist <- Neq1/array(apply(Neq1, c(1,2), sum), dim=c(nsim, maxage, nareas))
+    initdist <- Neq1/array(apply(Neq1, c(1,2), sum), dim=c(nsim, n_age, nareas))
     
     # check arrays and calculations
     if (checks) {
