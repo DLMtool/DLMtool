@@ -105,7 +105,7 @@ ChkObj <- function(OM, error=TRUE) {
     if (!error) warning("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
   }
 
-  
+  OM <- CheckOM(OM)
   ## Add variability - variability required in all values otherwise
   # OMs are not reproducible. 
   # for (sl in slotNames(OM)) {
@@ -128,6 +128,76 @@ ChkObj <- function(OM, error=TRUE) {
   
   
 }
+
+CheckOM <- function(OM) {
+  # check for old OMs with recruitment at age 1
+  maxage <- OM@maxage
+  n_age <- maxage +1 # number of age classes
+  assumptions <- NULL
+  msg <- FALSE
+  if (length(OM@M)==maxage) {
+    OM@M <- c(OM@M[1], OM@M)
+    OM@M2 <- c(OM@M2[1], OM@M2)
+    msg <- TRUE
+    assumptions <- 'OM@M and OM@M2 start at Age-1. Assuming M-at-age-0 is same as M-at-age-1'
+  }
+  if (!is.null(OM@cpars$Len_age) && dim(OM@cpars$Len_age)[2] ==maxage) {
+    len0 <- array(tiny, dim=c(dim(OM@cpars$Len_age)[1], 1, dim(OM@cpars$Len_age)[3]))
+    OM@cpars$Len_age <- abind::abind(len0, OM@cpars$Len_age, along=2)
+    msg <- TRUE 
+    assumptions <- c(assumptions, 'OM@cpars$Len_age starts at Age-1. Assuming length-at-age-0 is 0')
+  }
+  if (!is.null(OM@cpars$Wt_age) && dim(OM@cpars$Wt_age)[2] ==maxage) {
+    len0 <- array(tiny, dim=c(dim(OM@cpars$Wt_age)[1], 1, dim(OM@cpars$Wt_age)[3]))
+    OM@cpars$Wt_age <- abind::abind(len0, OM@cpars$Wt_age, along=2)
+    msg <- TRUE
+    assumptions <- c(assumptions, 'OM@cpars$Wt_age starts at Age-1. Assuming weight-at-age-0 is 0')
+  }
+  if (!is.null(OM@cpars$Mat_age) && dim(OM@cpars$Mat_age)[2] ==maxage) {
+    len0 <- array(tiny, dim=c(dim(OM@cpars$Mat_age)[1], 1, dim(OM@cpars$Mat_age)[3]))
+    OM@cpars$Mat_age <- abind::abind(len0, OM@cpars$Mat_age, along=2)
+    msg <- TRUE
+    assumptions <- c(assumptions, 'OM@cpars$Mat_age starts at Age-1. Assuming maturity-at-age-0 is 0')
+  }
+  if (!is.null(OM@cpars$M_ageArray) && dim(OM@cpars$M_ageArray)[2] ==maxage) {
+    len0 <- array(OM@cpars$M_ageArray[,1,], dim=c(dim(OM@cpars$M_ageArray)[1], 1, dim(OM@cpars$M_ageArray)[3]))
+    OM@cpars$M_ageArray <- abind::abind(len0, OM@cpars$M_ageArray, along=2)
+    msg <- TRUE
+    assumptions <- c(assumptions, 'OM@cpars$M_ageArray starts at Age-1. Assuming M-at-age-0 is same as M-at-age-1')
+  }
+  if (!is.null(OM@cpars$V) && dim(OM@cpars$V)[2] ==maxage) {
+    len0 <- array(tiny, dim=c(dim(OM@cpars$V)[1], 1, dim(OM@cpars$V)[3]))
+    OM@cpars$V <- abind::abind(len0, OM@cpars$V, along=2)
+    msg <- TRUE
+    assumptions <- c(assumptions, 'OM@cpars$V starts at Age-1. Assuming V-at-age-0 is 0')
+  }
+  if (!is.null(OM@cpars$retA) && dim(OM@cpars$retA)[2] ==maxage) {
+    len0 <- array(tiny, dim=c(dim(OM@cpars$retA)[1], 1, dim(OM@cpars$retA)[3]))
+    OM@cpars$retA <- abind::abind(len0, OM@cpars$retA, along=2)
+    msg <- TRUE
+    assumptions <- c(assumptions, 'OM@cpars$retA starts at Age-1. Assuming retention-at-age-0 is 0')
+  }
+  if (!is.null(OM@cpars$mov) && dim(OM@cpars$mov)[2] == OM@maxage) {
+    Dims <- dim(OM@cpars$mov)
+    Dims[2] <- 1
+    age0 <- array(OM@cpars$mov[,1,,], dim=Dims)
+    OM@cpars$mov <- abind::abind(OM@cpars$mov, age0, along=2)
+    msg <- TRUE
+    assumptions <- c(assumptions, 'OM@cpars$mov starts at Age-1. Assuming movement-at-age-0 is same as movement-at-age-1')
+  }
+  
+  if (!is.null(OM@cpars$Perr_y) && dim(OM@cpars$Perr_y)[2] == OM@nyears+OM@maxage+OM@proyears-1) {
+    OM@cpars$Perr_y <- cbind(rep(1, dim(OM@cpars$Perr_y)[1]), OM@cpars$Perr_y)
+  }
+  if (!is.null(OM@cpars$Perr) && dim(OM@cpars$Perr)[2] == OM@nyears+OM@maxage+OM@proyears-1) {
+    OM@cpars$Perr <- cbind(rep(1, dim(OM@cpars$Perr)[1]), OM@cpars$Perr)
+  }
+  if (msg) {
+    warning('Age classes now start at Age-0 instead of Age-1.\n\n',  print(paste(assumptions, collapse = "\n")))
+  }
+  OM
+}
+
 
 OptionalSlots <- function() {
   SelSlots <- c("SelYears", "L5Lower", "L5Upper", "LFSLower",
@@ -1056,9 +1126,10 @@ calcV <- function(x, Len_age, LenCV, SLarray, n_age, nyears, proyears, CAL_binsm
   len_at_age <- Len_age[x,,]
   len_aa_sd <- LenCV[x] * len_at_age
   sel_at_length <- SLarray[x,,]
-  v <- matrix(0, n_age, nyears+proyears)
+  v <- matrix(tiny, n_age, nyears+proyears)
   for (yr in 1:(nyears+proyears)) {
     ALK <- mapply(dnorm, mean=len_at_age[,yr], sd=len_aa_sd[,yr], MoreArgs=list(x=CAL_binsmid))
+    ALK[ALK<=0] <- tiny
     ALK_t <- matrix(colSums(ALK), nrow=nrow(ALK), ncol=ncol(ALK), byrow = TRUE)
     ALK <- t(ALK/ALK_t)
     sela <- ALK %*% sel_at_length[,yr] 
