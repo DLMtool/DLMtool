@@ -822,7 +822,6 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
     } 
     
     # selectivity at maximum length
-    # selectivity at maximum length
     Vmaxlens <- mapply(runif, n = nsim, min = Fleet@VmaxLower, max = Fleet@VmaxUpper)
     
     # update selectivity parameters 
@@ -864,7 +863,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
       }
       if(any(dim(V)!= c(nsim, n_age, nyears + proyears)))
         stop('V must be dimensions: nsim, n_age, nyears + proyears')
-      
+
       VB <- function(Linf, K, t0, age) Linf * (1-exp(-K*(age-t0)))
       for (yr in 1:(nyears+proyears)) {
         for (s in 1:nsim) {
@@ -903,6 +902,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
     V <- aperm(array(as.numeric(unlist(VList, use.names=FALSE)), dim=c(n_age, nyears+proyears, nsim)), c(3,1,2))
   }
   
+  
   # ---- Retention Curve ---- 
   if(!exists("LR5", inherits = FALSE)) LR5 <- runif(nsim, min(Fleet@LR5), max(Fleet@LR5)) * multi
   if(!exists("LFR", inherits = FALSE)) LFR <- runif(nsim, min(Fleet@LFR), max(Fleet@LFR)) * multi
@@ -913,7 +913,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   LFR_y <- matrix(LFR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   Rmaxlen_y <- matrix(Rmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   DR_y <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-  
+
   if (exists("retL", inherits=FALSE)) {
     # update retention parameters
     if (exists("retA", inherits = FALSE))  stop("Cannot pass both retL and retA in cpars")
@@ -969,7 +969,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
       retL[,, yr] <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFR_y[yr, ], sls=sls, srs=srs))
     }
   }
-  
+
   if (!exists("retA", inherits = FALSE)) {
     # calculate selectivity-at-age from selectivity-at-length
     retAList <- lapply(1:nsim, calcV, Len_age=Len_age, LenCV=LenCV, SLarray=retL, 
@@ -988,7 +988,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   dr <- aperm(abind::abind(rep(list(DR_y), nCALbins), along=3), c(2,3,1))
   retL <- (1-dr) * retL
   
-  # update realized vulnerablity curve with retention and dead discarded fish 
+  # update realized vulnerability curve with retention and dead discarded fish 
   Fdisc_array1 <- array(Fdisc, dim=c(nsim, n_age, nyears+proyears))
   V <- V * (retA + (1-retA)*Fdisc_array1) # Realised selection at age
   
