@@ -890,7 +890,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   if (!exists("V", inherits = FALSE)) {
     # calculate selectivity-at-age from selectivity-at-length
     VList <- lapply(1:nsim, calcV, Len_age=Len_age, LenCV=LenCV, SLarray=SLarray, 
-           n_age=n_age, nyears=nyears, proyears=proyears)
+           n_age=n_age, nyears=nyears, proyears=proyears, CAL_binsmid=CAL_binsmid)
     V <- aperm(array(as.numeric(unlist(VList, use.names=FALSE)), dim=c(n_age, nyears+proyears, nsim)), c(3,1,2))
   }
   
@@ -961,15 +961,22 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
       retL[,, yr] <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFR_y[yr, ], sls=sls, srs=srs))
     }
   }
+  
+  if (!exists("retA", inherits = FALSE)) {
+    # calculate selectivity-at-age from selectivity-at-length
+    retAList <- lapply(1:nsim, calcV, Len_age=Len_age, LenCV=LenCV, SLarray=retL, 
+                    n_age=n_age, nyears=nyears, proyears=proyears, CAL_binsmid=CAL_binsmid)
+    retA <- aperm(array(as.numeric(unlist(retAList, use.names=FALSE)), dim=c(n_age, nyears+proyears, nsim)), c(3,1,2))
+  }
     
   V2 <- V
   SLarray2 <- SLarray
   
   # Apply general discard rate 
-  dr <- aperm(abind::abind(rep(list(DR), n_age), along=3), c(2,3,1))
+  dr <- aperm(abind::abind(rep(list(DR_y), n_age), along=3), c(2,3,1))
   retA <- (1-dr) * retA
   
-  dr <- aperm(abind::abind(rep(list(DR), nCALbins), along=3), c(2,3,1))
+  dr <- aperm(abind::abind(rep(list(DR_y), nCALbins), along=3), c(2,3,1))
   retL <- (1-dr) * retL
   
   # update realized vulnerablity curve with retention and dead discarded fish 
@@ -986,17 +993,17 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   Fleetout$Fdisc <- Fdisc
   Fleetout$Fdisc_array1 <- Fdisc_array1
   Fleetout$Fdisc_array2 <- Fdisc_array2
-  Fleetout$LR5 <- LR5  
-  Fleetout$LFR <- LFR 
-  Fleetout$Rmaxlen <- Rmaxlen
-  Fleetout$DR <- DR
+  Fleetout$LR5 <- LR5_y  
+  Fleetout$LFR <- LFR_y
+  Fleetout$Rmaxlen <- Rmaxlen_y
+  Fleetout$DR <- DR_y
   
   Fleetout$retA <- retA  # retention-at-age array - nsim, maxage, nyears+proyears
   Fleetout$retL <- retL  # retention-at-length array - nsim, nCALbins, nyears+proyears
   
-  Fleetout$L5 <- L5  
-  Fleetout$LFS <- LFS 
-  Fleetout$Vmaxlen <- Vmaxlen 
+  Fleetout$L5 <- L5_y  
+  Fleetout$LFS <- LFS_y 
+  Fleetout$Vmaxlen <- Vmaxlen_y
   Fleetout$V <- V  # realized vulnerability-at-age
   Fleetout$SLarray <- SLarray # realized vulnerability-at-length
   Fleetout$V2 <- V2 # original vulnerablity-at-age curve 
