@@ -8,6 +8,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - fix catch bias for projections when conditioning on real data
 - fix retention-at-age when retention-at-length passed in `OM@cpars`
 - fix bug in `LBSPR_MLL` MP 
+- correction for auto-correlation in index when real data is used to condition model.
 
 ## DLMtool 5.4.2 
 
