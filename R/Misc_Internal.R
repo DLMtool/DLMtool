@@ -763,7 +763,7 @@ generateRes <- function(df, nsim, proyears, lst.err) {
   sd <- df$sd 
   ac <- df$AC
   if (all(is.na(sd))) return(rep(NA, nsim))
-  mu <- 0.5 * (sd)^2
+  mu <- -0.5 * (sd)^2 * (1 - ac)/sqrt(1 - ac^2)
   Res <- matrix(rnorm(proyears*nsim, mu, sd), nrow=proyears, ncol=nsim, byrow=TRUE) 
   # apply a pseudo AR1 autocorrelation 
   Res <- sapply(1:nsim, applyAC, res=Res, ac=ac, max.years=proyears, lst.err=lst.err) # log-space
@@ -777,7 +777,6 @@ applyAC <- function(x, res, ac, max.years, lst.err) {
     } else {
       res[y,x] <- ac[x] * res[y-1,x] + res[y,x] * (1-ac[x] * ac[x])^0.5  
     }
-    
   }
   res[,x]
 }
