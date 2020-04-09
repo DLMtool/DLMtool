@@ -161,6 +161,78 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   vn <- apply(N*Sample_Area$CAL[,,1:nyears,], c(1,2,3), sum) * FleetPars$retA[,,1:nyears] 
   # numbers at age in population that would be retained
   vn <- aperm(vn, c(1,3, 2))
+  
+  
+  
+  # ---- Lee's Phen Approx ----
+  maxsd <- 2
+  ngtg <- 9
+  distGTG <- seq(-maxsd, maxsd, length.out=ngtg)
+  rdist <- dnorm(distGTG, 0, 1.0, 0)
+  rdist <- rdist/sum(rdist)
+  
+  LAA <- array(NA, dim=c(nsim, n_age, nyears, ngtg))
+  SAA <- array(NA, dim=c(nsim, n_age, nyears, ngtg))
+  
+  # Set up array indexes sim (S) age (A) year (Y) growth-group (G)
+  SAYG <- as.matrix(expand.grid(1:ngtg, 1:(nyears), 1:n_age, 1:nsim)[4:1])  
+  SAY <- SAYG[,1:3]
+  S <- SAYG[,1]
+  G <- SAYG[,4]
+  # distribution of length-at-age across groups
+  LAA[SAYG] <- Len_age[SAY] + LenCV[S]*Len_age[SAY]*distGTG[G]  
+  
+  # selectivity for each age and growth group
+  for (yr in 1:nyears) {
+    for (g in 1:ngtg) {
+      SAA[,,yr,g] <- t(sapply(1:nsim, function(x) 
+        dnormal(LAA[x,,yr,g], LFS[yr,x], 
+                (LFS[yr,x] - L5[yr,x]) / sqrt(-log2(0.05)),
+                (Linf[x]- LFS[yr,x]) / sqrt(-log2(Vmaxlen[yr,x])))))
+    }
+  }
+  
+  
+  
+  yr <- 50
+  
+  ageind <- 0:maxage
+  yrind <- yr - (n_age-ageind)
+  
+  FAA <- array(NA, dim=c(nsim, n_age, length(yrind), ngtg))
+  ZAA <- array(NA, dim=c(nsim, n_age, length(yrind), ngtg))
+  
+  # Set up array indexes sim (S) age (A) year (Y) growth-group (G)
+  SAYG <- as.matrix(expand.grid(1:ngtg, 1:length(yrind), 1:n_age, 1:nsim)[4:1])  
+  SAY <- SAYG[,1:3]
+  SY <- SAYG[,c(1,3)]
+  S <- SAYG[,1]
+  G <- SAYG[,4]
+  
+  FAA[SAYG] <- Find[SY]*qs[S]*SAA[SAYG]
+  ZAA[SAYG] <- FAA[SAYG] + Mat_age[SAY]
+  
+  NPR <- array(NA, dim=c(nsim, n_age, length(yrind), ngtg))
+  temp <- array(rdist, dim=c(ngtg, length(yrind), nsim))
+  NPR[,1,,] <- aperm(temp, c(3,2,1)) # distribute recruits 
+  
+  ZAA2 <- aperm(apply(ZAA, c(1,3,4), cumsum), c(2,1,3,4))
+  
+  
+ 
+  
+ 
+  
+  
+  
+  
+
+
+  
+ 
+  
+  
+  
 
   CALdat <- simCAL(nsim, nyears, StockPars$maxage, ObsPars$CAL_ESS, 
                    ObsPars$CAL_nsamp, StockPars$nCALbins, StockPars$CAL_binsmid, 
