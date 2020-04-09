@@ -575,16 +575,16 @@ userguide_link <- function(url, ref=NULL) {
 #' @return CAA array 
 simCAA <- function(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp) {
   # generate CAA from retained catch-at-age 
-
+  
   CAA <- array(NA, dim = c(nsim, yrs, maxage))  # Catch  at age array
   
   # a multinomial observation model for catch-at-age data
   for (i in 1:nsim) {
     for (j in 1:yrs) {
-      if (!sum(Cret[i, j,])) {
+      if (!sum(Cret[i, ,j])) {
         CAA[i, j, ] <- 0 
       } else {
-        CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], Cret[i, j,]) * CAA_nsamp[i]/CAA_ESS[i])   
+        CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], Cret[i, ,j]) * CAA_nsamp[i]/CAA_ESS[i])   
       }
     }
   }

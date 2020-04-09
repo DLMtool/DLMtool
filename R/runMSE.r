@@ -292,12 +292,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     OM@cpars$plusgroup <- NULL 
   }
   
-  # 
-  
   control <- c(control, OM@cpars$control)
-  optVB <- FALSE
-  if (!is.null(control$D) && control$D == "VB") optVB <- TRUE  # optimize depletion for vulernable biomass
   OM@cpars$control <- NULL
+  # Option to optimize depletion for vulernable biomass instead of spawning biomass
+  optVB <- FALSE
+  if (!is.null(control$D) && control$D == "VB") optVB <- TRUE  
+  
   
   # --- Sample OM parameters ----
   # Custom Parameters
@@ -769,7 +769,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   CB[is.na(CB)] <- 0
   
   # Calculate retained-at-age
-  Cret <- apply(N * (1 - exp(-Z)) * (FMret/Z), c(1, 3, 2), sum)  # Retained catch in numbers
+  Cret <- N * (1 - exp(-Z)) * (FMret/Z)  # Retained catch in numbers
   Cret[is.na(Cret)] <- 0
   CBret <- Biomass * (1 - exp(-Z)) * (FMret/Z)  # Retained catch in biomass 
   CBret[is.na(CBret)] <- 0
@@ -815,15 +815,44 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SizeLim_f<-array(rlnorm(proyears * nsim, mconv(SizeLimFrac, SizeLimSD),
                           sdconv(SizeLimFrac, SizeLimSD)), c(nsim, proyears))  # composite of size limit fraction and error
   
+  # --- Sampling by area ----
+  valNames <- c("Catch", 'BInd', 'SBInd', 'VInd', 'RecInd',
+                'CAA', 'CAL')
+  Sample_Area_array <- array(1, dim=c(nsim, nyears+proyears, nareas))
+  Sample_Area <- rep(list(Sample_Area_array), length(valNames))
+  names(Sample_Area) <- valNames
+  
+  if (!is.null(control$Sample_Area)) {
+    Sample_Area_in <- control$Sample_Area
+    inval <- names(Sample_Area_in)[!names(Sample_Area_in) %in% valNames]
+    if (length(inval)>0) 
+      stop("Invalid names in OM@cpars$control$Sample_Area.\nValid names are:\n", paste(valNames, collapse="\n"))
+    
+    for (nm in names(Sample_Area_in)) {
+      Sample_Area[[nm]] <- Sample_Area_in[[nm]]
+      if (any(dim(Sample_Area_in[[nm]]) != c(nsim, nyears+proyears, nareas))) 
+        stop("OM@cpars$Sample_Area$", nm, " must be dimensions: nsim, nareas, nyears+proyears", call. = FALSE)
+    }
+  } 
+  
+  n_age <- maxage # +1 for new version of model starting at age-0
+  nms <- c("Catch", "BInd", "SBInd", "VInd", "CAA", "CAL")
+  for (nm in nms) {
+    temp <- replicate(n_age, Sample_Area[[nm]])
+    Sample_Area[[nm]] <- aperm(temp, c(1,4,2,3))
+  }
+
   # --- Populate Data object with Historical Data ---- 
   Data <- makeData(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
                    FleetPars, ObsPars, ImpPars, RefPoints,
-                   ErrList, OM, SampCpars, initD, control=control,
+                   ErrList, OM, SampCpars, initD, Sample_Area,
+                   control=control,
                    silent=silent)
   
   # --- Condition Simulated Data on input Data object (if it exists) & calculate error stats ----
   templist <- addRealData(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBret, 
-                          nsim, nyears, proyears, silent=silent)
+                          nsim, nyears, proyears,
+                          silent=silent)
   Data <- templist$Data # update 
   ErrList <- templist$ErrList # update
   
@@ -1133,7 +1162,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                       Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                       RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
                                       FleetPars, ObsPars, upyrs, interval, y, mm, 
-                                      Misc=Data_p@Misc, SampCpars)
+                                      Misc=Data_p@Misc, SampCpars, Sample_Area)
           
           
           # Update Abundance and FMSY for FMSYref MPs
@@ -1258,7 +1287,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                     RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
                                     FleetPars, ObsPars, c(upyrs, proyears), 
                                     interval = rep(proyears - max(upyrs), length(interval)), 
-                                    proyears, mm, Misc=Data_p@Misc, SampCpars)
+                                    proyears, mm, Misc=Data_p@Misc, SampCpars, Sample_Area)
       }
       
       B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_y[,mm,(OM@nyears+1):(OM@nyears+OM@proyears)]  # SSB relative to SSBMSY

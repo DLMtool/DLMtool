@@ -2,7 +2,8 @@
 
 makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
                      FleetPars, ObsPars, ImpPars, RefPoints,
-                     ErrList, OM, SampCpars, initD, control, silent=FALSE) {
+                     ErrList, OM, SampCpars, initD, Sample_Area, 
+                     control, silent=FALSE) {
   
   if(!silent) message("Simulating observed data")
   
@@ -22,14 +23,16 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   
   # --- Observed catch ----
   # Simulated observed retained catch (biomass)
-  Cobs <- ErrList$Cbiasa[, 1:nyears] * ErrList$Cerr[, 1:nyears] * apply(CBret, c(1, 3), sum)  
+  Cobs <- ErrList$Cbiasa[, 1:nyears] * ErrList$Cerr[, 1:nyears] * 
+    apply(CBret*Sample_Area$Catch[,,1:nyears,], c(1, 3), sum)  
   Data@Cat <- Cobs 
   Data@CV_Cat <- matrix(Data@CV_Cat[,1], nrow=nsim, ncol=nyears)
   
   # --- Index of total abundance ----
   # Index of abundance from total biomass - beginning of year before fishing
   # apply hyperstability / hyperdepletion
-  II <- (apply(Biomass, c(1, 3), sum)^ObsPars$betas) * ErrList$Ierr[, 1:nyears]  
+  II <- (apply(Biomass*Sample_Area$BInd[,,1:nyears,], c(1, 3), sum)^ObsPars$betas) * 
+    ErrList$Ierr[, 1:nyears]  
   II <- II/apply(II, 1, mean)  # normalize
   Data@Ind <- II # index of total abundance
   Data@CV_Ind <- matrix(Data@CV_Ind[,1], nrow=nsim, ncol=nyears)
@@ -37,7 +40,8 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   # --- Index of spawning abundance ----
   # Index of abundance from total biomass - beginning of year before fishing
   # apply hyperstability / hyperdepletion
-  II <- (apply(SSB, c(1, 3), sum)^ObsPars$betas) * ErrList$SpIerr[, 1:nyears]  
+  II <- (apply(SSB*Sample_Area$SBInd[,,1:nyears,], c(1, 3), sum)^ObsPars$betas) * 
+    ErrList$SpIerr[, 1:nyears]  
   II <- II/apply(II, 1, mean)  # normalize
   Data@SpInd <- II # index of spawning abundance
   Data@CV_SpInd <- matrix(Data@CV_SpInd[,1], nrow=nsim, ncol=nyears)
@@ -45,13 +49,15 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   # --- Index of vulnerable abundance ----
   # Index of abundance from vulnerable biomass - beginning of year before fishing
   # apply hyperstability / hyperdepletion
-  II <- (apply(VBiomass, c(1, 3), sum)^ObsPars$betas) * ErrList$VIerr[, 1:nyears]  
+  II <- (apply(VBiomass*Sample_Area$VInd[,,1:nyears,], c(1, 3), sum)^ObsPars$betas) * 
+    ErrList$VIerr[, 1:nyears]  
   II <- II/apply(II, 1, mean)  # normalize
   Data@VInd <- II # index of vulnerable abundance
   Data@CV_VInd <- matrix(Data@CV_VInd[,1], nrow=nsim, ncol=nyears)
   
   # --- Index of recruitment ----
-  Data@Rec <- apply(N[, 1, , ], c(1, 2), sum) * ErrList$Recerr[, 1:nyears] 
+  Data@Rec <- apply(N[, 1, , ]*Sample_Area$RecInd[,1:nyears,], c(1, 2), sum) * 
+    ErrList$Recerr[, 1:nyears] 
   Data@t <- rep(nyears, nsim) # number of years of data
   
   # --- Average catch ----
@@ -148,10 +154,12 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
     rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr)) # spawing abundance
   
   # --- Catch-at-age ----
-  Data@CAA <- simCAA(nsim, nyears, StockPars$maxage, Cret, ObsPars$CAA_ESS, ObsPars$CAA_nsamp) 
-
+  Cret2 <- apply(Cret * Sample_Area$CAA[,,1:nyears,], 1:3, sum)
+  Data@CAA <- simCAA(nsim, nyears, StockPars$maxage, Cret2, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
+         
   # --- Catch-at-length ----
-  vn <- apply(N, c(1,2,3), sum) * FleetPars$retA[,,1:nyears] # numbers at age in population that would be retained
+  vn <- apply(N*Sample_Area$CAL[,,1:nyears,], c(1,2,3), sum) * FleetPars$retA[,,1:nyears] 
+  # numbers at age in population that would be retained
   vn <- aperm(vn, c(1,3, 2))
 
   CALdat <- simCAL(nsim, nyears, StockPars$maxage, ObsPars$CAL_ESS, 
@@ -224,7 +232,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
                        FMSY_P, retA_P, 
                        retL_P, StockPars, FleetPars, ObsPars, 
                        upyrs, interval, y=2, 
-                       mm=1, Misc, SampCpars) {
+                       mm=1, Misc, SampCpars, Sample_Area) {
   
   yind <- upyrs[match(y, upyrs) - 1]:(upyrs[match(y, upyrs)] - 1) # index
   
@@ -238,21 +246,18 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   Data@t <- rep(nyears + y, nsim)
   
   # --- Simulate catches ---- 
-  CBtemp <- CB_Pret[, , yind, , drop=FALSE] # retained catch-at-age
-  CNtemp <- retA_P[,,yind+nyears, drop=FALSE] * 
-    apply(N_P[,,yind,, drop=FALSE], c(1,2,3), sum) # retained age structure
+  CBtemp <- CB_Pret[, , yind, , drop=FALSE] * Sample_Area$Catch[,,nyears+yind,, drop=FALSE] 
   CBtemp[is.na(CBtemp)] <- tiny
   CBtemp[!is.finite(CBtemp)] <- tiny
-  CNtemp[is.na(CNtemp)] <- tiny
-  CNtemp[!is.finite(CNtemp)] <- tiny
-  CNtemp <- aperm(CNtemp, c(1,3,2))
+
   yr.index <- max(which(!is.na(Data@CV_Cat[1,])))
   newCV_Cat <- matrix(Data@CV_Cat[,yr.index], nrow=nsim, ncol=length(yind))
   Data@CV_Cat <- cbind(Data@CV_Cat, newCV_Cat)
   
   # --- Observed catch ----
   # Simulated observed retained catch (biomass)
-  Cobs <- ErrList$Cerr[, nyears + yind] * apply(CBtemp, c(1, 3), sum, na.rm = TRUE) * ErrList$Cbiasa[, nyears + yind]
+  Cobs <- ErrList$Cerr[, nyears + yind] * apply(CBtemp, c(1, 3), sum, na.rm = TRUE) *
+    ErrList$Cbiasa[, nyears + yind]
   Data@Cat <- cbind(Data@Cat, Cobs) 
   
   if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Cat)>nyears &&
@@ -269,8 +274,8 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   
   # --- Index of total abundance ----
   yr.ind <- max(which(!is.na(ErrList$Ierr[1,1:nyears])))
-  I2 <- cbind(apply(Biomass, c(1, 3), sum)[,yr.ind:nyears], 
-              apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)])
+  I2 <- cbind(apply(Biomass*Sample_Area$BInd[,,1:nyears,], c(1, 3), sum)[,yr.ind:nyears], 
+              apply(Biomass_P*Sample_Area$BInd[,,(nyears+1):(nyears+proyears),], c(1, 3), sum)[, 1:(y - 1)])
   
   # standardize, apply  beta & obs error  
   I2 <- exp(lcs(I2))^ObsPars$betas * ErrList$Ierr[,yr.ind:(nyears + (y - 1))]
@@ -299,8 +304,8 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
 
   # --- Index of spawning abundance ----
   yr.ind <- max(which(!is.na(ErrList$SpIerr[1,1:nyears])))
-  I2 <- cbind(apply(SSB, c(1, 3), sum)[,yr.ind:nyears], 
-              apply(SSB_P, c(1, 3), sum)[, 1:(y - 1)])
+  I2 <- cbind(apply(SSB*Sample_Area$SBInd[,,1:nyears,], c(1, 3), sum)[,yr.ind:nyears], 
+              apply(SSB_P*Sample_Area$SBInd[,,(nyears+1):(nyears+proyears),], c(1, 3), sum)[, 1:(y - 1)])
   
   # standardize, apply  beta & obs error  
   I2 <- exp(lcs(I2))^ObsPars$betas * ErrList$SpIerr[,yr.ind:(nyears + (y - 1))]
@@ -329,8 +334,8 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   
   # --- Index of vulnerable abundance ----
   yr.ind <- max(which(!is.na(ErrList$VIerr[1,1:nyears])))
-  I2 <- cbind(apply(VBiomass, c(1, 3), sum)[,yr.ind:nyears], 
-              apply(VBiomass_P, c(1, 3), sum)[, 1:(y - 1)])
+  I2 <- cbind(apply(VBiomass*Sample_Area$VInd[,,1:nyears,], c(1, 3), sum)[,yr.ind:nyears], 
+              apply(VBiomass_P*Sample_Area$VInd[,,(nyears+1):(nyears+proyears),], c(1, 3), sum)[, 1:(y - 1)])
   
   # standardize, apply  beta & obs error  
   I2 <- exp(lcs(I2))^ObsPars$betas * ErrList$VIerr[,yr.ind:(nyears + (y - 1))]
@@ -413,7 +418,8 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   }
 
   # --- Index of recruitment ----
-  Recobs <- ErrList$Recerr[, nyears + yind] * apply(array(N_P[, 1, yind, ], 
+  Recobs <- ErrList$Recerr[, nyears + yind] * apply(array(N_P[, 1, yind, ] *
+                                                            Sample_Area$RecInd[,nyears+yind,], 
                                                           c(nsim, interval[mm], nareas)),
                                                     c(1, 2), sum)
   Data@Rec <- cbind(Data@Rec, Recobs)
@@ -453,17 +459,22 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   Data@CAA <- array(0, dim = c(nsim, nyears + y - 1, StockPars$maxage))
   Data@CAA[, 1:(nyears + y - interval[mm] - 1), ] <- oldCAA[, 1:(nyears + y - interval[mm] - 1), ] 
   # update CAA
+  
+  CNtemp <- retA_P[,,yind+nyears, drop=FALSE] * 
+    apply(N_P[,,yind,, drop=FALSE]*Sample_Area$CAA[,,nyears+yind,, drop=FALSE], 1:3, sum) 
+  CNtemp[is.na(CNtemp)] <- tiny
+  CNtemp[!is.finite(CNtemp)] <- tiny
+
   CAA <- simCAA(nsim, yrs=length(yind), StockPars$maxage, Cret=CNtemp, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
   Data@CAA[, nyears + yind, ] <- CAA
   
-
   # --- Catch-at-length ----
   oldCAL <- Data@CAL
   Data@CAL <- array(0, dim = c(nsim, nyears + y - 1, StockPars$nCALbins))
   Data@CAL[, 1:(nyears + y - interval[mm] - 1), ] <- oldCAL[, 1:(nyears + y - interval[mm] - 1), ]
   
   CAL <- array(NA, dim = c(nsim, interval[mm], StockPars$nCALbins))  
-  vn <- (apply(N_P[,,,], c(1,2,3), sum) * retA_P[,,(nyears+1):(nyears+proyears)]) # numbers at age that would be retained
+  vn <- (apply(N_P*Sample_Area$CAL[,,(nyears+1):(nyears+proyears),], c(1,2,3), sum) * retA_P[,,(nyears+1):(nyears+proyears)]) # numbers at age that would be retained
   vn <- aperm(vn, c(1,3,2))
   
   CALdat <- simCAL(nsim, nyears=length(yind), StockPars$maxage, ObsPars$CAL_ESS, 
