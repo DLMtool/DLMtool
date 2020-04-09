@@ -299,7 +299,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   optVB <- FALSE
   if (!is.null(control$D) && control$D == "VB") optVB <- TRUE  
   
-  
   # --- Sample OM parameters ----
   # Custom Parameters
   # custom parameters exist - sample and write to list
@@ -854,7 +853,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     }
   } 
   
-  n_age <- maxage # +1 for new version of model starting at age-0
+  n_age <- maxage +1
   nms <- c("Catch", "BInd", "SBInd", "VInd", "CAA", "CAL")
   for (nm in nms) {
     temp <- replicate(n_age, Sample_Area[[nm]])
