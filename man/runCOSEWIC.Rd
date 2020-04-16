@@ -133,7 +133,7 @@ color coded by thresholds.
 }}
 
 \references{
-\url{https://www.canada.ca/en/environment-climate-change/services/committee-status-endangered-wildlife.html}
+\url{http://cosewic.ca/index.php/en-ca/}
 }
 \author{
 T. Carruthers
