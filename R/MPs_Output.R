@@ -2599,7 +2599,7 @@ Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
   ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   C_dat <- Data@Cat[x, ind]
   if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
-    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat, na.rm=TRUE), Data@CV_Cat/(yrsmth^0.5))
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat, na.rm=TRUE), Data@CV_Cat[x,1]/(yrsmth^0.5))
   } else {
     TACstar <- rep(Data@MPrec[x], reps)
   }

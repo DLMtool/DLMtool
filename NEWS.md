@@ -2,6 +2,9 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.4.999 - Dev version
 
+### Major changes
+- Age accounting now starts from age-0 instead of age-1
+
 ### New Additions
 - Management procedures can now update the discard rate (`Rec@DR`)
 - Catchability parameter (q) can now be passed in with cpars (`OM@cpars$qs`). Doesn't optimize for depletion and updates `OM@D`.
@@ -14,10 +17,6 @@ The current version of the DLMtool package is available for download from [CRAN]
 - fix to calculation of retained and total catch - thanks to K. Sys for picking this up.
 
 ## DLMtool 5.4.3 
-
-### Major changes
-- Age accounting now starts from age-0 instead of age-1
-
 ### Minor changes
 - Added spatial sampling for some data. Set the fraction of sampling within each area 
 as a named list in `OM@cpars$control$Sample_Area`; e.g., `OM@cpars$control$Sample_Area$Catch`

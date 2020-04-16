@@ -165,7 +165,8 @@ CheckOM <- function(OM) {
     msg <- TRUE
     assumptions <- c(assumptions, 'OM@cpars$M_ageArray starts at Age-1. Assuming M-at-age-0 is same as M-at-age-1')
   }
-  if (!is.null(OM@cpars$V) && dim(OM@cpars$V)[2] ==maxage) {
+  
+  if ('V' %in% names(OM@cpars) && dim(OM@cpars$V)[2] ==maxage) {
     len0 <- array(tiny, dim=c(dim(OM@cpars$V)[1], 1, dim(OM@cpars$V)[3]))
     OM@cpars$V <- abind::abind(len0, OM@cpars$V, along=2)
     msg <- TRUE
