@@ -1,6 +1,6 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.4.999 - development version
+## DLMtool 5.4.3 
 
 ### Minor changes
 - Added spatial sampling for some data. Set the fraction of sampling within each area 
