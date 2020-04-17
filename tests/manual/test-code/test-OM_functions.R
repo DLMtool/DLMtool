@@ -1,12 +1,12 @@
 testthat::context("test OM_functions")
 
-
-testthat::test_that("ForceCor works ", {
-  OM <- DLMtool::testOM
-  OM@nsim <- 6
-  OM <- ForceCor(OM)
-  testthat::expect_error(runMSE(OM, silent=TRUE), NA)
-})
+# 
+# testthat::test_that("ForceCor works ", {
+#   OM <- DLMtool::testOM
+#   OM@nsim <- 6
+#   OM <- ForceCor(OM)
+#   testthat::expect_error(runMSE(OM, silent=TRUE), NA)
+# })
 
 Stock <- Bluefin_tuna
 Fleet <- DecE_NDom
