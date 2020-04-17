@@ -827,21 +827,21 @@ MLne <- function(x, Data, Linfc, Kc, ML_reps = 100, MLtype = "dep") {
 ## SRA supporting functions ####
 SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
                     AMc, ac, bc, Catch, CAA, opt = 1) {
-
+  n_age <- maxage + 1 # start from age-0 now
   ny <- length(Catch)
   AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
   AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
   if (AFC >= 0.7 * maxage) AFC <- 0.7 * maxage
   if (AFS >= 0.9 * maxage) AFS <- 0.9 * maxage
   KES <- max(2, ceiling(mean(c(AFC, AFS))))
-  vul <- rep(1, maxage)
-  vul[1:(KES - 1)] <- 0
-  Mac <- rep(1, maxage)
+  vul <- rep(1, n_age)
+  vul[1:(KES)] <- 0
+  Mac <- rep(1, n_age)
   Mac[1:max(1, floor(AMc))] <- 0
-  Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+  Lac <- Linfc * (1 - exp(-Kc * ((0:maxage) - t0c)))
   Wac <- ac * Lac^bc
   R0c <- exp(lnR0c)
-  N <- exp(-Mc * ((1:maxage) - 1)) * R0c
+  N <- exp(-Mc * ((1:n_age) - 1)) * R0c
   SSN <- Mac * N  # Calculate initial spawning stock numbers
   Biomass <- N * Wac
   SSB <- SSN * Wac  # Calculate spawning stock biomass
@@ -852,20 +852,20 @@ SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
   SSBpR <- sum(SSB)/R0c  # Calculate spawning stock biomass per recruit
   SSNpR <- SSN/R0c
 
-  CN <- array(NA, dim = c(ny, maxage))
-  HR <- rep(0, maxage)
+  CN <- array(NA, dim = c(ny, n_age))
+  HR <- rep(0, n_age)
   pen <- 0
   for (y in 1:ny) {
-    VB <- Biomass[KES:maxage] * exp(-Mc)
+    VB <- Biomass[(KES+1):n_age] * exp(-Mc)
     CB <- Catch[y] * VB/sum(VB)
     testHR <- CB[1]/VB[1]
     if (testHR > 0.8)  pen <- pen + (testHR - 0.8)^2
-    HR[KES:maxage] <- min(testHR, 0.8)
+    HR[(KES+1):n_age] <- min(testHR, 0.8)
     FMc <- -log(1 - HR)  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
     Zc <- FMc + Mc
 
     CN[y, ] <- N * (1 - exp(-Zc)) * (FMc/Zc)
-    N[2:maxage] <- N[1:(maxage - 1)] * exp(-Zc[1:(maxage - 1)])  # Total mortality
+    N[2:n_age] <- N[1:(n_age - 1)] * exp(-Zc[1:(n_age - 1)])  # Total mortality
     N[1] <- (0.8 * R0c * hc * sum(SSB))/(0.2 * SSBpR * R0c * (1 - hc) +
                                            (hc - 0.2) * sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
     Biomass <- N * Wac
@@ -877,7 +877,7 @@ SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
   CN[CN < 0] <- 0  # stop any negative catches
   syear <- ny - dim(CAA)[1] + 1
   pred <- CN[syear:ny, ]
-  pred <- pred/array(apply(pred, 1, sum), dim = c(dim(CAA)[1], maxage))
+  pred <- pred/array(apply(pred, 1, sum), dim = c(dim(CAA)[1], n_age))
   
   fobj <- pen - sum(log(pred + tiny) * CAA, na.rm = T)
   if (opt == 1) {
