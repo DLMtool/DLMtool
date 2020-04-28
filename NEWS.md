@@ -1,5 +1,10 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.4.999 - Dev version
+
+### Fixes
+- fix issue with `XL2OM` for latest version of R (behavior of `base::data.matrix` changed)
+
 ## DLMtool 5.4.3 
 
 ### Minor changes

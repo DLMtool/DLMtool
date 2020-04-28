@@ -698,12 +698,13 @@ setClassUnion(name="char.log", members=c("character", "logical"))
 #' showClass('Fleet')
 #' 
 setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = "numeric", 
-                            EffYears = "numeric", EffLower = "numeric", EffUpper = "numeric", Esd = "numeric", 
-                            qinc = "numeric", qcv = "numeric",   
+                            EffYears = "numeric", EffLower = "numeric", EffUpper = "numeric", 
+                            Esd = "numeric", qinc = "numeric", qcv = "numeric",   
                             L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", isRel = "char.log",
                             LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
                             SelYears = "numeric", AbsSelYears = "numeric",
-                            L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
+                            L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", 
+                            LFSUpper = "numeric", VmaxLower = "numeric", 
                             VmaxUpper = "numeric", CurrentYr="numeric", MPA='matrix'))
 
 # initialize Fleet
@@ -712,8 +713,10 @@ setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
     if (file.exists(file)) {
       dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", 
+                                      col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", 
+                                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       
@@ -783,13 +786,11 @@ setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
       isMPA <- grep('MPA', dname)
       if (length(isMPA)<1) isMPA <- NA
       if (!is.na(isMPA)) {
-        suppressWarnings(MPA <- temp <- data.matrix(dat[isMPA:nrow(dat),]))
-        valCols <- !is.na(colSums(MPA))
-        MPA <- MPA[,valCols, drop=FALSE]
-        valRows <- !is.na(rowSums(MPA))
-        MPA <- MPA[valRows, drop=FALSE]
-        MPA <- matrix(MPA, nrow=nrow(temp))
-        .Object@MPA <- MPA
+        MPAdat <- dat[isMPA:nrow(dat),]
+        nrow <- min(which(is.na(as.numeric(MPAdat[1,]))))
+        MPAdat <- MPAdat[,1:(nrow-1)]
+        MPAdat <- as.matrix(sapply(MPAdat, as.numeric))  
+        .Object@MPA <- MPAdat
       }
       
     } else {
