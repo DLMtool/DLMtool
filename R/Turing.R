@@ -217,7 +217,7 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
     for (r in 1:nrow) {
       col <- "grey"
       for (c in 1:ncol) {
-        dat <- df4 %>% filter(Sim==r, Year == c)
+        dat <- df4 %>% dplyr::filter(Sim==r, Year == c)
         if (r == nrow) {
           barplot(dat$Freq, names=round(dat$Val, 2), axes=FALSE, col=col, ylim=ylim)    
         } else {
@@ -236,7 +236,7 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
     for (r in 1:nrow) {
       col <- ifelse(r==realInd, "blue", "grey")
       for (c in 1:ncol) {
-        dat <- df4 %>% filter(Sim==r, Year == c)
+        dat <- df4 %>% dplyr::filter(Sim==r, Year == c)
         if (r == nrow) {
           barplot(dat$Freq, names=round(dat$Val, 2), axes=FALSE, col=col, ylim=ylim)    
         } else {
