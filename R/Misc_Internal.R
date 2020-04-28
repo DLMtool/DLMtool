@@ -71,8 +71,8 @@ ChkObj <- function(OM, error=TRUE) {
     slotVal <- slot(OM, slots[sl])
     if (length(slotVal) == 0) Ok[sl] <- FALSE
     if (length(slotVal) > 0) {
-      Ok[sl] <- class(slotVal) == class(slot(OM, slots[sl]))
-      if (class(slotVal) != "character" & class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
+      Ok[sl] <- all(class(slotVal) == class(slot(OM, slots[sl])))
+      if (class(slotVal) != "character" && class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
     } 
   }
   optslots <- OptionalSlots()
