@@ -479,15 +479,21 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (exists("Mage", inherits=FALSE)) {
     if (exists("M", inherits=FALSE) & length(cpars[["M"]])>0) 
       if (msg) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
+    
+    temp <- gettempvar(1, Msd, targgrad=0, nyears + proyears, nsim, Mrand) # add Msd
+    temp2 <- replicate(maxage, temp)
+    temp2 <- aperm(temp2, c(1,3,2))
+    M_ageArray <-  array(Mage, dim=c(nsim, maxage, proyears+nyears))
+    M_ageArray <- temp2 * M_ageArray
     # M is calculated as mean M of mature ages
     M <- rep(NA, nsim)
-    for (sim in 1:nsim) M[sim] <- mean(Mage[sim,round(ageM[sim],0):maxage])
+    for (sim in 1:nsim) M[sim] <- mean(Mage[sim,round(ageM[sim],0):maxage]) # mean adult M 
   }
   
   # == Mean Natural mortality by simulation and year ====
-  if (exists("M_ageArray", inherits=FALSE)) {
+  if (length(cpars[["M_ageArray"]])>0) {
     if (!all(dim(M_ageArray) == c(nsim, maxage, proyears+nyears))) stop("'M_ageArray' must be array with dimensions: nsim, maxage, nyears + proyears") 
-    if(msg) message("M_ageArray has been provided in OM@cpars. Ignoring OM@Mexp, OM@Msd, and OM@Mgrad")
+    if(msg) message("M-at-age has been specified in OM or provided in OM@cpars. Ignoring OM@Mexp, OM@Msd, and OM@Mgrad")
     Mexp <- Msd <- Mgrad <- rep(0, nsim)
   }
    
@@ -496,7 +502,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     Marray <- matrix(NA, nsim, nyears+proyears)
     for (yr in 1:(nyears+proyears)) {
       for (sim in 1:nsim) {
-        Marray[sim, yr] <- mean(M_ageArray[sim, ageM[sim,yr]:maxage,yr])
+        Marray[sim, yr] <- mean(M_ageArray[sim, round(ageM[sim,yr],0):maxage,yr])
       }
     }
   }
@@ -509,7 +515,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   # == Natural mortality by simulation, age and year ====
   if (!exists("M_ageArray", inherits=FALSE)) { # only calculate M_ageArray if it hasn't been specified in cpars
-    
     M_ageArray <- array(NA, dim=c(nsim, maxage, nyears + proyears))
     if (exists("Mage", inherits=FALSE)) { # M-at-age has been provided
       temp1 <- Mage/ matrix(apply(Mage, 1, mean), nsim, maxage, byrow=FALSE)
