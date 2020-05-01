@@ -323,7 +323,7 @@ calcProb <- function(PM, MSEobj) {
 #' @keywords internal
 #'
 calcMean <- function(Prob) {
-  if (class(Prob) == 'matrix') return(apply(Prob , 2, mean, na.rm=TRUE))
-  if (class(Prob) == 'numeric') return(mean(Prob, na.rm=TRUE))
+  if ('matrix' %in% class(Prob)) return(apply(Prob , 2, mean, na.rm=TRUE))
+  if ('numeric' %in% class(Prob)) return(mean(Prob, na.rm=TRUE))
 }
 
