@@ -664,7 +664,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   N_unfished <- aperm(array(as.numeric(unlist(histYrs_unfished[1,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   N_unfished <- apply(N_unfished, 1:3, sum)
   
-  
   # Check that depletion is correct
   if (checks) {
     if (prod(round(D, 2)/ round(Depletion,2)) != 1) {
@@ -1380,8 +1379,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 cparscheck<-function(cpars){
   
   dim1check<-function(x){
-    if(class(x)=="numeric" | class(x)=="integer")length(x)
-    else dim(x)[1]
+    if (inherits(x, 'numeric') | inherits(x, 'integer')) return(length(x))
+    else return(dim(x)[1])
   }
   
   dims <- sapply(cpars,dim1check)
