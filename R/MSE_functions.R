@@ -1034,38 +1034,35 @@ Dom <- function(MSEobj, ..., PMlist=NULL, Refs=NULL, Yrs=NULL) {
     if (length(ind)>0) {
       df1 <- DF[i,] %>% 
         dplyr::select(-MP, -Data, -DataClass, -Type, -Recs) %>% unlist()
-      m1 <- matrix(df1, nrow=length(ind), ncol=length(df1), byrow=TRUE) %>% 
-        round(2)
+      m1 <- matrix(df1, nrow=length(ind), ncol=length(df1), byrow=TRUE) 
       df2 <- DF[ind,] %>% 
-        dplyr::select(-MP, -Data, -DataClass, -Type, -Recs) %>% as.matrix() %>% 
-        round(2)
+        dplyr::select(-MP, -Data, -DataClass, -Type, -Recs) %>% as.matrix() 
       ind2 <- which(rowSums(m1 < df2) ==0) 
       if (length(ind2)>0) {
         DomList[[i]] <- data.frame(DominatedMPs=DF$MP[ind[ind2]], 
-                                   By=MSEobj@MPs[i], stringsAsFactors = FALSE)
+                                   By=DF$MP[i], stringsAsFactors = FALSE)
       } 
     } 
   }
   DomDF <- do.call("rbind", DomList) %>% as.data.frame()
   DomMPs <- unique(DomDF$DominatedMPs)
   NonDom <- MSEobj@MPs[!MSEobj@MPs %in% DomMPs]
-  DomList <- list()
+  DomList2 <- list()
   for (i in seq_along(DomMPs)) {
-    By <- DomDF %>% dplyr::filter(DominatedMPs ==DomMPs[i]) %>% dplyr::select(By) %>% unique() %>%
+    By <- DomDF %>% dplyr::filter(DominatedMPs ==DomMPs[i]) %>% 
+      dplyr::select(By) %>% unique() %>%
       unlist(., use.names = FALSE)
     By <- By[By %in% NonDom]
     By <- By %>% paste(., collapse=", ") %>% sort()
     if (nchar(By)>0)
-      DomList[[i]] <- data.frame(MP=DomMPs[i], By=By, stringsAsFactors = FALSE)
+      DomList2[[i]] <- data.frame(MP=DomMPs[i], By=By, stringsAsFactors = FALSE)
   }
   
-  DomDF <- do.call("rbind", DomList) %>% as.data.frame() %>% dplyr::arrange(MP)
-  NonDom %>% sort()
+  DomDF <- do.call("rbind", DomList2) %>% as.data.frame() %>% dplyr::arrange(MP)
+  NonDom <- NonDom %>% sort()
   
   list(MPs=NonDom, DomMPs=DomDF)
 }
-
-
 
 
 
