@@ -1541,21 +1541,24 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
       if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins", "binWidth", "AddIunits") %in% name)) {
         sampCpars[[name]] <- samps
       } else {
-        if (class(samps) == "numeric" | class(samps) == "integer") sampCpars[[name]] <- samps[ind]
+        if ("numeric" %in% class(samps) | "integer" %in% class(samps)) sampCpars[[name]] <- samps[ind]
         
-        if (class(samps) == "matrix") sampCpars[[name]] <- samps[ind,, drop=FALSE] 
-        
-        if (class(samps) == "array") {
-          dims <- dim(samps)
-          tout <- array(NA, dim=c(length(ind), dims[2:length(dims)]))
-          tlist <- c(list(ind), lapply(dims[2:length(dims)], seq))
-          tlist2 <- c(list(1:nsim), lapply(dims[2:length(dims)], seq))
-          varind <- expand.grid(tlist) %>% as.matrix()
-          varind2 <- expand.grid(tlist2) %>% as.matrix()
-          tout[varind2] <- samps[varind]
-          sampCpars[[name]] <- tout
+        if ('matrix' %in% class(samps)| 'array' %in% class(samps)) {
+          if (length(dim(samps)) == 2) {
+            sampCpars[[name]] <- samps[ind,, drop=FALSE]   
+          }  else {
+            dims <- dim(samps)
+            tout <- array(NA, dim=c(length(ind), dims[2:length(dims)]))
+            tlist <- c(list(ind), lapply(dims[2:length(dims)], seq))
+            tlist2 <- c(list(1:nsim), lapply(dims[2:length(dims)], seq))
+            varind <- expand.grid(tlist) %>% as.matrix()
+            varind2 <- expand.grid(tlist2) %>% as.matrix()
+            tout[varind2] <- samps[varind]
+            sampCpars[[name]] <- tout
+          }
         }
-        if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
+        
+        if ("data.frame" %in% class(samps))   sampCpars[[name]] <- samps 
       }
     }
   }
