@@ -70,6 +70,9 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
   if (ncol * nrow < nPMs) stop("ncol x nrow must be > length(PMs)")
  
   if (MSEobj@nMPs > maxMP) {
+    while (MSEobj@nMPs %% maxMP == 1) {
+      maxMP <- maxMP+1
+    }
     nplots <- ceiling(MSEobj@nMPs /maxMP)
   } else{
     nplots <- 1
@@ -109,6 +112,7 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
       PMval <- PMs[[xx]](subMSE)
       PMName[xx] <- PMval@Name
       PMval@Prob[!is.finite(PMval@Prob)] <- 0
+    
       cum_mean <- apply(PMval@Prob, 2, cumsum)/apply(PMval@Prob, 2, seq_along) * 100
       vals <- as.vector(cum_mean) 
       mp <- rep(subMSE@MPs, each=subMSE@nsim)
@@ -196,6 +200,7 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
   }
   return(resultsTab)
 }
+
 
 
 
