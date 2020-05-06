@@ -4,11 +4,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ### Fixes
 - fix issue with `XL2OM` for latest version of R (behavior of `base::data.matrix` changed)
-- fixes for R V4.0
-
-### New Additions
-- `addMPs` function has been added. Combines multiple MSE objects with same OM and
-historical OM values but different MPs in forward projections.
+- minor fixes for R V4.0
+- fix to calculation of retained and total catch - thanks to K. Sys for picking this up.
 
 ## DLMtool 5.4.3 
 
