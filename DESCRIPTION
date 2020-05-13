@@ -27,6 +27,7 @@ Imports:
     grDevices,
     ggplot2,
     parallel,
+    Rcpp,
     stats,
     utils
 LazyData: yes
