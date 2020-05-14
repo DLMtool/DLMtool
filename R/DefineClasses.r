@@ -1607,8 +1607,6 @@ setMethod("summary",
             # CAA 
             if (all(is.na(object@CAA))) {
               P2 <- FALSE
-            } else if (NAor0(object@CAA[x,,])) {
-              P2 <- FALSE
             } else {
               P2 <- TRUE
             }
@@ -1631,6 +1629,7 @@ setMethod("summary",
               Years <- object@Year
               nyears <- length(unique(df1$Year))
               df1$Year_val <- (Years[(length(Years)-nyears+1):length(Years)])
+              df1 <- df1[!is.na(df1$Freq),]  # Fliter out NA values, so we don't try to plot missing years
             
               if (nrow(df1)>0 && 'CAA' %in% plots) {
                 
@@ -1666,7 +1665,7 @@ setMethod("summary",
                 col <- "grey"
                 for (pg in 1:npages) {
                   if(npages>1)message('Plot ', pg, ' of ', npages)
-                  yrind <- yr1:(yr1+nplot-1)
+                  yrind <- unique(df1$Year)[yr1:(yr1+nplot-1)]
                   yr1 <- max(yrind) + 1
                   dat <- df1 %>% dplyr::filter(Year %in% yrind)
                   un.yrs_val <- as.numeric(unique(dat$Year_val))
@@ -1709,8 +1708,6 @@ setMethod("summary",
             
             # CAL 
             if (all(is.na(object@CAL))) {
-              P3 <- FALSE
-            } else if (NAor0(object@CAL[x,,])) {
               P3 <- FALSE
             } else {
               P3 <- TRUE
