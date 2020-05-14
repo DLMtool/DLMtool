@@ -37,7 +37,7 @@ The maximum fractional change in TAC is determined by \eqn{mc}, defined as
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{ITM}: Ind, Iref, MPrec, Mort
+\code{ITM}: Ind, Iref, Mort, MPrec
 }
 
 \section{Rendered Equations}{

@@ -1546,10 +1546,11 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
 #' probability distributions respectively
 #' @param rmd Logical. Used in a rmd file?
 #' @param head Character. Heading for rmd file. Default is '##' (second level heading)
+#' @param tplot Integer. Number of plots per page. Default 25
 #' @export
 setMethod("summary",
           signature(object = "Data"),
-          function(object, wait=TRUE, x=1, plots='all', rmd=FALSE, head="##"){
+          function(object, wait=TRUE, x=1, plots='all', rmd=FALSE, head="##", tplot=25){
             plots <- match.arg(plots, c('all', 'TS', 'CAA', 'CAL', 'PD'), several.ok = TRUE)
             if ('all' %in% plots) plots <- c('TS', 'CAA', 'CAL', 'PD')
             
@@ -1606,8 +1607,6 @@ setMethod("summary",
             # CAA 
             if (all(is.na(object@CAA))) {
               P2 <- FALSE
-            } else if (NAor0(object@CAA[x,,])) {
-              P2 <- FALSE
             } else {
               P2 <- TRUE
             }
@@ -1630,6 +1629,7 @@ setMethod("summary",
               Years <- object@Year
               nyears <- length(unique(df1$Year))
               df1$Year_val <- (Years[(length(Years)-nyears+1):length(Years)])
+              df1 <- df1[!is.na(df1$Freq),]  # Fliter out NA values, so we don't try to plot missing years
             
               if (nrow(df1)>0 && 'CAA' %in% plots) {
                 
@@ -1644,7 +1644,6 @@ setMethod("summary",
                 
                 nyears <- length(unique(df1$Year))
                 nbins <- length(unique(df1$Val))
-                tplot <- 25 # total plots per page
                 if (nyears > tplot) {
                   npages <- ceiling(nyears/tplot) 
                   ncol <- 5 
@@ -1666,7 +1665,7 @@ setMethod("summary",
                 col <- "grey"
                 for (pg in 1:npages) {
                   if(npages>1)message('Plot ', pg, ' of ', npages)
-                  yrind <- yr1:(yr1+nplot-1)
+                  yrind <- unique(df1$Year)[yr1:(yr1+nplot-1)]
                   yr1 <- max(yrind) + 1
                   dat <- df1 %>% dplyr::filter(Year %in% yrind)
                   un.yrs_val <- as.numeric(unique(dat$Year_val))
@@ -1710,8 +1709,6 @@ setMethod("summary",
             # CAL 
             if (all(is.na(object@CAL))) {
               P3 <- FALSE
-            } else if (NAor0(object@CAL[x,,])) {
-              P3 <- FALSE
             } else {
               P3 <- TRUE
             }
@@ -1752,7 +1749,6 @@ setMethod("summary",
                 nyears <- sum(!nayears$isna)
                 
                 nbins <- length(unique(df1$Val))
-                tplot <- 25 # total plots per page
                 if (nyears > tplot) {
                   npages <- ceiling(nyears/tplot) 
                   ncol <- 5 
