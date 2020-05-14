@@ -589,9 +589,9 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
     MSEobj@Misc$Unfished$ByYear[[i]] <- MSEobj@Misc$Unfished$ByYear[[i]][SubIts,Years]
   }
   MSEobj@Misc$MSYRefs$Refs <- MSEobj@Misc$MSYRefs$Refs[SubIts, ]
-  for (i in 1:length(MSEobj@Misc$MSYRefs$ByYear)) {
-    MSEobj@Misc$MSYRefs$ByYear[[i]] <- MSEobj@Misc$MSYRefs$ByYear[[i]][SubIts, mpind, Years]
-  }
+  # for (i in 1:length(MSEobj@Misc$MSYRefs$ByYear)) {
+  #   MSEobj@Misc$MSYRefs$ByYear[[i]] <- MSEobj@Misc$MSYRefs$ByYear[[i]][SubIts, mpind, Years]
+  # }
   MSEobj@Misc$TryMP <- MSEobj@Misc$TryMP[mpind]
   
   
