@@ -1546,10 +1546,11 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
 #' probability distributions respectively
 #' @param rmd Logical. Used in a rmd file?
 #' @param head Character. Heading for rmd file. Default is '##' (second level heading)
+#' @param tplot Integer. Number of plots per page. Default 25
 #' @export
 setMethod("summary",
           signature(object = "Data"),
-          function(object, wait=TRUE, x=1, plots='all', rmd=FALSE, head="##"){
+          function(object, wait=TRUE, x=1, plots='all', rmd=FALSE, head="##", tplot=25){
             plots <- match.arg(plots, c('all', 'TS', 'CAA', 'CAL', 'PD'), several.ok = TRUE)
             if ('all' %in% plots) plots <- c('TS', 'CAA', 'CAL', 'PD')
             
@@ -1644,7 +1645,6 @@ setMethod("summary",
                 
                 nyears <- length(unique(df1$Year))
                 nbins <- length(unique(df1$Val))
-                tplot <- 25 # total plots per page
                 if (nyears > tplot) {
                   npages <- ceiling(nyears/tplot) 
                   ncol <- 5 
@@ -1752,7 +1752,6 @@ setMethod("summary",
                 nyears <- sum(!nayears$isna)
                 
                 nbins <- length(unique(df1$Val))
-                tplot <- 25 # total plots per page
                 if (nyears > tplot) {
                   npages <- ceiling(nyears/tplot) 
                   ncol <- 5 
