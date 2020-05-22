@@ -96,6 +96,10 @@ ChkObj <- function(OM, error=TRUE) {
     probSlots <- probSlots[!probSlots %in% c("Perr")]
   }
   
+  if ('Find' %in% names(OM@cpars)) {
+    probSlots <- probSlots[!probSlots %in% c("EffLower", "EffUpper", "EffYears")]
+  }
+  
   if (length(probSlots) > 0) {
     if (error) stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
     if (!error) warning("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
