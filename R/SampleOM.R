@@ -138,49 +138,56 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (exists("Perr", inherits = FALSE)) {
     procsd <- Perr
   }
-  if (!exists("procsd", inherits=FALSE)) {
-    StockOut$procsd <- procsd <- myrunif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
-  } else {
-    StockOut$procsd <- procsd
-  }
   
-  if (!exists("AC", inherits=FALSE)) {
-    StockOut$AC <- AC <- myrunif(nsim, Stock@AC[1], Stock@AC[2])  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
-  } else {
-    StockOut$AC <- AC  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
-  }
-  
-  # All recruitment Deviations
-  # Add cycle (phase shift) to recruitment deviations - if specified
-  if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
-    # Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
-    Period <- myrunif(nsim, min(Stock@Period), max(Stock@Period))
-    if (max(Stock@Amplitude)>1) {
-      if (msg) message("Stock@Amplitude > 1. Defaulting to 1")
-      Stock@Amplitude[Stock@Amplitude>1] <- 1
-    }
-    Amplitude <- myrunif(nsim, min(Stock@Amplitude), max(Stock@Amplitude))
-    
-    yrs <- 1:(nyears + proyears+maxage-1)
-    recMulti <- t(sapply(1:nsim, function(x) 1+sin((runif(1, 0, 1)*max(yrs) + 2*yrs*pi)/Period[x])*Amplitude[x]))
-    if (msg) message("Adding cyclic recruitment pattern")
-    
-    # recMulti <-  t(sapply(1:nsim, SetRecruitCycle, Period, Amplitude, TotYears=length(yrs), Shape = "sin"))
-    
-  } else {
-    recMulti <- 1 
-  }
-  
-  StockOut$procmu <- procmu <- -0.5 * procsd^2  * (1 - AC)/sqrt(1 - AC^2) #  # adjusted log normal mean http://dx.doi.org/10.1139/cjfas-2016-0167
   if (!exists("Perr_y", inherits=FALSE)) {
+    
+    if (!exists("procsd", inherits=FALSE)) {
+      StockOut$procsd <- procsd <- myrunif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
+    } else {
+      StockOut$procsd <- procsd
+    }
+    
+    if (!exists("AC", inherits=FALSE)) {
+      StockOut$AC <- AC <- myrunif(nsim, Stock@AC[1], Stock@AC[2]) 
+      # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
+    } else {
+      StockOut$AC <- AC 
+      # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
+    }
+    
+    # All recruitment Deviations
+    # Add cycle (phase shift) to recruitment deviations - if specified
+    if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
+      # Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
+      Period <- myrunif(nsim, min(Stock@Period), max(Stock@Period))
+      if (max(Stock@Amplitude)>1) {
+        if (msg) message("Stock@Amplitude > 1. Defaulting to 1")
+        Stock@Amplitude[Stock@Amplitude>1] <- 1
+      }
+      Amplitude <- myrunif(nsim, min(Stock@Amplitude), max(Stock@Amplitude))
+      
+      yrs <- 1:(nyears + proyears+maxage-1)
+      recMulti <- t(sapply(1:nsim, function(x) 1+sin((runif(1, 0, 1)*max(yrs) + 2*yrs*pi)/Period[x])*Amplitude[x]))
+      if (msg) message("Adding cyclic recruitment pattern")
+      
+      # recMulti <-  t(sapply(1:nsim, SetRecruitCycle, Period, Amplitude, TotYears=length(yrs), Shape = "sin"))
+      
+    } else {
+      recMulti <- 1 
+    }
+    
+    StockOut$procmu <- procmu <- -0.5 * procsd^2  * (1 - AC)/sqrt(1 - AC^2) #  
+    # adjusted log normal mean http://dx.doi.org/10.1139/cjfas-2016-0167
+    
     Perr_y <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + proyears+maxage-1), 
-                        rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
+                          rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
     for (y in 2:(nyears + proyears+maxage-1)) Perr_y[, y] <- AC * Perr_y[, y - 1] + Perr_y[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
     StockOut$Perr_y <- Perr_y <- exp(Perr_y) * recMulti # normal space (mean 1 on average) 
     
     
   } else {
     StockOut$Perr_y <- Perr_y
+    StockOut$procsd <- apply(Perr_y, 1, sd)
   }
 
   # if (nsim > 1) {
