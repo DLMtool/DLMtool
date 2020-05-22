@@ -213,12 +213,14 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   if (length(MPRecs$Fdisc) >0) { # Fdisc has changed
     if (length(MPRecs$Fdisc) != nsim) stop("Fdisc recommmendation is not 'nsim' long.\n Does MP return Fdisc recommendation under all conditions?")
     Fdisc_P <- MPRecs$Fdisc
+    RetentFlag <- TRUE
   }
   
   # Discard Ratio 
   if (length(MPRecs$DR)>0) { # DR has changed
     if (length(MPRecs$DR) != nsim) stop("DR recommmendation is not 'nsim' long.\n Does MP return DR recommendation under all conditions?")
     DR_P[(y+nyears):(nyears+proyears),] <- matrix(MPRecs$DR, nrow=length((y+nyears):(nyears+proyears)), ncol=nsim, byrow=TRUE) 
+    RetentFlag <- TRUE
   }
   
   # Update Selectivity and Retention Curve 
@@ -485,6 +487,16 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   out$TAE <- TAE
   out$Effort <- Effort_act # actual effort this year
   out$Ftot <- Ftot
+ 
+  out$LR5_P <- LR5_P
+  out$LFR_P <- LFR_P
+  out$Rmaxlen_P <- Rmaxlen_P
+  out$L5_P <- L5_P
+  out$LFS_P <- LFS_P
+  out$Vmaxlen_P <- Vmaxlen_P
+  out$Fdisc_P <- Fdisc_P
+  out$DR_P <- DR_P
+  
   out
 }
 

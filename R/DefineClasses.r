@@ -1974,6 +1974,7 @@ setMethod("summary",
 #' @slot LFS smallest length at full selection  - in absolute units - i.e same units as Linf and L50
 #' @slot Vmaxlen selection of the largest size class - fraction between 0 and 1
 #' @slot Fdisc fraction of discarded fish that die - fraction between 0 and 1
+#' @slot DR Discard rate - the fraction of caught fish that are discarded
 #' @slot Misc An empty list that can be used to store information and pass on to MPs in future 
 #' @author A. Hordyk
 #' @keywords classes
@@ -1984,6 +1985,7 @@ setClass("Rec", representation(
   LR5 = "numeric", LFR = "numeric", HS="numeric", Rmaxlen="numeric", 
   L5 = "numeric", LFS = "numeric", Vmaxlen="numeric", 
   Fdisc = "numeric",
+  DR='numeric',
   Misc="list"))
 
 
@@ -2013,7 +2015,8 @@ setMethod("show", signature = (object="Rec"), function(object) {
  }
  
  names <- c("TAC", "Effort", "LR5", "LFR", "HS", "Rmaxlen",
-            "L5", "LFS", 'Vmaxlen', 'Spatial')
+            "L5", "LFS", 'Vmaxlen', 'Fdisc', 'DR', 'Spatial')
+            
  mat <- matrix(0, nrow=1, ncol=length(names)+nareas-1)
  count <- 0 
  for (x in names) {

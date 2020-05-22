@@ -692,7 +692,7 @@ indfitwrap <- function(x, type, sim.indices, ind.type, Data, nyears, plot=FALSE)
 }
 
 lcs<-function(x){
-  if (class(x) == "matrix") {
+  if ("matrix" %in% class(x)) {
     nsim <- nrow(x)
     nyr <- ncol(x)
     x1 <- x/matrix(apply(x, 1, mean, na.rm=TRUE), nrow=nsim, ncol=nyr) # rescale to mean 1

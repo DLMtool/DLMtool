@@ -1070,7 +1070,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                 FinF, Spat_targ,
                                 CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
                                 qs, qvar, qinc, Effort_pot)
-  
+      
       TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
       LastSpatial <- MPCalcs$Si
       LastAllocat <- MPCalcs$Ai
@@ -1088,6 +1088,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       V_P <- MPCalcs$V_P  # vulnerable-at-age
       SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
       FMa[,mm,y] <- MPCalcs$Ftot 
+      
+      LR5_P <- MPCalcs$LR5_P
+      LFR_P <- MPCalcs$LFR_P
+      Rmaxlen_P <- MPCalcs$Rmaxlen_P
+      L5_P <- MPCalcs$L5_P
+      LFS_P <- MPCalcs$LFS_P
+      Vmaxlen_P <- MPCalcs$Vmaxlen_P
+      Fdisc_P <- MPCalcs$Fdisc_P
+      DR_P <- MPCalcs$DR_P
       
       # ---- Bio-economics ----
       RetainCatch <- apply(CB_Pret[,,y,], 1, sum) # retained catch this year
@@ -1217,6 +1226,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           V_P <- MPCalcs$V_P  # vulnerable-at-age
           SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
           
+          LR5_P <- MPCalcs$LR5_P
+          LFR_P <- MPCalcs$LFR_P
+          Rmaxlen_P <- MPCalcs$Rmaxlen_P
+          L5_P <- MPCalcs$L5_P
+          LFS_P <- MPCalcs$LFS_P
+          Vmaxlen_P <- MPCalcs$Vmaxlen_P
+          Fdisc_P <- MPCalcs$Fdisc_P
+          DR_P <- MPCalcs$DR_P
+          
           # ---- Bio-economics ----
           RetainCatch <- apply(CB_Pret[,,y,], 1, sum) # retained catch this year
           RetainCatch[RetainCatch<=0] <- tiny
@@ -1263,6 +1281,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           retL_P <- MPCalcs$retL_P # retained-at-length
           V_P <- MPCalcs$V_P  # vulnerable-at-age
           SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+          
+          
           
           # ---- Bio-economics ----
           RetainCatch <- apply(CB_Pret[,,y,], 1, sum) # retained catch this year

@@ -257,9 +257,9 @@ MPtype <- function(MPs=NA) {
   
   type <- rep("NA", length(MPs))
   rec <- rep("", length(MPs))
-  rectypes <- c("TAE", "Spatial", "SL")
+  rectypes <- c("TAE", "Spatial", "SL", "Discards")
   for (mm in seq_along(recs)) {
-    Effort <- Spatial <- Selectivity <- FALSE
+    Effort <- Spatial <- Selectivity <- Discards<- FALSE
     output <- length(recs[[mm]]$TAC) > 0 
     names <- names(recs[[mm]])
     names <- names[!names %in% c("TAC", "Spatial")]
@@ -276,8 +276,9 @@ MPtype <- function(MPs=NA) {
       if (any(is.finite(recs[[mm]]$LR5)) | any(is.finite(recs[[mm]]$LFR)) | any(is.finite(recs[[mm]]$HS)) |
           any(is.finite(recs[[mm]]$Rmaxlen)) | any(is.finite(recs[[mm]]$L5)) | any(is.finite(recs[[mm]]$LFS)) |
           any(is.finite(recs[[mm]]$Vmaxlen))) Selectivity <- TRUE
+      if (any(is.finite(recs[[mm]]$DR)) | any(is.finite(recs[[mm]]$Fdisc))) Discards <- TRUE
       
-      dorecs <- rectypes[c(Effort, Spatial, Selectivity)]
+      dorecs <- rectypes[c(Effort, Spatial, Selectivity, Discards)]
       thisrec <- dorecs
       type[mm] <- "Input"
       

@@ -2,6 +2,9 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.4.999 - Dev version
 
+### Changes
+- Management procedures can now update the discard rate (`Rec@DR`)
+
 ### Fixes
 - fix issue with `XL2OM` for latest version of R (behavior of `base::data.matrix` changed)
 - minor fixes for R V4.0
