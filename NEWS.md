@@ -5,6 +5,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 ### New Additions
 - Management procedures can now update the discard rate (`Rec@DR`)
 - Catchability parameter (q) can now be passed in with cpars (`OM@cpars$qs`). Doesn't optimize for depletion and updates `OM@D`.
+- Units for the additional indices (`Data@AddInd`) can now be specified using `Data@AddIunits` (numeric vector length n.ind 1=biomass (default) 0=numbers).
+- Additional indices can now use total, spawning, or vulnerable biomass using `Data@AddIndType` (numeric vector length n.ind 1=total stock (default), 2=spawning stock, 3=vulnerable stock).
 
 ### Fixes
 - fix issue with `XL2OM` for latest version of R (behavior of `base::data.matrix` changed)
