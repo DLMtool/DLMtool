@@ -71,15 +71,20 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Ind Relative total abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot CV_Ind Coefficient of variation in the relative total abundance index. Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Ind` for all years
+#'  
 #' @slot SpInd Relative spawning abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
-#' @slot CV_SpInd Coefficient of variation in the relative spawning abundance index. Matrix nsim rows and either 1 or nyear columns.
-#'  Positive real numbers. 
+#' @slot CV_SpInd Coefficient of variation in the relative spawning abundance index. Matrix nsim rows and either 1 or nyear columns. Positive real numbers. 
+#' 
 #' @slot VInd Relative vulnerable abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot CV_VInd Coefficient of variation in the relative vulnerable abundance index. Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. 
+#'  
 #' @slot AddInd Optional additional indices. Array of dimensions `nsim`, n additional indices, and `nyears` (length `Year`).  
 #' @slot CV_AddInd Coefficient of variation for additional indices. Array of same dimensions as `AddInd`
 #' @slot AddIndV Vulnerability-at-age schedules for the additional indices. Array with dimensions: `nsim`, n additional indices, `MaxAge`.  
+#' @slot AddIunits Units for the additional indices - biomass (1; default) or numbers (0). Numeric vector length n.ind.
+#' @slot AddIndType Index calculated from total stock (1, default), spawning stock (2), or vulnerable stock (3). Numeric vector of length n.ind
+#' 
 #' @slot Rec Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot CV_Rec Log-normal CV for recent recruitment strength.  Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Rec` for all years.
@@ -169,6 +174,8 @@ setClass("Data",
                         VInd = "matrix", CV_VInd = "matrix", 
                         
                         AddInd = "array", CV_AddInd = "array", AddIndV = "array",
+                        AddIunits = 'vector', AddIndType='vector',
+                        
                         Rec = "matrix", CV_Rec = "matrix", 
                         ML = "matrix",  Lc = "matrix", Lbar = "matrix", 
                         

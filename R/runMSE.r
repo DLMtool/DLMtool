@@ -861,8 +861,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Condition Simulated Data on input Data object (if it exists) & calculate error stats ----
   templist <- addRealData(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBret, 
-                          nsim, nyears, proyears,
+                          nsim, nyears, proyears, V, Mat_age,
                           silent=silent)
+  AddIunits <- templist$AddIunits
+  AddIndType <- templist$AddIndType
+  
   Data <- templist$Data # update 
   ErrList <- templist$ErrList # update
   
@@ -1180,8 +1183,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, N,
                                       Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                       RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
-                                      FleetPars, ObsPars, upyrs, interval, y, mm, 
-                                      Misc=Data_p@Misc, SampCpars, Sample_Area)
+                                      FleetPars, ObsPars, V_P, Mat_age,
+                                      upyrs, interval, y, mm, 
+                                      Misc=Data_p@Misc, SampCpars, Sample_Area, 
+                                      AddIunits, AddIndType)
           
           
           # Update Abundance and FMSY for FMSYref MPs
@@ -1315,9 +1320,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, N,
                                     Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                     RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
-                                    FleetPars, ObsPars, c(upyrs, proyears), 
+                                    FleetPars, ObsPars,  V_P, Mat_age,
+                                    upyrs=c(upyrs, proyears), 
                                     interval = rep(proyears - max(upyrs), length(interval)), 
-                                    proyears, mm, Misc=Data_p@Misc, SampCpars, Sample_Area)
+                                    y=proyears, mm, Misc=Data_p@Misc, SampCpars, Sample_Area,
+                                    AddIunits, AddIndType)
       }
       
       B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_y[,mm,(OM@nyears+1):(OM@nyears+OM@proyears)]  # SSB relative to SSBMSY

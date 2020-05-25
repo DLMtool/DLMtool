@@ -231,8 +231,9 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
                        N_P, SSB, SSB_P, VBiomass, VBiomass_P, RefPoints, ErrList, 
                        FMSY_P, retA_P, 
                        retL_P, StockPars, FleetPars, ObsPars, 
+                       V_P, Mat_age,
                        upyrs, interval, y=2, 
-                       mm=1, Misc, SampCpars, Sample_Area) {
+                       mm=1, Misc, SampCpars, Sample_Area, AddIunits, AddIndType) {
   
   yind <- upyrs[match(y, upyrs) - 1]:(upyrs[match(y, upyrs)] - 1) # index
   
@@ -374,14 +375,41 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
      
      yr.ind <- max(which(!is.na(ErrList$AddIerr[1,i, 1:nyears])))
      
-     if (is.null(SampCpars$AddIunits) || SampCpars$AddIunits[i]) { # Biomass-based index
-       b1 <- apply(Biomass[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum)
-       b2 <- apply(Biomass_P, c(1, 2, 3), sum)
+     if (AddIunits[i]) { # Biomass-based index
+       if (AddIndType[i]==1) {
+         # total biomass
+         b1 <- apply(Biomass[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum)
+         b2 <- apply(Biomass_P, c(1, 2, 3), sum)
+       }
+       
+       if (AddIndType[i]==2) {
+         # spawning biomass
+         b1 <- apply(SSB[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum)
+         b2 <- apply(SSB_P, c(1, 2, 3), sum)
+       }
+       if (AddIndType[i]==3) {
+         # vulnerable biomass
+         b1 <- apply(VBiomass[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum)
+         b2 <- apply(VBiomass_P, c(1, 2, 3), sum)
+       }
      } else {
-       b1 <- apply(N[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum) # Abundance-based index
-       b2 <- apply(N_P, c(1, 2, 3), sum)
+       if (AddIndType[i]==1) {
+         # total stock
+         b1 <- apply(N[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum) # Abundance-based index
+         b2 <- apply(N_P, c(1, 2, 3), sum)
+       }
+       if (AddIndType[i]==2) {
+         # spawning stock
+         b1 <- apply(N[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum) * Mat_age[,,yr.ind:nyears,  drop=FALSE] 
+         b2 <- apply(N_P, c(1, 2, 3), sum)  * Mat_age[,,(nyears+1):(nyears+proyears),  drop=FALSE]
+       }
+       if (AddIndType[i]==3) {
+         # vuln stock
+         b1 <- apply(N[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum) * V_P[,,yr.ind:nyears,  drop=FALSE]  
+         b2 <- apply(N_P, c(1, 2, 3), sum) * V_P[,,(nyears+1):(nyears+proyears),  drop=FALSE]
+       }
      }
-     
+   
      b1 <- apply(b1 * Ind_V[,,yr.ind:nyears, drop=FALSE], c(1,3), sum)
      b2 <- apply(b2 * Ind_V[,,(nyears+1):(nyears+proyears), drop=FALSE], c(1,3), sum)
      tempI <- cbind(b1, b2[, 1:(y - 1)])
