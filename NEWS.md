@@ -2,8 +2,9 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.4.999 - Dev version
 
-### Changes
+### New Additions
 - Management procedures can now update the discard rate (`Rec@DR`)
+- Catchability parameter (q) can now be passed in with cpars (`OM@cpars$qs`). Doesn't optimize for depletion and updates `OM@D`.
 
 ### Fixes
 - fix issue with `XL2OM` for latest version of R (behavior of `base::data.matrix` changed)

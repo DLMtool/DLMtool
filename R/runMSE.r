@@ -548,14 +548,20 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
  
  
-  # --- Optimize catchability (q) to fit depletion ---- 
-  if(!silent) message("Optimizing for user-specified depletion in last historical year")
+  # --- Optimize catchability (q) to fit depletion ----
   bounds <- c(0.0001, 15) # q bounds for optimizer
-  # find the q that gives current stock depletion - optVB = depletion for vulnerable biomass else SB
-  qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-               M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
-               Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF,
-               plusgroup=plusgroup, VB0=VB0, optVB=optVB)
+  if (!is.null(SampCpars$qs)) {
+    if(!silent) message("Skipping optimization for depletion - using catchability (q) from OM@cpars.")
+    qs <- SampCpars$qs
+  
+    } else {
+    if(!silent) message("Optimizing for user-specified depletion in last historical year")
+    # find the q that gives current stock depletion - optVB = depletion for vulnerable biomass else SB
+    qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
+                 M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
+                 Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF,
+                 plusgroup=plusgroup, VB0=VB0, optVB=optVB)
+  }
   
   # --- Check that q optimizer has converged ---- 
   LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
@@ -663,6 +669,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
               control=1, SSB0c=SSB0[x], plusgroup=plusgroup))
   N_unfished <- aperm(array(as.numeric(unlist(histYrs_unfished[1,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   N_unfished <- apply(N_unfished, 1:3, sum)
+  
+  if (!is.null(OM@cpars$qs)) {
+    # update OM@D 
+    D <- Depletion 
+  }
   
   # Check that depletion is correct
   if (checks) {
