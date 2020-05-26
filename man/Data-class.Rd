@@ -99,20 +99,22 @@ Positive real numbers. Note: built-in MPs use only the first value of \code{CV_I
 
 \item{\code{SpInd}}{Relative spawning abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
-\item{\code{CV_SpInd}}{Coefficient of variation in the relative spawning abundance index. Matrix nsim rows and either 1 or nyear columns.
-Positive real numbers.}
+\item{\code{CV_SpInd}}{Coefficient of variation in the relative spawning abundance index. Matrix nsim rows and either 1 or nyear columns. Positive real numbers.}
 
 \item{\code{VInd}}{Relative vulnerable abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
 \item{\code{CV_VInd}}{Coefficient of variation in the relative vulnerable abundance index. Matrix nsim rows and either 1 or nyear columns.
 Positive real numbers.}
 
-\item{\code{AddInd}}{Optional additional indices. Array of dimensions \code{nsim}, n additional arrays, and \code{nyears} (length \code{Year}).}
+\item{\code{AddInd}}{Optional additional indices. Array of dimensions \code{nsim}, n additional indices, and \code{nyears} (length \code{Year}).}
 
 \item{\code{CV_AddInd}}{Coefficient of variation for additional indices. Array of same dimensions as \code{AddInd}}
 
-\item{\code{AddIndV}}{Vulnerability-at-age schedules for the additional indices. Array with dimensions: \code{nsim}, n additional arrays,
-and \code{MaxAge}.}
+\item{\code{AddIndV}}{Vulnerability-at-age schedules for the additional indices. Array with dimensions: \code{nsim}, n additional indices, \code{MaxAge}.}
+
+\item{\code{AddIunits}}{Units for the additional indices - biomass (1; default) or numbers (0). Numeric vector length n.ind.}
+
+\item{\code{AddIndType}}{Index calculated from total stock (1, default), spawning stock (2), or vulnerable stock (3). Numeric vector of length n.ind}
 
 \item{\code{Rec}}{Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 

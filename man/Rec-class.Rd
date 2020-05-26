@@ -34,6 +34,8 @@ An object for storing the MP recommendations
 
 \item{\code{Fdisc}}{fraction of discarded fish that die - fraction between 0 and 1}
 
+\item{\code{DR}}{Discard rate - the fraction of caught fish that are discarded}
+
 \item{\code{Misc}}{An empty list that can be used to store information and pass on to MPs in future}
 }}
 
