@@ -187,7 +187,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     StockOut$Perr_y <- Perr_y
     StockOut$procsd <- apply(Perr_y, 1, sd)
   }
- 
 
   # if (nsim > 1) {
   #   cumlRecDev <- apply(Perr[, 1:(nyears+maxage-1)], 1, prod)
