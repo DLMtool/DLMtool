@@ -250,7 +250,12 @@ MPtype <- function(MPs=NA) {
   
   Data <- DLMtool::SimulatedData
   dims <- dim(Data@Ind)
-  # Data@RInd <- array(Data@Ind, dim=c(dims[1],3,dims[2]))
+  n.ind <- 5
+  Data@AddInd <- array(Data@Ind, dim=c(dims[1],n.ind,dims[2]))
+  Data@AddIndV <- array(1, dim=c(dims[1],n.ind,dims[2])) 
+  Data@AddIndType <- rep(1, n.ind)
+  Data@AddIunits <- rep(1, n.ind)
+  Data@CV_AddInd <- array(0.1, dim=c(dims[1],n.ind,dims[2])) 
   
   runMPs <- applyMP(Data, MPs, reps = 2, nsims=1, silent=TRUE)
   recs <- runMPs[[1]]
