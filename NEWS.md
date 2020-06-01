@@ -1,6 +1,6 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.4.999 - Dev version
+## DLMtool 5.4.4
 
 ### New Additions
 - Management procedures can now update the discard rate (`Rec@DR`)
@@ -9,6 +9,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - Additional indices can now use total, spawning, or vulnerable biomass using `Data@AddIndType` (numeric vector length n.ind 1=total stock (default), 2=spawning stock, 3=vulnerable stock).
 
 ### Fixes
+- fix issue where `Misc$Removals` wasn't being returned in parallel mode.
 - fix issue with `XL2OM` for latest version of R (behavior of `base::data.matrix` changed)
 - minor fixes for R V4.0
 - fix to calculation of retained and total catch - thanks to K. Sys for picking this up.
@@ -35,7 +36,6 @@ The following names are accepted:
 - fix retention-at-age when retention-at-length passed in `OM@cpars`
 - fix bug in `LBSPR_MLL` MP 
 - correction for auto-correlation in index when real data is used to condition model.
-
 
 
 ## DLMtool 5.4.2 
