@@ -196,7 +196,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
     if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
 
-    MSE1 <- joinMSE(temp) 
+    MSE1 <- joinMSE(temp)
     if (class(MSE1) == "MSE") {
       if (!silent) message("MSE completed")
     } else if (class(MSE1) == "Hist"){
@@ -215,12 +215,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   if (class(MSE1) == "MSE") {
     # list in sequential mode
-    if (class(MSE1@Misc$TryMP) == "list") {
+    if ('list' %in% class(MSE1@Misc$TryMP)) {
       ok <- unlist(MSE1@Misc$TryMP) == "Okay"
       fail <- unlist(MSE1@Misc$TryMP)
     }
       
-    if (class(MSE1@Misc$TryMP) == "matrix") {
+    if ('matrix' %in% class(MSE1@Misc$TryMP)) {
       ok <- colSums(MSE1@Misc$TryMP == "Okay") == nrow(MSE1@Misc$TryMP)
       fail <- t(MSE1@Misc$TryMP)
       if (any(grepl("could not find function", unique(fail[!ok,])))) {
