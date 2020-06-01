@@ -744,10 +744,13 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   Fleetout$dFfinal <- dFfinal
   
   # === Spatial Targetting ====
-  if (!exists("Spat_targ", inherits = FALSE))
+  if (!exists("Spat_targ", inherits = FALSE)) {
     # spatial targetting Ba^targetting param 
     Fleetout$Spat_targ <- Spat_targ <- myrunif(nsim, Fleet@Spat_targ[1], Fleet@Spat_targ[2])  
-  
+  } else {
+    Fleetout$Spat_targ <- Spat_targ 
+  }
+    
   # === Sample fishing efficiency parameters ====
   # interannual variability in catchability
   if (!exists("qinc", inherits = FALSE)) 
