@@ -864,6 +864,18 @@ joinMSE <- function(MSEobjs = NULL) {
   
   }
   
+  # ErrList 
+  nms <- names(MSEobjs[[1]]@Misc$ErrList)
+  for (nm in nms) {
+    t1 <- lapply(1:length(MSEobjs), function(i) MSEobjs[[i]]@Misc$ErrList[[nm]])
+    Misc$ErrList[[nm]] <- do.call('rbind', t1) 
+  }
+  
+  # Removals 
+  t1 <- lapply(1:length(MSEobjs), function(i) MSEobjs[[i]]@Misc$Removals)
+  Misc$Removals <- abind::abind(t1, along=1)
+  
+  
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 
                 proyears = unique(outlist$proyears), nMP = unique(outlist$nMP), 
                 MPs = unique(outlist$MPs), nsim = sum(outlist$nsim), OM = outlist$OM, 
