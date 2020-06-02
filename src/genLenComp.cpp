@@ -39,8 +39,7 @@ NumericVector get_freq(NumericVector x, double width, double origin = 0,
   int bin= 0;
   int nmissing = 0;
   std::vector<int> out(outlen);
-  NumericVector::iterator x_it = x.begin(), x_end;
-  for(; x_it != x.end(); ++x_it) {
+  for(NumericVector::iterator x_it = x.begin(); x_it != x.end(); ++x_it) {
     double val = *x_it;
     if (ISNAN(val)) {
       ++nmissing;

@@ -1,6 +1,6 @@
 testthat::context("test OM_functions")
 
-# 
+
 # testthat::test_that("ForceCor works ", {
 #   OM <- DLMtool::testOM
 #   OM@nsim <- 6

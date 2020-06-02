@@ -749,7 +749,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   } else {
     Fleetout$Spat_targ <- Spat_targ 
   }
-  
+
   # === Sample fishing efficiency parameters ====
   # interannual variability in catchability
   if (!exists("qinc", inherits = FALSE)) 

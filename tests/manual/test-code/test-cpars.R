@@ -37,9 +37,11 @@ for (sl in slots) {
     sl_val <- suppressWarnings(mean(slot(OM2, sl)))
     if(is.na(sl_val)) sl_val <- 0.05
     OM2@cpars[[sl]] <- rep(sl_val[1], OM2@nsim)
-    if (sl %in% c("L5", "LFS", "Vmaxlen", "LR5", "LFR", "Rmaxlen")) {
+    if (sl %in% c("L5", "LFS", "Vmaxlen", "LR5", "LFR", "Rmaxlen", "DR")) {
       OM2@isRel <- 'FALSE'
-      testthat::expect_error(runMSE(OM2, Hist=TRUE), NA)  
+      # don't test these now - use V and SLarray etc in cpars
+      # OM2@cpars[[sl]] <- matrix(OM2@cpars[[sl]], nrow=OM2@nyears+OM2@proyears, ncol=OM2@nsim)
+      # testthat::expect_error(runMSE(OM2, Hist=TRUE), NA)  
     } else {
       if (sl %in% c("EffYears", "EffUpper", "EffLower")) {
         testthat::expect_error(runMSE(OM2, Hist=TRUE))
