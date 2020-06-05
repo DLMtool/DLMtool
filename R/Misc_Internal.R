@@ -866,6 +866,11 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBr
   if (!is.null(SampCpars$Data)) {
     RealDat <- SampCpars$Data
     
+    if (length(RealDat@Iref)>0 & !all(is.na(RealDat@Iref))) {
+      Data@Iref <- rep(RealDat@Iref, nsim)  
+    }
+    
+    
     # ---- Catch ----
     if (!all(is.na(RealDat@Cat[1,]))) {
       if (!silent) 
