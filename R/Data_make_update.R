@@ -19,7 +19,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   Data <- replic8(Data, nsim)  # make nsim sized slots in the DLM data object
   
   Data@Name <- Name
-  Data@Year <- 1:nyears
+  Data@Year <- (OM@CurrentYr - nyears+1):OM@CurrentYr
   
   # --- Observed catch ----
   # Simulated observed retained catch (biomass)
@@ -220,7 +220,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   Data@wlb <- rep(StockPars$b, nsim)
   Data@nareas <- nareas
   Data@Ref <- OFLreal 
-  Data@LHYear <- nyears  # Last historical year is nyears (for fixed MPs)
+  Data@LHYear <- OM@CurrentYr  # Last historical year is nyears (for fixed MPs)
   Data@Misc <- vector("list", nsim)
   
   Data
@@ -243,7 +243,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   nareas <- StockPars$nareas
   reps <- OM@reps
   
-  Data@Year <- 1:(nyears + y - 1)
+  Data@Year <- (OM@CurrentYr - nyears+1):(OM@CurrentYr+ y - 1)
   Data@t <- rep(nyears + y, nsim)
   
   # --- Simulate catches ---- 
