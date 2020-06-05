@@ -6,6 +6,9 @@ The current version of the DLMtool package is available for download from [CRAN]
 ### Major changes
 - Age accounting now starts from age-0 instead of age-1
 
+### Minor changes
+- `Data@Year` now reports calendar year instead of year index.
+
 ## DLMtool 5.4.4
 
 
