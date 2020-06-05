@@ -188,6 +188,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   } else {
     StockOut$Perr_y <- Perr_y
     StockOut$procsd <- apply(Perr_y, 1, sd)
+    StockOut$AC <- apply(Perr_y,1,function(x)acf(x, plot=FALSE)$acf[2,1,1])
   }
 
   # if (nsim > 1) {
