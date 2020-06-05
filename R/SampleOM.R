@@ -186,6 +186,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   } else {
     StockOut$Perr_y <- Perr_y
     StockOut$procsd <- apply(Perr_y, 1, sd)
+    StockOut$AC <- apply(Perr_y,1,function(x)acf(x, plot=FALSE)$acf[2,1,1])
   }
 
   # if (nsim > 1) {
@@ -481,14 +482,14 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   
   # == M-at-age has been provided in OM ====
-  if (exists("Mage", inherits=FALSE)) {
+  if (length(cpars[["Mage"]])>0) {
     if (exists("M", inherits=FALSE) & length(cpars[["M"]])>0) 
       if (msg) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
     
     temp <- gettempvar(1, Msd, targgrad=0, nyears + proyears, nsim, Mrand) # add Msd
     temp2 <- replicate(maxage, temp)
     temp2 <- aperm(temp2, c(1,3,2))
-    M_ageArray <-  array(Mage, dim=c(nsim, maxage, proyears+nyears))
+    M_ageArray <-  array(Mage, dim=c(nsim, n_age, proyears+nyears))
     M_ageArray <- temp2 * M_ageArray
     # M is calculated as mean M of mature ages
     M <- rep(NA, nsim)
@@ -497,7 +498,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   # == Mean Natural mortality by simulation and year ====
   if (exists("M_ageArray", inherits=FALSE)) {
-    if (!all(dim(M_ageArray) == c(nsim, n_age, proyears+nyears))) stop("'M_ageArray' must be array with dimensions: nsim, maxage+1, nyears + proyears") 
+    if (!all(dim(M_ageArray) == c(nsim, n_age, proyears+nyears))) stop("'M_ageArray' must be array with dimensions: nsim, maxage+1, nyears + proyears but has dimensions: ", paste(dim(M_ageArray), collapse=" ")) 
     if(msg) message("M_ageArray has been provided in OM@cpars. Ignoring OM@Mexp, OM@Msd, and OM@Mgrad")
     Mexp <- Msd <- Mgrad <- rep(0, nsim)
   }
