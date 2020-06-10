@@ -2,6 +2,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.4.999 - Development Version
 
+### Fixes
+- fix issue with total removals calculation when MPs change discard ratio
 
 
 ## DLMtool 5.4.4
