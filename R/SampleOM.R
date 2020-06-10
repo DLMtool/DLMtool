@@ -985,9 +985,12 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   }
   if(!exists("DR", inherits = FALSE)) {
     DR <- runif(nsim, min(Fleet@DR), max(Fleet@DR))
-    DR <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   }
-  
+  if(exists("DR_y", inherits = FALSE)) DR_y <- t(DR_y)
+  if(!exists("DR_y", inherits = FALSE)) {
+    DR_y <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+
   Rmaxlen[Rmaxlen<=0] <- tiny 
   if (any(LR5 > LFR)) {
     if (all(LFR<0.001)) {
@@ -1025,10 +1028,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   SLarray2 <- SLarray
   
   # Apply general discard rate 
-  dr <- aperm(abind::abind(rep(list(DR), maxage), along=3), c(2,3,1))
+  dr <- aperm(abind::abind(rep(list(DR_y), maxage), along=3), c(2,3,1))
   retA <- (1-dr) * retA
   
-  dr <- aperm(abind::abind(rep(list(DR), nCALbins), along=3), c(2,3,1))
+  dr <- aperm(abind::abind(rep(list(DR_y), nCALbins), along=3), c(2,3,1))
   retL <- (1-dr) * retL
   
   # update realized vulnerablity curve with retention and dead discarded fish 
@@ -1048,7 +1051,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   Fleetout$LR5 <- LR5  
   Fleetout$LFR <- LFR 
   Fleetout$Rmaxlen <- Rmaxlen
-  Fleetout$DR <- DR
+  Fleetout$DR <- DR_y
   
   Fleetout$retA <- retA  # retention-at-age array - nsim, maxage, nyears+proyears
   Fleetout$retL <- retL  # retention-at-length array - nsim, nCALbins, nyears+proyears

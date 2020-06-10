@@ -2,9 +2,12 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.4.999 - Development Version
 
+### New Additions
+- time-varying discard rate can now be added with `cpars$DR_y` - matrix nsim rows and nyears+proyears columns
+
 ### Fixes
 - fix issue with total removals calculation when MPs change discard ratio
-
+- fix issue with discard rate (DR) in cpars. 
 
 ## DLMtool 5.4.4
 
