@@ -284,15 +284,18 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
     
     # update realized vulnerablity curve with retention and dead discarded fish 
     Fdisc_array1 <- array(Fdisc_P, dim=c(nsim, n_age, length(allyrs)))
-    
-    V_P[,,allyrs] <- V_P[,,allyrs, drop=FALSE] * (retA_P[,,allyrs, drop=FALSE] + (1-retA_P[,,allyrs, drop=FALSE])*Fdisc_array1)
-    
+
+    V_P2 <- V_P
+    V_P2[,,allyrs] <- V_P[,,allyrs, drop=FALSE] * (retA_P[,,allyrs, drop=FALSE] + (1-retA_P[,,allyrs, drop=FALSE])*Fdisc_array1)
+  
     Fdisc_array2 <- array(Fdisc_P, dim=c(nsim, nCALbins, length(allyrs)))
     SLarray_P[,,allyrs]  <- SLarray_P[,,allyrs, drop=FALSE] * (retL_P[,,allyrs, drop=FALSE]+ (1-retL_P[,,allyrs, drop=FALSE])*Fdisc_array2)
-    
+
     # Realised Retention curves
     retA_P[,,allyrs] <- retA_P[,,allyrs] * V_P[,,allyrs]
     retL_P[,,allyrs] <- retL_P[,,allyrs] * SLarray_P[,,allyrs] 
+    
+    V_P <- V_P2
   }
   
   CurrentB <- Biomass_P[,,y,] # biomass at the beginning of year 

@@ -1110,6 +1110,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       Effort[, mm, y] <- MPCalcs$Effort  
       CB_P <- MPCalcs$CB_P # removals
       CB_Pret <- MPCalcs$CB_Pret # retained catch 
+
       # apply(CB_Pret[,,1,], 1, sum)
       FM_P <- MPCalcs$FM_P # fishing mortality
       FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 

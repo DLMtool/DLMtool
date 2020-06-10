@@ -950,7 +950,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
         }
       }
     }
-   # calculate retL
+    # calculate retL
     nCALbins <- length(CAL_binsmid)
     CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
     retL <- array(NA, dim=c(nsim, nCALbins, nyears+proyears)) # Retention-at-length 
@@ -961,6 +961,33 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
       } else {
         stop('LR5 is greater than LFR', call.=FALSE)   
       }
+    }
+  if(!exists("LR5", inherits = FALSE)) {
+    LR5 <- runif(nsim, min(Fleet@LR5), max(Fleet@LR5)) * multi
+    LR5 <- matrix(LR5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+  if(!exists("LFR", inherits = FALSE)) {
+    LFR <- runif(nsim, min(Fleet@LFR), max(Fleet@LFR)) * multi
+    LFR <- matrix(LFR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+  if(!exists("Rmaxlen", inherits = FALSE)) {
+    Rmaxlen <- runif(nsim, min(Fleet@Rmaxlen), max(Fleet@Rmaxlen))
+    Rmaxlen <- matrix(Rmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+  if(!exists("DR", inherits = FALSE)) {
+    DR <- runif(nsim, min(Fleet@DR), max(Fleet@DR))
+  }
+  if(exists("DR_y", inherits = FALSE)) DR_y <- t(DR_y)
+  if(!exists("DR_y", inherits = FALSE)) {
+    DR_y <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+
+  Rmaxlen[Rmaxlen<=0] <- tiny 
+  if (any(LR5 > LFR)) {
+    if (all(LFR<0.001)) {
+      LFR <- LR5 + LFR
+    } else {
+      stop('LR5 is greater than LFR', call.=FALSE)   
     }
     for (yr in 1:(nyears+proyears)) {
       srs <- (Linf - LFR_y[yr,]) / ((-log(Rmaxlen_y[yr,],2))^0.5) 
@@ -1002,9 +1029,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   Fleetout$Fdisc <- Fdisc
   Fleetout$Fdisc_array1 <- Fdisc_array1
   Fleetout$Fdisc_array2 <- Fdisc_array2
+
   Fleetout$LR5 <- LR5_y  
   Fleetout$LFR <- LFR_y
   Fleetout$Rmaxlen <- Rmaxlen_y
+
   Fleetout$DR <- DR_y
   
   Fleetout$retA <- retA  # retention-at-age array - nsim, maxage, nyears+proyears
