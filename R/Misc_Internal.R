@@ -71,8 +71,8 @@ ChkObj <- function(OM, error=TRUE) {
     slotVal <- slot(OM, slots[sl])
     if (length(slotVal) == 0) Ok[sl] <- FALSE
     if (length(slotVal) > 0) {
-      Ok[sl] <- class(slotVal) == class(slot(OM, slots[sl]))
-      if (class(slotVal) != "character" & class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
+      Ok[sl] <- all(class(slotVal) == class(slot(OM, slots[sl])))
+      if (class(slotVal) != "character" && class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
     } 
   }
   optslots <- OptionalSlots()
@@ -91,6 +91,13 @@ ChkObj <- function(OM, error=TRUE) {
   probSlots <- probSlots[!probSlots %in% names(OM@cpars)]
   if ('Len_age' %in% names(OM@cpars)) {
     probSlots <- probSlots[!probSlots %in% c("Linf", "K", "t0")]
+  }
+  if ('Perr_y' %in% names(OM@cpars)) {
+    probSlots <- probSlots[!probSlots %in% c("Perr")]
+  }
+  
+  if ('Find' %in% names(OM@cpars)) {
+    probSlots <- probSlots[!probSlots %in% c("EffLower", "EffUpper", "EffYears")]
   }
   
   if (length(probSlots) > 0) {
@@ -692,7 +699,7 @@ indfitwrap <- function(x, type, sim.indices, ind.type, Data, nyears, plot=FALSE)
 }
 
 lcs<-function(x){
-  if (class(x) == "matrix") {
+  if ("matrix" %in% class(x)) {
     nsim <- nrow(x)
     nyr <- ncol(x)
     x1 <- x/matrix(apply(x, 1, mean, na.rm=TRUE), nrow=nsim, ncol=nyr) # rescale to mean 1
@@ -782,8 +789,10 @@ applyAC <- function(x, res, ac, max.years, lst.err) {
 }
 
 addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBret,
-                        nsim, nyears, proyears, silent=FALSE) {
+                        nsim, nyears, proyears, 
+                        V, Mat_age, silent=FALSE) {
  
+  AddIndType <- AddIunits <- NA
   if (!is.null(SampCpars$Data)) {
     RealDat <- SampCpars$Data
     
@@ -925,19 +934,34 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBr
       }
       
       if (!is.null(SampCpars$AddIerr)) {
-        if (any(dim(SampCpars$AddIerr) != c(nsim, n.ind, nyears+proyears))) stop("cpars$AddIerr must be dimensions c(nsim, n.ind, nyears+proyears)")
+        if (any(dim(SampCpars$AddIerr) != c(nsim, n.ind, nyears+proyears))) 
+          stop("cpars$AddIerr must be dimensions c(nsim, n.ind, nyears+proyears)")
         ErrList$AddIerr <- SampCpars$AddIerr
         fitIerr <- FALSE
       } else {
         ErrList$AddIerr <- array(NA, dim=c(nsim, n.ind, nyears+proyears))
       }
       
-      if (!is.null(SampCpars$AddIunits) && length(SampCpars$AddIunits) != n.ind) stop("cpars$AddIunits must be length n.ind")
+      if (!is.null(SampCpars$AddIunits) && length(SampCpars$AddIunits) != n.ind) 
+        stop("cpars$AddIunits must be length n.ind")
+      
+      AddIunits <- RealDat@AddIunits
+      if (all(is.na(AddIunits))) AddIunits <- rep(1, n.ind)
+      if (!is.null(SampCpars$AddIunits)) AddIunits <- SampCpars$AddIunits
+      
+      AddIndType <- RealDat@AddIndType 
+      if (all(is.na(AddIndType))) AddIndType <- rep(1, n.ind)
       
       ErrList$AddInd_Stat <- list()
 
+      UnitsTab <- data.frame(n=0:1, units=c('biomass', 'numbers'))
+      TypeTab <- data.frame(n=1:3, type=c('total', 'spawning', 'vuln.'))
       for (i in 1:n.ind) {
-        if(!silent) message("Additional index ", i)
+        
+        units <- UnitsTab$units[match(AddIunits[i], UnitsTab$n)]
+        type <- TypeTab$type[match(AddIndType[i], TypeTab$n)]
+        
+        if(!silent) message("Additional index ", i, ' - ', type, ' stock', ' (', units, ')')
         ind <- RealDat@AddInd[1,i,1:nyears]
         cv_ind <- RealDat@CV_AddInd[1,i,1:nyears]
         Data@AddInd[,i,] <- matrix(ind, nrow=nsim, ncol=nyears, byrow=TRUE)
@@ -945,11 +969,16 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBr
         
         # Calculate observation error for future projections 
         Ind_V <- RealDat@AddIndV[1,i, ]
-        if (is.null(SampCpars$AddIunits) || SampCpars$AddIunits[i]) { 
-          SimIndex <- apply(Biomass, c(1, 2, 3), sum) # Biomass-based index
+        if (AddIunits[i]) { 
+          if (AddIndType[i]==1) SimIndex <- apply(Biomass, c(1, 2, 3), sum) # Total Biomass-based index
+          if (AddIndType[i]==2) SimIndex <- apply(SSB, c(1, 2, 3), sum) # Spawning Biomass-based index
+          if (AddIndType[i]==3) SimIndex <- apply(VBiomass, c(1, 2, 3), sum) # vuln Biomass-based index
         } else {
-          SimIndex <- apply(N, c(1, 2, 3), sum) # Abundance-based index
+          if (AddIndType[i]==1) SimIndex <- apply(N, c(1, 2, 3), sum) # Total Abundance-based index 
+          if (AddIndType[i]==2) SimIndex <- apply(N, c(1, 2, 3), sum) * Mat_age[,,1:nyears] # Spawning abundance-based index 
+          if (AddIndType[i]==3) SimIndex <- apply(N, c(1, 2, 3), sum) * V[,,1:nyears] # Spawning abundance-based index 
         }
+        
         Ind_V <- matrix(Ind_V, nrow=Data@MaxAge, ncol= nyears)
         Ind_V <- replicate(nsim, Ind_V) %>% aperm(., c(3,1,2))
         SimIndex <- apply(SimIndex*Ind_V, c(1,3), sum) # apply vuln curve
@@ -981,7 +1010,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBr
       
     }
   }
-  return(list(Data=Data, ErrList=ErrList))
+  return(list(Data=Data, ErrList=ErrList, AddIndType=AddIndType, AddIunits=AddIunits))
 }
 
 

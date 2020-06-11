@@ -3,6 +3,21 @@ library(DLMtool)
 options(testthat.output_file = "test-out.xml")
 testthat::test_dir('tests/manual/test-code', reporter = "junit")
 
+options(testthat.output_file = "test-1.rda")
+tt <- testthat::test_dir('tests/manual/test-1') #, reporter=ListReporter)
+
+
+t1 <- readRDS(file.path(getwd(), '/tests/manual/test-1/test-1.rda'))
+
+
+options(testthat.output_file = "tests-result.xml")
+tt <- testthat::test_file("tests/manual/test-code/test-checkPopdyn.R"  ) # ok
+
+t1 <- testthat::test_file("tests/manual/test-code/test-cpars.R", reporter = RstudioReporter) # ok
+
+t1
+
+
 
 # testthat::test_file("tests/manual/test-code/test-checkPopdyn.R") # ok
 

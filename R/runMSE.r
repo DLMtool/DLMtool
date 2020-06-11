@@ -196,7 +196,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
     if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
 
-    MSE1 <- joinMSE(temp) 
+    MSE1 <- joinMSE(temp)
     if (class(MSE1) == "MSE") {
       if (!silent) message("MSE completed")
     } else if (class(MSE1) == "Hist"){
@@ -215,12 +215,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   if (class(MSE1) == "MSE") {
     # list in sequential mode
-    if (class(MSE1@Misc$TryMP) == "list") {
+    if ('list' %in% class(MSE1@Misc$TryMP)) {
       ok <- unlist(MSE1@Misc$TryMP) == "Okay"
       fail <- unlist(MSE1@Misc$TryMP)
     }
       
-    if (class(MSE1@Misc$TryMP) == "matrix") {
+    if ('matrix' %in% class(MSE1@Misc$TryMP)) {
       ok <- colSums(MSE1@Misc$TryMP == "Okay") == nrow(MSE1@Misc$TryMP)
       fail <- t(MSE1@Misc$TryMP)
       if (any(grepl("could not find function", unique(fail[!ok,])))) {
@@ -548,14 +548,20 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
  
  
-  # --- Optimize catchability (q) to fit depletion ---- 
-  if(!silent) message("Optimizing for user-specified depletion in last historical year")
+  # --- Optimize catchability (q) to fit depletion ----
   bounds <- c(0.0001, 15) # q bounds for optimizer
-  # find the q that gives current stock depletion - optVB = depletion for vulnerable biomass else SB
-  qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-               M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
-               Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF,
-               plusgroup=plusgroup, VB0=VB0, optVB=optVB)
+  if (!is.null(SampCpars$qs)) {
+    if(!silent) message("Skipping optimization for depletion - using catchability (q) from OM@cpars.")
+    qs <- SampCpars$qs
+  
+    } else {
+    if(!silent) message("Optimizing for user-specified depletion in last historical year")
+    # find the q that gives current stock depletion - optVB = depletion for vulnerable biomass else SB
+    qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
+                 M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
+                 Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF,
+                 plusgroup=plusgroup, VB0=VB0, optVB=optVB)
+  }
   
   # --- Check that q optimizer has converged ---- 
   LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
@@ -664,6 +670,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   N_unfished <- aperm(array(as.numeric(unlist(histYrs_unfished[1,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   N_unfished <- apply(N_unfished, 1:3, sum)
   
+  if (!is.null(OM@cpars$qs)) {
+    # update OM@D 
+    D <- Depletion 
+  }
   
   # Check that depletion is correct
   if (checks) {
@@ -851,8 +861,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Condition Simulated Data on input Data object (if it exists) & calculate error stats ----
   templist <- addRealData(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBret, 
-                          nsim, nyears, proyears,
+                          nsim, nyears, proyears, V, Mat_age,
                           silent=silent)
+  AddIunits <- templist$AddIunits
+  AddIndType <- templist$AddIndType
+  
   Data <- templist$Data # update 
   ErrList <- templist$ErrList # update
   
@@ -1071,7 +1084,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                 FinF, Spat_targ,
                                 CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
                                 qs, qvar, qinc, Effort_pot)
-  
+      
       TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
       LastSpatial <- MPCalcs$Si
       LastAllocat <- MPCalcs$Ai
@@ -1080,6 +1093,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       Effort[, mm, y] <- MPCalcs$Effort  
       CB_P <- MPCalcs$CB_P # removals
       CB_Pret <- MPCalcs$CB_Pret # retained catch 
+
       # apply(CB_Pret[,,1,], 1, sum)
       FM_P <- MPCalcs$FM_P # fishing mortality
       FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
@@ -1089,6 +1103,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       V_P <- MPCalcs$V_P  # vulnerable-at-age
       SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
       FMa[,mm,y] <- MPCalcs$Ftot 
+      
+      LR5_P <- MPCalcs$LR5_P
+      LFR_P <- MPCalcs$LFR_P
+      Rmaxlen_P <- MPCalcs$Rmaxlen_P
+      L5_P <- MPCalcs$L5_P
+      LFS_P <- MPCalcs$LFS_P
+      Vmaxlen_P <- MPCalcs$Vmaxlen_P
+      Fdisc_P <- MPCalcs$Fdisc_P
+      DR_P <- MPCalcs$DR_P
       
       # ---- Bio-economics ----
       RetainCatch <- apply(CB_Pret[,,y,], 1, sum) # retained catch this year
@@ -1161,8 +1184,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, N,
                                       Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                       RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
-                                      FleetPars, ObsPars, upyrs, interval, y, mm, 
-                                      Misc=Data_p@Misc, SampCpars, Sample_Area)
+                                      FleetPars, ObsPars, V_P, Mat_age,
+                                      upyrs, interval, y, mm, 
+                                      Misc=Data_p@Misc, SampCpars, Sample_Area, 
+                                      AddIunits, AddIndType)
           
           
           # Update Abundance and FMSY for FMSYref MPs
@@ -1218,6 +1243,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           V_P <- MPCalcs$V_P  # vulnerable-at-age
           SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
           
+          LR5_P <- MPCalcs$LR5_P
+          LFR_P <- MPCalcs$LFR_P
+          Rmaxlen_P <- MPCalcs$Rmaxlen_P
+          L5_P <- MPCalcs$L5_P
+          LFS_P <- MPCalcs$LFS_P
+          Vmaxlen_P <- MPCalcs$Vmaxlen_P
+          Fdisc_P <- MPCalcs$Fdisc_P
+          DR_P <- MPCalcs$DR_P
+          
           # ---- Bio-economics ----
           RetainCatch <- apply(CB_Pret[,,y,], 1, sum) # retained catch this year
           RetainCatch[RetainCatch<=0] <- tiny
@@ -1265,6 +1299,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           V_P <- MPCalcs$V_P  # vulnerable-at-age
           SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
           
+          
+          
           # ---- Bio-economics ----
           RetainCatch <- apply(CB_Pret[,,y,], 1, sum) # retained catch this year
           RetainCatch[RetainCatch<=0] <- tiny
@@ -1285,9 +1321,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, N,
                                     Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                     RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
-                                    FleetPars, ObsPars, c(upyrs, proyears), 
+                                    FleetPars, ObsPars,  V_P, Mat_age,
+                                    upyrs=c(upyrs, proyears), 
                                     interval = rep(proyears - max(upyrs), length(interval)), 
-                                    proyears, mm, Misc=Data_p@Misc, SampCpars, Sample_Area)
+                                    y=proyears, mm, Misc=Data_p@Misc, SampCpars, Sample_Area,
+                                    AddIunits, AddIndType)
       }
       
       B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_y[,mm,(OM@nyears+1):(OM@nyears+OM@proyears)]  # SSB relative to SSBMSY
@@ -1380,8 +1418,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 cparscheck<-function(cpars){
   
   dim1check<-function(x){
-    if(class(x)=="numeric" | class(x)=="integer")length(x)
-    else dim(x)[1]
+    if (inherits(x, 'numeric') | inherits(x, 'integer')) return(length(x))
+    else return(dim(x)[1])
   }
   
   dims <- sapply(cpars,dim1check)

@@ -30,7 +30,6 @@ vignettes/*.pdf
 ^\.travis\.yml$
 ^\_pkgdown\.yml$
 docs
-^\index\.md$
 
 # Ignore tests 
 tests\*.*
@@ -45,3 +44,4 @@ src\*.dll
 \.dll$
 
 \.ini$
+^index\.md$

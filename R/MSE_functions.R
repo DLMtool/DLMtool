@@ -70,6 +70,9 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
   if (ncol * nrow < nPMs) stop("ncol x nrow must be > length(PMs)")
  
   if (MSEobj@nMPs > maxMP) {
+    while (MSEobj@nMPs %% maxMP == 1) {
+      maxMP <- maxMP+1
+    }
     nplots <- ceiling(MSEobj@nMPs /maxMP)
   } else{
     nplots <- 1
@@ -109,6 +112,7 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
       PMval <- PMs[[xx]](subMSE)
       PMName[xx] <- PMval@Name
       PMval@Prob[!is.finite(PMval@Prob)] <- 0
+    
       cum_mean <- apply(PMval@Prob, 2, cumsum)/apply(PMval@Prob, 2, seq_along) * 100
       vals <- as.vector(cum_mean) 
       mp <- rep(subMSE@MPs, each=subMSE@nsim)
@@ -196,6 +200,7 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
   }
   return(resultsTab)
 }
+
 
 
 
@@ -584,9 +589,9 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
     MSEobj@Misc$Unfished$ByYear[[i]] <- MSEobj@Misc$Unfished$ByYear[[i]][SubIts,Years]
   }
   MSEobj@Misc$MSYRefs$Refs <- MSEobj@Misc$MSYRefs$Refs[SubIts, ]
-  for (i in 1:length(MSEobj@Misc$MSYRefs$ByYear)) {
-    MSEobj@Misc$MSYRefs$ByYear[[i]] <- MSEobj@Misc$MSYRefs$ByYear[[i]][SubIts, mpind, Years]
-  }
+  # for (i in 1:length(MSEobj@Misc$MSYRefs$ByYear)) {
+  #   MSEobj@Misc$MSYRefs$ByYear[[i]] <- MSEobj@Misc$MSYRefs$ByYear[[i]][SubIts, mpind, Years]
+  # }
   MSEobj@Misc$TryMP <- MSEobj@Misc$TryMP[mpind]
   
   
@@ -859,6 +864,18 @@ joinMSE <- function(MSEobjs = NULL) {
   
   }
   
+  # ErrList 
+  nms <- names(MSEobjs[[1]]@Misc$ErrList)
+  for (nm in nms) {
+    t1 <- lapply(1:length(MSEobjs), function(i) MSEobjs[[i]]@Misc$ErrList[[nm]])
+    Misc$ErrList[[nm]] <- do.call('rbind', t1) 
+  }
+  
+  # Removals 
+  t1 <- lapply(1:length(MSEobjs), function(i) MSEobjs[[i]]@Misc$Removals)
+  Misc$Removals <- abind::abind(t1, along=1)
+  
+  
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 
                 proyears = unique(outlist$proyears), nMP = unique(outlist$nMP), 
                 MPs = unique(outlist$MPs), nsim = sum(outlist$nsim), OM = outlist$OM, 
@@ -1034,39 +1051,81 @@ Dom <- function(MSEobj, ..., PMlist=NULL, Refs=NULL, Yrs=NULL) {
     if (length(ind)>0) {
       df1 <- DF[i,] %>% 
         dplyr::select(-MP, -Data, -DataClass, -Type, -Recs) %>% unlist()
-      m1 <- matrix(df1, nrow=length(ind), ncol=length(df1), byrow=TRUE) %>% 
-        round(2)
+      m1 <- matrix(df1, nrow=length(ind), ncol=length(df1), byrow=TRUE) 
       df2 <- DF[ind,] %>% 
-        dplyr::select(-MP, -Data, -DataClass, -Type, -Recs) %>% as.matrix() %>% 
-        round(2)
+        dplyr::select(-MP, -Data, -DataClass, -Type, -Recs) %>% as.matrix() 
       ind2 <- which(rowSums(m1 < df2) ==0) 
       if (length(ind2)>0) {
         DomList[[i]] <- data.frame(DominatedMPs=DF$MP[ind[ind2]], 
-                                   By=MSEobj@MPs[i], stringsAsFactors = FALSE)
+                                   By=DF$MP[i], stringsAsFactors = FALSE)
       } 
     } 
   }
   DomDF <- do.call("rbind", DomList) %>% as.data.frame()
   DomMPs <- unique(DomDF$DominatedMPs)
   NonDom <- MSEobj@MPs[!MSEobj@MPs %in% DomMPs]
-  DomList <- list()
+  DomList2 <- list()
   for (i in seq_along(DomMPs)) {
-    By <- DomDF %>% dplyr::filter(DominatedMPs ==DomMPs[i]) %>% dplyr::select(By) %>% unique() %>%
+    By <- DomDF %>% dplyr::filter(DominatedMPs ==DomMPs[i]) %>% 
+      dplyr::select(By) %>% unique() %>%
       unlist(., use.names = FALSE)
     By <- By[By %in% NonDom]
     By <- By %>% paste(., collapse=", ") %>% sort()
     if (nchar(By)>0)
-      DomList[[i]] <- data.frame(MP=DomMPs[i], By=By, stringsAsFactors = FALSE)
+      DomList2[[i]] <- data.frame(MP=DomMPs[i], By=By, stringsAsFactors = FALSE)
   }
   
-  DomDF <- do.call("rbind", DomList) %>% as.data.frame() %>% dplyr::arrange(MP)
-  NonDom %>% sort()
+  DomDF <- do.call("rbind", DomList2) %>% as.data.frame() %>% dplyr::arrange(MP)
+  NonDom <- NonDom %>% sort()
   
   list(MPs=NonDom, DomMPs=DomDF)
 }
 
-
-
-
-
+#' @describeIn checkMSE Adds additional MPs to an MSE object by combining
+#'  multiple MSE objects that have identical historical OM values but different 
+#'  MPs. Note that the `Misc` slot is returned as a list of `length(MSEobjs)` with 
+#'  each element containing the `Misc` object from `MSEobjs`.
+#' @export
+#' 
+addMPs <- function(MSEobjs) {
+  # join two or more MSE objects
+  if (class(MSEobjs) != "list") stop("MSEobjs must be a list")
+  if (length(MSEobjs) < 2) stop("MSEobjs list doesn't contain multiple MSE objects")
+  if (!(all(lapply(MSEobjs, class) %>% unlist() =='MSE')))
+    stop('MSEobjs must be a list of objects of class `MSE`', call.=FALSE)
+  
+  # Check seed and hist values
+  for (x in 2:length(MSEobjs)) {
+    check <- all(MSEobjs[[x]]@OM == MSEobjs[[1]]@OM)
+    if (!check) 
+    stop('Values for `MSEobjs[[', x, ']]@OM` are not the same as `MSEobjs[[1]]@OM`')
+  }
+ 
+  MSEout <- MSEobjs[[1]]
+  MPs <- lapply(MSEobjs, slot, 'MPs') %>% unlist()
+  MSEout@MPs <- MPs
+  MSEout@nMPs <- length(MPs)
+  
+  addmp <- function(sl='B_BMSY', MSEobjs, MSEout) {
+    vals <- lapply(MSEobjs, slot, sl)
+    slot(MSEout, sl) <- abind::abind(vals, along=2)
+    MSEout
+  }
+  MSEout <- addmp('B_BMSY', MSEobjs, MSEout)
+  MSEout <- addmp('F_FMSY', MSEobjs, MSEout)
+  MSEout <- addmp('B', MSEobjs, MSEout)
+  MSEout <- addmp('SSB', MSEobjs, MSEout)
+  MSEout <- addmp('VB', MSEobjs, MSEout)
+  MSEout <- addmp('FM', MSEobjs, MSEout)
+  MSEout <- addmp('C', MSEobjs, MSEout)
+  MSEout <- addmp('TAC', MSEobjs, MSEout)
+  MSEout <- addmp('Effort', MSEobjs, MSEout)
+  MSEout <- addmp('PAA', MSEobjs, MSEout)
+  MSEout <- addmp('CAA', MSEobjs, MSEout)
+  MSEout <- addmp('CAL', MSEobjs, MSEout)
+  
+  MSEout@Misc <- lapply(MSEobjs, slot, 'Misc') 
+  
+  MSEout
+}
 

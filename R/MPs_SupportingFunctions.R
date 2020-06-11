@@ -743,6 +743,7 @@ bheq <- function(K, Linf, Lc, Lbar) {
   K * (Linf - Lbar)/(Lbar - Lc)
 }
 
+#' @importFrom Rcpp evalCpp
 bhnoneq <- function(year, mlen, ss, K, Linf, Lc, nbreaks, styrs, stZ) {
   mlen[mlen <= 0 | is.na(mlen)] <- -99
   ss[ss <= 0 | is.na(ss)] <- 0 

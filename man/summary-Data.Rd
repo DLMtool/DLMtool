@@ -4,7 +4,15 @@
 \alias{summary,Data-method}
 \title{Summary of Data object}
 \usage{
-\S4method{summary}{Data}(object, wait = TRUE, x = 1, plots = "all", rmd = FALSE, head = "##")
+\S4method{summary}{Data}(
+  object,
+  wait = TRUE,
+  x = 1,
+  plots = "all",
+  rmd = FALSE,
+  head = "##",
+  tplot = 25
+)
 }
 \arguments{
 \item{object}{An object of class Data}
@@ -20,6 +28,8 @@ probability distributions respectively}
 \item{rmd}{Logical. Used in a rmd file?}
 
 \item{head}{Character. Heading for rmd file. Default is '##' (second level heading)}
+
+\item{tplot}{Integer. Number of plots per page. Default 25}
 }
 \description{
 Summary of Data object

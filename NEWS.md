@@ -1,5 +1,28 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.4.999 - Development Version
+
+### New Additions
+- time-varying discard rate can now be added with `cpars$DR_y` - matrix nsim rows and nyears+proyears columns
+
+### Fixes
+- fix issue with total removals calculation when MPs change discard ratio
+- fix issue with discard rate (DR) in cpars. 
+
+## DLMtool 5.4.4
+
+### New Additions
+- Management procedures can now update the discard rate (`Rec@DR`)
+- Catchability parameter (q) can now be passed in with cpars (`OM@cpars$qs`). Doesn't optimize for depletion and updates `OM@D`.
+- Units for the additional indices (`Data@AddInd`) can now be specified using `Data@AddIunits` (numeric vector length n.ind 1=biomass (default) 0=numbers).
+- Additional indices can now use total, spawning, or vulnerable biomass using `Data@AddIndType` (numeric vector length n.ind 1=total stock (default), 2=spawning stock, 3=vulnerable stock).
+
+### Fixes
+- fix issue where `Misc$Removals` wasn't being returned in parallel mode.
+- fix issue with `XL2OM` for latest version of R (behavior of `base::data.matrix` changed)
+- minor fixes for R V4.0
+- fix to calculation of retained and total catch - thanks to K. Sys for picking this up.
+
 ## DLMtool 5.4.3 
 
 ### Minor changes
@@ -22,7 +45,6 @@ The following names are accepted:
 - fix retention-at-age when retention-at-length passed in `OM@cpars`
 - fix bug in `LBSPR_MLL` MP 
 - correction for auto-correlation in index when real data is used to condition model.
-
 
 
 ## DLMtool 5.4.2 

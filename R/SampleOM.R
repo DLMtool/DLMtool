@@ -138,49 +138,57 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (exists("Perr", inherits = FALSE)) {
     procsd <- Perr
   }
-  if (!exists("procsd", inherits=FALSE)) {
-    StockOut$procsd <- procsd <- myrunif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
-  } else {
-    StockOut$procsd <- procsd
-  }
   
-  if (!exists("AC", inherits=FALSE)) {
-    StockOut$AC <- AC <- myrunif(nsim, Stock@AC[1], Stock@AC[2])  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
-  } else {
-    StockOut$AC <- AC  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
-  }
-  
-  # All recruitment Deviations
-  # Add cycle (phase shift) to recruitment deviations - if specified
-  if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
-    # Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
-    Period <- myrunif(nsim, min(Stock@Period), max(Stock@Period))
-    if (max(Stock@Amplitude)>1) {
-      if (msg) message("Stock@Amplitude > 1. Defaulting to 1")
-      Stock@Amplitude[Stock@Amplitude>1] <- 1
-    }
-    Amplitude <- myrunif(nsim, min(Stock@Amplitude), max(Stock@Amplitude))
-    
-    yrs <- 1:(nyears + proyears+maxage-1)
-    recMulti <- t(sapply(1:nsim, function(x) 1+sin((runif(1, 0, 1)*max(yrs) + 2*yrs*pi)/Period[x])*Amplitude[x]))
-    if (msg) message("Adding cyclic recruitment pattern")
-    
-    # recMulti <-  t(sapply(1:nsim, SetRecruitCycle, Period, Amplitude, TotYears=length(yrs), Shape = "sin"))
-    
-  } else {
-    recMulti <- 1 
-  }
-  
-  StockOut$procmu <- procmu <- -0.5 * procsd^2  * (1 - AC)/sqrt(1 - AC^2) #  # adjusted log normal mean http://dx.doi.org/10.1139/cjfas-2016-0167
   if (!exists("Perr_y", inherits=FALSE)) {
+    
+    if (!exists("procsd", inherits=FALSE)) {
+      StockOut$procsd <- procsd <- myrunif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
+    } else {
+      StockOut$procsd <- procsd
+    }
+    
+    if (!exists("AC", inherits=FALSE)) {
+      StockOut$AC <- AC <- myrunif(nsim, Stock@AC[1], Stock@AC[2]) 
+      # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
+    } else {
+      StockOut$AC <- AC 
+      # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
+    }
+    
+    # All recruitment Deviations
+    # Add cycle (phase shift) to recruitment deviations - if specified
+    if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
+      # Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
+      Period <- myrunif(nsim, min(Stock@Period), max(Stock@Period))
+      if (max(Stock@Amplitude)>1) {
+        if (msg) message("Stock@Amplitude > 1. Defaulting to 1")
+        Stock@Amplitude[Stock@Amplitude>1] <- 1
+      }
+      Amplitude <- myrunif(nsim, min(Stock@Amplitude), max(Stock@Amplitude))
+      
+      yrs <- 1:(nyears + proyears+maxage-1)
+      recMulti <- t(sapply(1:nsim, function(x) 1+sin((runif(1, 0, 1)*max(yrs) + 2*yrs*pi)/Period[x])*Amplitude[x]))
+      if (msg) message("Adding cyclic recruitment pattern")
+      
+      # recMulti <-  t(sapply(1:nsim, SetRecruitCycle, Period, Amplitude, TotYears=length(yrs), Shape = "sin"))
+      
+    } else {
+      recMulti <- 1 
+    }
+    
+    StockOut$procmu <- procmu <- -0.5 * procsd^2  * (1 - AC)/sqrt(1 - AC^2) #  
+    # adjusted log normal mean http://dx.doi.org/10.1139/cjfas-2016-0167
+    
     Perr_y <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + proyears+maxage-1), 
-                        rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
+                          rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
     for (y in 2:(nyears + proyears+maxage-1)) Perr_y[, y] <- AC * Perr_y[, y - 1] + Perr_y[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
     StockOut$Perr_y <- Perr_y <- exp(Perr_y) * recMulti # normal space (mean 1 on average) 
     
     
   } else {
     StockOut$Perr_y <- Perr_y
+    StockOut$procsd <- apply(Perr_y, 1, sd)
+    StockOut$AC <- apply(Perr_y,1,function(x)acf(x, plot=FALSE)$acf[2,1,1])
   }
 
   # if (nsim > 1) {
@@ -479,15 +487,21 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (exists("Mage", inherits=FALSE)) {
     if (exists("M", inherits=FALSE) & length(cpars[["M"]])>0) 
       if (msg) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
+    
+    temp <- gettempvar(1, Msd, targgrad=0, nyears + proyears, nsim, Mrand) # add Msd
+    temp2 <- replicate(maxage, temp)
+    temp2 <- aperm(temp2, c(1,3,2))
+    M_ageArray <-  array(Mage, dim=c(nsim, maxage, proyears+nyears))
+    M_ageArray <- temp2 * M_ageArray
     # M is calculated as mean M of mature ages
     M <- rep(NA, nsim)
-    for (sim in 1:nsim) M[sim] <- mean(Mage[sim,round(ageM[sim],0):maxage])
+    for (sim in 1:nsim) M[sim] <- mean(Mage[sim,round(ageM[sim],0):maxage]) # mean adult M 
   }
   
   # == Mean Natural mortality by simulation and year ====
-  if (exists("M_ageArray", inherits=FALSE)) {
+  if (length(cpars[["M_ageArray"]])>0) {
     if (!all(dim(M_ageArray) == c(nsim, maxage, proyears+nyears))) stop("'M_ageArray' must be array with dimensions: nsim, maxage, nyears + proyears") 
-    if(msg) message("M_ageArray has been provided in OM@cpars. Ignoring OM@Mexp, OM@Msd, and OM@Mgrad")
+    if(msg) message("M-at-age has been specified in OM or provided in OM@cpars. Ignoring OM@Mexp, OM@Msd, and OM@Mgrad")
     Mexp <- Msd <- Mgrad <- rep(0, nsim)
   }
    
@@ -496,7 +510,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     Marray <- matrix(NA, nsim, nyears+proyears)
     for (yr in 1:(nyears+proyears)) {
       for (sim in 1:nsim) {
-        Marray[sim, yr] <- mean(M_ageArray[sim, ageM[sim,yr]:maxage,yr])
+        Marray[sim, yr] <- mean(M_ageArray[sim, round(ageM[sim,yr],0):maxage,yr])
       }
     }
   }
@@ -509,7 +523,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   # == Natural mortality by simulation, age and year ====
   if (!exists("M_ageArray", inherits=FALSE)) { # only calculate M_ageArray if it hasn't been specified in cpars
-    
     M_ageArray <- array(NA, dim=c(nsim, maxage, nyears + proyears))
     if (exists("Mage", inherits=FALSE)) { # M-at-age has been provided
       temp1 <- Mage/ matrix(apply(Mage, 1, mean), nsim, maxage, byrow=FALSE)
@@ -732,10 +745,13 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   Fleetout$dFfinal <- dFfinal
   
   # === Spatial Targetting ====
-  if (!exists("Spat_targ", inherits = FALSE))
+  if (!exists("Spat_targ", inherits = FALSE)) {
     # spatial targetting Ba^targetting param 
     Fleetout$Spat_targ <- Spat_targ <- myrunif(nsim, Fleet@Spat_targ[1], Fleet@Spat_targ[2])  
-  
+  } else {
+    Fleetout$Spat_targ <- Spat_targ 
+  }
+    
   # === Sample fishing efficiency parameters ====
   # interannual variability in catchability
   if (!exists("qinc", inherits = FALSE)) 
@@ -969,9 +985,12 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   }
   if(!exists("DR", inherits = FALSE)) {
     DR <- runif(nsim, min(Fleet@DR), max(Fleet@DR))
-    DR <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   }
-  
+  if(exists("DR_y", inherits = FALSE)) DR_y <- t(DR_y)
+  if(!exists("DR_y", inherits = FALSE)) {
+    DR_y <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  }
+
   Rmaxlen[Rmaxlen<=0] <- tiny 
   if (any(LR5 > LFR)) {
     if (all(LFR<0.001)) {
@@ -1009,10 +1028,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   SLarray2 <- SLarray
   
   # Apply general discard rate 
-  dr <- aperm(abind::abind(rep(list(DR), maxage), along=3), c(2,3,1))
+  dr <- aperm(abind::abind(rep(list(DR_y), maxage), along=3), c(2,3,1))
   retA <- (1-dr) * retA
   
-  dr <- aperm(abind::abind(rep(list(DR), nCALbins), along=3), c(2,3,1))
+  dr <- aperm(abind::abind(rep(list(DR_y), nCALbins), along=3), c(2,3,1))
   retL <- (1-dr) * retL
   
   # update realized vulnerablity curve with retention and dead discarded fish 
@@ -1032,7 +1051,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   Fleetout$LR5 <- LR5  
   Fleetout$LFR <- LFR 
   Fleetout$Rmaxlen <- Rmaxlen
-  Fleetout$DR <- DR
+  Fleetout$DR <- DR_y
   
   Fleetout$retA <- retA  # retention-at-age array - nsim, maxage, nyears+proyears
   Fleetout$retL <- retL  # retention-at-length array - nsim, nCALbins, nyears+proyears
@@ -1536,21 +1555,24 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
       if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins", "binWidth", "AddIunits") %in% name)) {
         sampCpars[[name]] <- samps
       } else {
-        if (class(samps) == "numeric" | class(samps) == "integer") sampCpars[[name]] <- samps[ind]
+        if ("numeric" %in% class(samps) | "integer" %in% class(samps)) sampCpars[[name]] <- samps[ind]
         
-        if (class(samps) == "matrix") sampCpars[[name]] <- samps[ind,, drop=FALSE] 
-        
-        if (class(samps) == "array") {
-          dims <- dim(samps)
-          tout <- array(NA, dim=c(length(ind), dims[2:length(dims)]))
-          tlist <- c(list(ind), lapply(dims[2:length(dims)], seq))
-          tlist2 <- c(list(1:nsim), lapply(dims[2:length(dims)], seq))
-          varind <- expand.grid(tlist) %>% as.matrix()
-          varind2 <- expand.grid(tlist2) %>% as.matrix()
-          tout[varind2] <- samps[varind]
-          sampCpars[[name]] <- tout
+        if ('matrix' %in% class(samps)| 'array' %in% class(samps)) {
+          if (length(dim(samps)) == 2) {
+            sampCpars[[name]] <- samps[ind,, drop=FALSE]   
+          }  else {
+            dims <- dim(samps)
+            tout <- array(NA, dim=c(length(ind), dims[2:length(dims)]))
+            tlist <- c(list(ind), lapply(dims[2:length(dims)], seq))
+            tlist2 <- c(list(1:nsim), lapply(dims[2:length(dims)], seq))
+            varind <- expand.grid(tlist) %>% as.matrix()
+            varind2 <- expand.grid(tlist2) %>% as.matrix()
+            tout[varind2] <- samps[varind]
+            sampCpars[[name]] <- tout
+          }
         }
-        if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
+        
+        if ("data.frame" %in% class(samps))   sampCpars[[name]] <- samps 
       }
     }
   }

@@ -71,16 +71,20 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Ind Relative total abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot CV_Ind Coefficient of variation in the relative total abundance index. Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Ind` for all years
+#'  
 #' @slot SpInd Relative spawning abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
-#' @slot CV_SpInd Coefficient of variation in the relative spawning abundance index. Matrix nsim rows and either 1 or nyear columns.
-#'  Positive real numbers. 
+#' @slot CV_SpInd Coefficient of variation in the relative spawning abundance index. Matrix nsim rows and either 1 or nyear columns. Positive real numbers. 
+#' 
 #' @slot VInd Relative vulnerable abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot CV_VInd Coefficient of variation in the relative vulnerable abundance index. Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. 
-#' @slot AddInd Optional additional indices. Array of dimensions `nsim`, n additional arrays, and `nyears` (length `Year`).  
+#'  
+#' @slot AddInd Optional additional indices. Array of dimensions `nsim`, n additional indices, and `nyears` (length `Year`).  
 #' @slot CV_AddInd Coefficient of variation for additional indices. Array of same dimensions as `AddInd`
-#' @slot AddIndV Vulnerability-at-age schedules for the additional indices. Array with dimensions: `nsim`, n additional arrays,
-#' and `MaxAge`.  
+#' @slot AddIndV Vulnerability-at-age schedules for the additional indices. Array with dimensions: `nsim`, n additional indices, `MaxAge`.  
+#' @slot AddIunits Units for the additional indices - biomass (1; default) or numbers (0). Numeric vector length n.ind.
+#' @slot AddIndType Index calculated from total stock (1, default), spawning stock (2), or vulnerable stock (3). Numeric vector of length n.ind
+#' 
 #' @slot Rec Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot CV_Rec Log-normal CV for recent recruitment strength.  Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Rec` for all years.
@@ -170,6 +174,8 @@ setClass("Data",
                         VInd = "matrix", CV_VInd = "matrix", 
                         
                         AddInd = "array", CV_AddInd = "array", AddIndV = "array",
+                        AddIunits = 'vector', AddIndType='vector',
+                        
                         Rec = "matrix", CV_Rec = "matrix", 
                         ML = "matrix",  Lc = "matrix", Lbar = "matrix", 
                         
@@ -698,12 +704,13 @@ setClassUnion(name="char.log", members=c("character", "logical"))
 #' showClass('Fleet')
 #' 
 setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = "numeric", 
-                            EffYears = "numeric", EffLower = "numeric", EffUpper = "numeric", Esd = "numeric", 
-                            qinc = "numeric", qcv = "numeric",   
+                            EffYears = "numeric", EffLower = "numeric", EffUpper = "numeric", 
+                            Esd = "numeric", qinc = "numeric", qcv = "numeric",   
                             L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", isRel = "char.log",
                             LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
                             SelYears = "numeric", AbsSelYears = "numeric",
-                            L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
+                            L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", 
+                            LFSUpper = "numeric", VmaxLower = "numeric", 
                             VmaxUpper = "numeric", CurrentYr="numeric", MPA='matrix'))
 
 # initialize Fleet
@@ -712,8 +719,10 @@ setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
     if (file.exists(file)) {
       dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", 
+                                      col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", 
+                                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       
@@ -783,13 +792,11 @@ setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
       isMPA <- grep('MPA', dname)
       if (length(isMPA)<1) isMPA <- NA
       if (!is.na(isMPA)) {
-        suppressWarnings(MPA <- temp <- data.matrix(dat[isMPA:nrow(dat),]))
-        valCols <- !is.na(colSums(MPA))
-        MPA <- MPA[,valCols, drop=FALSE]
-        valRows <- !is.na(rowSums(MPA))
-        MPA <- MPA[valRows, drop=FALSE]
-        MPA <- matrix(MPA, nrow=nrow(temp))
-        .Object@MPA <- MPA
+        MPAdat <- dat[isMPA:nrow(dat),]
+        nrow <- min(which(is.na(as.numeric(MPAdat[1,]))))
+        MPAdat <- MPAdat[,1:(nrow-1)]
+        MPAdat <- as.matrix(sapply(MPAdat, as.numeric))  
+        .Object@MPA <- MPAdat
       }
       
     } else {
@@ -1545,10 +1552,11 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
 #' probability distributions respectively
 #' @param rmd Logical. Used in a rmd file?
 #' @param head Character. Heading for rmd file. Default is '##' (second level heading)
+#' @param tplot Integer. Number of plots per page. Default 25
 #' @export
 setMethod("summary",
           signature(object = "Data"),
-          function(object, wait=TRUE, x=1, plots='all', rmd=FALSE, head="##"){
+          function(object, wait=TRUE, x=1, plots='all', rmd=FALSE, head="##", tplot=25){
             plots <- match.arg(plots, c('all', 'TS', 'CAA', 'CAL', 'PD'), several.ok = TRUE)
             if ('all' %in% plots) plots <- c('TS', 'CAA', 'CAL', 'PD')
             
@@ -1605,8 +1613,6 @@ setMethod("summary",
             # CAA 
             if (all(is.na(object@CAA))) {
               P2 <- FALSE
-            } else if (NAor0(object@CAA[x,,])) {
-              P2 <- FALSE
             } else {
               P2 <- TRUE
             }
@@ -1629,6 +1635,7 @@ setMethod("summary",
               Years <- object@Year
               nyears <- length(unique(df1$Year))
               df1$Year_val <- (Years[(length(Years)-nyears+1):length(Years)])
+              df1 <- df1[!is.na(df1$Freq),]  # Fliter out NA values, so we don't try to plot missing years
             
               if (nrow(df1)>0 && 'CAA' %in% plots) {
                 
@@ -1643,7 +1650,6 @@ setMethod("summary",
                 
                 nyears <- length(unique(df1$Year))
                 nbins <- length(unique(df1$Val))
-                tplot <- 25 # total plots per page
                 if (nyears > tplot) {
                   npages <- ceiling(nyears/tplot) 
                   ncol <- 5 
@@ -1665,7 +1671,7 @@ setMethod("summary",
                 col <- "grey"
                 for (pg in 1:npages) {
                   if(npages>1)message('Plot ', pg, ' of ', npages)
-                  yrind <- yr1:(yr1+nplot-1)
+                  yrind <- unique(df1$Year)[yr1:(yr1+nplot-1)]
                   yr1 <- max(yrind) + 1
                   dat <- df1 %>% dplyr::filter(Year %in% yrind)
                   un.yrs_val <- as.numeric(unique(dat$Year_val))
@@ -1709,8 +1715,6 @@ setMethod("summary",
             # CAL 
             if (all(is.na(object@CAL))) {
               P3 <- FALSE
-            } else if (NAor0(object@CAL[x,,])) {
-              P3 <- FALSE
             } else {
               P3 <- TRUE
             }
@@ -1751,7 +1755,6 @@ setMethod("summary",
                 nyears <- sum(!nayears$isna)
                 
                 nbins <- length(unique(df1$Val))
-                tplot <- 25 # total plots per page
                 if (nyears > tplot) {
                   npages <- ceiling(nyears/tplot) 
                   ncol <- 5 
@@ -1977,6 +1980,7 @@ setMethod("summary",
 #' @slot LFS smallest length at full selection  - in absolute units - i.e same units as Linf and L50
 #' @slot Vmaxlen selection of the largest size class - fraction between 0 and 1
 #' @slot Fdisc fraction of discarded fish that die - fraction between 0 and 1
+#' @slot DR Discard rate - the fraction of caught fish that are discarded
 #' @slot Misc An empty list that can be used to store information and pass on to MPs in future 
 #' @author A. Hordyk
 #' @keywords classes
@@ -1987,6 +1991,7 @@ setClass("Rec", representation(
   LR5 = "numeric", LFR = "numeric", HS="numeric", Rmaxlen="numeric", 
   L5 = "numeric", LFS = "numeric", Vmaxlen="numeric", 
   Fdisc = "numeric",
+  DR='numeric',
   Misc="list"))
 
 
@@ -2016,7 +2021,8 @@ setMethod("show", signature = (object="Rec"), function(object) {
  }
  
  names <- c("TAC", "Effort", "LR5", "LFR", "HS", "Rmaxlen",
-            "L5", "LFS", 'Vmaxlen', 'Spatial')
+            "L5", "LFS", 'Vmaxlen', 'Fdisc', 'DR', 'Spatial')
+            
  mat <- matrix(0, nrow=1, ncol=length(names)+nareas-1)
  count <- 0 
  for (x in names) {

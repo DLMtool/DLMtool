@@ -1,6 +1,11 @@
-language: R
+language: r
+r:
+  - oldrel
+  - release
+  - devel
+  
 repos:
-  CRAN: http://cran.rstudio.com
+  CRAN: https://cloud.r-project.org
 cache: packages
 addons:
   apt:
@@ -11,7 +16,6 @@ before_install:
     - export DISPLAY=:99.0
 services:
   - xvfb
-r:
-  - oldrel
-  - release
-  - devel
+  
+after_success:
+  - Rscript -e 'devtools::install();testthat::test_dir("tests/manual/test-code")'

@@ -213,12 +213,14 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   if (length(MPRecs$Fdisc) >0) { # Fdisc has changed
     if (length(MPRecs$Fdisc) != nsim) stop("Fdisc recommmendation is not 'nsim' long.\n Does MP return Fdisc recommendation under all conditions?")
     Fdisc_P <- MPRecs$Fdisc
+    RetentFlag <- TRUE
   }
   
   # Discard Ratio 
   if (length(MPRecs$DR)>0) { # DR has changed
     if (length(MPRecs$DR) != nsim) stop("DR recommmendation is not 'nsim' long.\n Does MP return DR recommendation under all conditions?")
     DR_P[(y+nyears):(nyears+proyears),] <- matrix(MPRecs$DR, nrow=length((y+nyears):(nyears+proyears)), ncol=nsim, byrow=TRUE) 
+    RetentFlag <- TRUE
   }
   
   # Update Selectivity and Retention Curve 
@@ -277,17 +279,20 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
     dr <- aperm(abind::abind(rep(list(DR_P), nCALbins), along=3), c(2,3,1))
     retL_P[,,allyrs] <- (1-dr[,,yr]) * retL_P[,,yr]
     
-    # update realized vulnerablity curve with retention and dead discarded fish 
+    # update realized vulnerability curve with retention and dead discarded fish 
     Fdisc_array1 <- array(Fdisc_P, dim=c(nsim, maxage, length(allyrs)))
     
-    V_P[,,allyrs] <- V_P[,,allyrs, drop=FALSE] * (retA_P[,,allyrs, drop=FALSE] + (1-retA_P[,,allyrs, drop=FALSE])*Fdisc_array1)
-    
+    V_P2 <- V_P
+    V_P2[,,allyrs] <- V_P[,,allyrs, drop=FALSE] * (retA_P[,,allyrs, drop=FALSE] + (1-retA_P[,,allyrs, drop=FALSE])*Fdisc_array1)
+  
     Fdisc_array2 <- array(Fdisc_P, dim=c(nsim, nCALbins, length(allyrs)))
     SLarray_P[,,allyrs]  <- SLarray_P[,,allyrs, drop=FALSE] * (retL_P[,,allyrs, drop=FALSE]+ (1-retL_P[,,allyrs, drop=FALSE])*Fdisc_array2)
-    
+
     # Realised Retention curves
     retA_P[,,allyrs] <- retA_P[,,allyrs] * V_P[,,allyrs]
     retL_P[,,allyrs] <- retL_P[,,allyrs] * SLarray_P[,,allyrs] 
+    
+    V_P <- V_P2
   }
   
   CurrentB <- Biomass_P[,,y,] # biomass at the beginning of year 
@@ -367,7 +372,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
     
     # Calculate total and retained catch 
     CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * (1-exp(-Z_P[SAYR])) * Biomass_P[SAYR]
-    CB_Pret[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * (1-exp(-Z_P[SAYR])) * Biomass_P[SAYR]
+    CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * (1-exp(-Z_P[SAYR])) * Biomass_P[SAYR]
     
     # Calculate total removals when CB_Pret == TAC - total removal > retained when discarding
     actualremovals <- apply(CB_P[,,y,], 1, sum)
@@ -485,6 +490,16 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   out$TAE <- TAE
   out$Effort <- Effort_act # actual effort this year
   out$Ftot <- Ftot
+ 
+  out$LR5_P <- LR5_P
+  out$LFR_P <- LFR_P
+  out$Rmaxlen_P <- Rmaxlen_P
+  out$L5_P <- L5_P
+  out$LFS_P <- LFS_P
+  out$Vmaxlen_P <- Vmaxlen_P
+  out$Fdisc_P <- Fdisc_P
+  out$DR_P <- DR_P
+  
   out
 }
 
