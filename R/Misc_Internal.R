@@ -105,25 +105,32 @@ ChkObj <- function(OM, error=TRUE) {
     if (!error) warning("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
   }
 
+  # check for negative values
+  slot_names <- c('M', 'Linf', 'h', 'K', 'L50', 'L50_95', 'maxage', 'nyears',
+                  'proyears', 'Vmaxlen', 'Rmaxlen', 'L5', "LFS", 'LR5', 'LFR',
+                  'DR', 'L5Lower', 'L5Upper', 'LFSLower', 'LFSUpper', 'VmaxLower',
+                  'VmaxUpper', 'R0', 'Msd', 'Perr', 'LenCV', 'Ksd',
+                  'Linfsd', 'D', 'Size_area_1', 'Frac_area_1', 'Prob_staying',
+                  'Fdisc', 'Spat_targ', "Esd", 'qcv', 'Cobs',
+                  'CAA_nsamp', "CAA_ESS", 'CAL_nsamp', 'CAL_ESS', 'Iobs', 'Btobs',
+                  'Btbiascv', 'beta', 'Dobs', 'Recbiascv')
+  for (sl in slot_names) {
+    val <- slot(OM, sl)
+    if (length(val)>0 && !all(is.na(val)))
+      if (all(val<0)) stop('OM@', sl, ' has negative values')
+  }
+  # cpars 
+  vals <- c(slot_names, 'M_at_Length', 'L95', 'Perr_y', 'Asize', 'Karray', 'Linfarray',
+            'Marray', 'ageM', 'age95', 'M_ageArray', 'Mat_age', 'LatASD',
+            'Wt_age', 'Len_age', 'mov', 'initD', 'binWidth', 'Find', "V",
+            'SLarray', 'retA', 'retL')
+  for (i in vals) {
+    val <- OM@cpars[[i]]
+    if(!is.null(val) && !all(is.na(val)))
+      if (all(val<0)) stop('OM@cpars$', i, ' has negative values')
+  }
   
-  ## Add variability - variability required in all values otherwise
-  # OMs are not reproducible. 
-  # for (sl in slotNames(OM)) {
-  #   slt <- slot(OM, sl)
-  #   if (class(slt) == "numeric") {
-  #     if (length(slt) ==2) {
-  #       if (!all(is.na(slt)) && slt[1] == slt[2]) {
-  #         slt[1] <- slt[1]
-  #         slt[2] <- slt[2]+tiny
-  #       }
-  #      
-  #     }
-  #     if (length(slt)==1) {
-  #       if (!all(is.na(slt)) && slt == 0) slt <- tiny
-  #     }
-  #     slot(OM,sl) <- slt
-  #   }
-  # }?
+  
   OM
   
   
