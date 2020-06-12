@@ -21,7 +21,7 @@ nms <- row.names(sys.info)
 
 **DLMextra version**: `r packageVersion("DLMextra")`
 
-**System**: `r sys.info$sys.info[nms=='sysname']``
+**System**: `r sys.info$sys.info[nms=='sysname']`
 
 **User**: `r sys.info$sys.info[nms=='user']`
 
