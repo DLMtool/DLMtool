@@ -961,7 +961,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBr
       
       ErrList$AddInd_Stat <- list()
 
-      UnitsTab <- data.frame(n=0:1, units=c('biomass', 'numbers'))
+      UnitsTab <- data.frame(n=1:0, units=c('biomass', 'numbers'))
       TypeTab <- data.frame(n=1:3, type=c('total', 'spawning', 'vuln.'))
       for (i in 1:n.ind) {
         
