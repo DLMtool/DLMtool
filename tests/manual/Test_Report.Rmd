@@ -1,0 +1,171 @@
+---
+title: "DLMtool Tests"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(xml2)
+library(DT)
+
+sys.info <-Sys.info()
+sys.info <- data.frame(sys.info)
+nms <- row.names(sys.info)
+
+```
+
+## System and Package Overview
+
+**DLMtool version**: `r packageVersion("DLMtool")`
+
+**DLMextra version**: `r packageVersion("DLMextra")`
+
+**System**: `r sys.info$sys.info[nms=='sysname']``
+
+**User**: `r sys.info$sys.info[nms=='user']`
+
+## Tests Overview
+
+```{r, echo=FALSE}
+
+
+
+test.results <- xml2::read_xml("test-out2.xml")
+
+# tests
+tests <- xml2::xml_children(test.results)
+
+name <- xml2::xml_attr(tests, 'name')
+n.tests <- xml2::xml_attr(tests, 'tests') %>% as.numeric()
+n.skipped <- xml2::xml_attr(tests, 'skipped') %>% as.numeric()
+n.fail <- xml2::xml_attr(tests, 'failures') %>% as.numeric()
+n.error <- xml2::xml_attr(tests, 'errors') %>% as.numeric()
+n.time <- xml2::xml_attr(tests, 'time') %>% as.numeric()
+
+DF <- data.frame(Test=name, n.tests, n.skipped, n.fail, n.error, n.time)
+
+DT::datatable(DF, 
+              options=list(
+                pageLength = 100
+              ))
+
+```
+
+
+## Failed Tests
+
+```{r, echo=FALSE, results='asis'}
+fails <- which(DF$n.fail>0)
+if (length(fails)<1) {
+  cat("None!")
+} else {
+  DF_list <- fail_msg <- list()
+  ii <- 0; kk <- 0 
+  for (i in fails) {
+    ii <- ii +1
+    failed <- xml_children(xml_children(tests[i]))
+    ind <- xml2::xml_attr(failed, 'type') == "failure"
+    failed <- failed[ind]
+    df_list <- list()
+    for (j in seq_along(failed)) {
+      kk <- kk + 1
+      parent <- xml2::xml_parent(failed[j])
+      test <- xml2::xml_attr(parent, 'classname')
+      context <- xml2::xml_attr(parent, 'name')
+      msg <- xml2::xml_attr(failed[j], 'message')
+      str <- xml2::as_list(failed[j])[[1]][[1]][[1]][1]
+      fail_msg[[kk]] <- base::strsplit(str, split="\n")[[1]]
+      df_list[[j]] <- data.frame(test, context, msg)
+    }
+    DF_list[[ii]] <- do.call('rbind', df_list)
+    
+  }
+  
+}
+
+```
+
+```{r, echo=FALSE} 
+if (length(DF_list)>0) {
+  DF_out <- do.call('rbind', DF_list)
+  DT::datatable(DF_out, 
+              options=list(
+                pageLength = 100
+              ))
+}
+
+```
+
+```{r, echo=FALSE}
+ if (length(fail_msg)>0) {
+    cat("### Traceback\n")
+   for (k in 1:length(fail_msg)) {
+     cat("#### ", k, '\n')
+     for (kk in seq_along(fail_msg[[k]])) {
+       cat(fail_msg[[k]][kk], '\n')
+     }
+     cat("\n\n")
+   }
+ }
+
+```
+
+
+## Errors 
+
+```{r, echo=FALSE, results='asis'}
+fails <- which(DF$n.fail>0)
+if (length(fails)<1) {
+  cat("None!")
+} else {
+  DF_list <- fail_msg <- list()
+  ii <- 0; kk <- 0 
+  for (i in fails) {
+    ii <- ii +1
+    failed <- xml_children(xml_children(tests[i]))
+    ind <- xml2::xml_attr(failed, 'type') == "error"
+    failed <- failed[ind]
+    df_list <- list()
+    for (j in seq_along(failed)) {
+      kk <- kk + 1
+      parent <- xml2::xml_parent(failed[j])
+      test <- xml2::xml_attr(parent, 'classname')
+      context <- xml2::xml_attr(parent, 'name')
+      msg <- xml2::xml_attr(failed[j], 'message')
+      str <- xml2::as_list(failed[j])[[1]][[1]][[1]][1]
+      fail_msg[[kk]] <- base::strsplit(str, split="\n")[[1]]
+      df_list[[j]] <- data.frame(test, context, msg)
+    }
+    DF_list[[ii]] <- do.call('rbind', df_list)
+    
+  }
+  
+}
+
+```
+
+```{r, echo=FALSE} 
+if (length(DF_list)>0) {
+  DF_out <- do.call('rbind', DF_list)
+  DT::datatable(DF_out, 
+              options=list(
+                pageLength = 100
+              ))
+}
+
+```
+
+```{r, echo=FALSE}
+ if (length(fail_msg)>0) {
+    cat("### Traceback\n")
+   for (k in 1:length(fail_msg)) {
+     cat("#### ", k, '\n')
+     for (kk in seq_along(fail_msg[[k]])) {
+       cat(fail_msg[[k]][kk], '\n')
+     }
+     cat("\n\n")
+   }
+ }
+
+```
