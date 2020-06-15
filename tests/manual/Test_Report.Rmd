@@ -2,6 +2,8 @@
 title: "DLMtool Tests"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
+params:
+  results.file: 'test-results.xml'
 ---
 
 ```{r setup, include=FALSE}
@@ -31,7 +33,7 @@ nms <- row.names(sys.info)
 
 
 
-test.results <- xml2::read_xml("test-out2.xml")
+test.results <- xml2::read_xml(params$results.file)
 
 # tests
 tests <- xml2::xml_children(test.results)
