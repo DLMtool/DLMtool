@@ -2,7 +2,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 
 
-## DLMtool 6.0.0 - Development Version 
+## DLMtool 6.0.999 - Development Version 
 
 ### Major changes
 - Age accounting now starts from age-0 instead of age-1
