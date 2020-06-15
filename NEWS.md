@@ -2,13 +2,16 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 
 
-## DLMtool 5.4.999 Development Version 
+## DLMtool 6.0.0 - Development Version 
 
 ### Major changes
 - Age accounting now starts from age-0 instead of age-1
 
 ### Minor changes
 - `Data@Year` now reports calendar year instead of year index.
+
+
+## DLMtool 5.4.5
 
 ### New Additions
 - time-varying discard rate can now be added with `cpars$DR_y` - matrix nsim rows and nyears+proyears columns

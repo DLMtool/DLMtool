@@ -1,22 +1,39 @@
 library(DLMtool)
 
-options(testthat.output_file = "test-out.xml")
+test.results <- file.path('tests/manual', 
+                          paste0(Sys.Date(), 'DLMtool_V', packageVersion("DLMtool"), '.xml'))
+
+options(testthat.output_file = test.results)
+
 testthat::test_dir('tests/manual/test-code', reporter = "junit")
 
-options(testthat.output_file = "test-1.rda")
-tt <- testthat::test_dir('tests/manual/test-1') #, reporter=ListReporter)
+# remove ESC symbol from xml
+sed -i -r "s/\x1b/''/g" test.xml   ## get rid of escape symbol  
 
 
-t1 <- readRDS(file.path(getwd(), '/tests/manual/test-1/test-1.rda'))
+# build test report
 
 
-options(testthat.output_file = "tests-result.xml")
-tt <- testthat::test_file("tests/manual/test-code/test-checkPopdyn.R"  ) # ok
 
-t1 <- testthat::test_file("tests/manual/test-code/test-cpars.R", reporter = RstudioReporter) # ok
 
-t1
 
+
+test.file <- '2020-06-12DLMtool_V5.4.5.xml'
+test.file <- 'test.xml'
+rmarkdown::render(input='tests/manual/Test_Report.Rmd', params=list(results.file=test.file))
+
+
+
+
+
+
+
+
+
+
+
+options(testthat.output_file = NULL)
+testthat::test_file("tests/manual/test-code/test-cpars.R", reporter = 'summary')
 
 
 # testthat::test_file("tests/manual/test-code/test-checkPopdyn.R") # ok

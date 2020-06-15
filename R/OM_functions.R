@@ -112,14 +112,14 @@
 #' Predict missing life-history parameters
 #' 
 #' Predict missing life-history based on taxonomic information and 
-#' hierachical model fitted to FishBase life-history parameters
+#' hierarchical model fitted to FishBase life-history parameters
 #' 
 #' @describeIn LH2OM Predict missing life-history and populate `OM@cpars`
 #'
 #' @param OM An object of class 'OM'
 #' @param dist Character. Should parameters be sampled from a uniform (`unif`) or
 #' normal (`norm`) distribution?
-#' @param filterMK Logical. Should the predicted M and K parameters be filtered within the range specied in `inpars`or `OM`? 
+#' @param filterMK Logical. Should the predicted M and K parameters be filtered within the range specified in `inpars`or `OM`? 
 #' e.g. `OM@M` and `OM@K`. Empty slots or slots with all values of 0 are considered unknown.
 #' @param plot Logical. Should the plot be produced?
 #' @param Class Optional higher order taxonomic information
@@ -189,6 +189,12 @@ LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=FALSE, plot=TRUE,
   OM@L50 <- c(0,0)
   OM@M <- c(0,0)
   OM@K <- c(0,0)
+  
+  # check for negative parameters
+  if (any(Out$Linf <=0)) warning("Some Linf values are <= 0")
+  if (any(Out$M <=0)) warning("Some M values are <= 0")
+  if (any(Out$K <=0)) warning("Some K values are <= 0")
+  if (any(Out$L50 <=0)) warning("Some L50 values are <= 0")
   
   OM@cpars$Linf <- Out$Linf
   OM@cpars$M <- Out$M
