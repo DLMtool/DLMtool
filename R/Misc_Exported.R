@@ -92,8 +92,8 @@ DLMextra <- function(silent=FALSE, force=FALSE) {
   if (!silent) message("Use 'library(DLMextra)' to load additional data into workspace")
    
   ver <- packageVersion("DLMextra")
-  if (ver > '0.1.3') stop("This version of DLMextra is not compatible with DLMtool V", 
-                          packageVersion('DLMtool'), '. Please install DLMextra V0.1.3')
+  if (ver <= '0.1.3') stop("This version of DLMextra is not compatible with DLMtool V", 
+                          packageVersion('DLMtool'), '. Please install DLMextra V0.1.4+')
   
   # if (tt) {
   #  
