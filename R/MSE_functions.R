@@ -599,6 +599,7 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   MSEobj@Misc$Revenue <- MSEobj@Misc$Revenue[SubIts, mpind,]
   MSEobj@Misc$Cost <- MSEobj@Misc$Cost[SubIts, mpind,]
   MSEobj@Misc$TAE <- MSEobj@Misc$TAE[SubIts, mpind,]
+  MSEobj@Misc$Removals <- MSEobj@Misc$Removals[SubIts, mpind,]
   
   MSEobj@Misc$ErrList$Cbiasa <- MSEobj@Misc$ErrList$Cbiasa[SubIts, Years]
   MSEobj@Misc$ErrList$Cerr <- MSEobj@Misc$ErrList$Cerr[SubIts, Years]

@@ -222,26 +222,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // popdynOneTScpp
-arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcurr, NumericMatrix Ncurr, Rcpp::NumericMatrix Zcurr, double PerrYr, double hs, Rcpp::NumericVector R0a, Rcpp::NumericVector SSBpR, Rcpp::NumericVector aR, Rcpp::NumericVector bR, arma::cube mov, double SRrel, int plusgroup);
-RcppExport SEXP _DLMtool_popdynOneTScpp(SEXP nareasSEXP, SEXP maxageSEXP, SEXP SSBcurrSEXP, SEXP NcurrSEXP, SEXP ZcurrSEXP, SEXP PerrYrSEXP, SEXP hsSEXP, SEXP R0aSEXP, SEXP SSBpRSEXP, SEXP aRSEXP, SEXP bRSEXP, SEXP movSEXP, SEXP SRrelSEXP, SEXP plusgroupSEXP) {
+arma::mat popdynOneTScpp(double nareas, double maxage, NumericMatrix Ncurr, Rcpp::NumericMatrix Zcurr, arma::cube mov, int plusgroup);
+RcppExport SEXP _DLMtool_popdynOneTScpp(SEXP nareasSEXP, SEXP maxageSEXP, SEXP NcurrSEXP, SEXP ZcurrSEXP, SEXP movSEXP, SEXP plusgroupSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type nareas(nareasSEXP);
     Rcpp::traits::input_parameter< double >::type maxage(maxageSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type SSBcurr(SSBcurrSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type Ncurr(NcurrSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Zcurr(ZcurrSEXP);
-    Rcpp::traits::input_parameter< double >::type PerrYr(PerrYrSEXP);
-    Rcpp::traits::input_parameter< double >::type hs(hsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type R0a(R0aSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type SSBpR(SSBpRSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type aR(aRSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type bR(bRSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type mov(movSEXP);
-    Rcpp::traits::input_parameter< double >::type SRrel(SRrelSEXP);
     Rcpp::traits::input_parameter< int >::type plusgroup(plusgroupSEXP);
-    rcpp_result_gen = Rcpp::wrap(popdynOneTScpp(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel, plusgroup));
+    rcpp_result_gen = Rcpp::wrap(popdynOneTScpp(nareas, maxage, Ncurr, Zcurr, mov, plusgroup));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -296,7 +288,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DLMtool_tdnorm", (DL_FUNC) &_DLMtool_tdnorm, 3},
     {"_DLMtool_genSizeComp", (DL_FUNC) &_DLMtool_genSizeComp, 10},
     {"_DLMtool_movfit_Rcpp", (DL_FUNC) &_DLMtool_movfit_Rcpp, 3},
-    {"_DLMtool_popdynOneTScpp", (DL_FUNC) &_DLMtool_popdynOneTScpp, 14},
+    {"_DLMtool_popdynOneTScpp", (DL_FUNC) &_DLMtool_popdynOneTScpp, 6},
     {"_DLMtool_popdynCPP", (DL_FUNC) &_DLMtool_popdynCPP, 27},
     {NULL, NULL, 0}
 };

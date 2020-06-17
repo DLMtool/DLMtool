@@ -142,8 +142,8 @@ movfit_Rcpp <- function(par, prb, frac) {
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age 
 #' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
-#' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
-#' @param Zcurr A numeric matrix (maxage, nareas) with total mortality-at-age in each area
+#' @param Ncurr A numeric matrix (maxage+1, nareas) with current numbers-at-age in each area
+#' @param Zcurr A numeric matrix (maxage+1, nareas) with total mortality-at-age in each area
 #' @param PerrYr A numeric value with recruitment deviation for current year 
 #' @param hs Steepness of SRR
 #' @param R0a Numeric vector with unfished recruitment by area
@@ -157,8 +157,8 @@ movfit_Rcpp <- function(par, prb, frac) {
 #' 
 #' @export
 #' @keywords internal
-popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel, plusgroup = 0L) {
-    .Call('_DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel, plusgroup)
+popdynOneTScpp <- function(nareas, maxage, Ncurr, Zcurr, mov, plusgroup = 0L) {
+    .Call('_DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, Zcurr, mov, plusgroup)
 }
 
 #' Population dynamics model in CPP
@@ -169,14 +169,14 @@ popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age 
 #' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
-#' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
+#' @param Ncurr A numeric matrix (maxage+1, nareas) with current numbers-at-age in each area
 #' @param pyears The number of years to project the population forward
-#' @param M_age Numeric matrix (maxage, pyears) with natural mortality by age and year
+#' @param M_age Numeric matrix (maxage+1, pyears) with natural mortality by age and year
 #' @param Asize_c Numeric vector (length nareas) with size of each area
 #' @param MatAge Numeric vector with proportion mature by age
-#' @param WtAge Numeric matrix (maxage, pyears) with weight by age and year
-#' @param Vuln Numeric matrix (maxage, pyears) with vulnerability by age and year
-#' @param Retc Numeric matrix (maxage, pyears) with retention by age and year
+#' @param WtAge Numeric matrix (maxage+1, pyears) with weight by age and year
+#' @param Vuln Numeric matrix (maxage+1, pyears) with vulnerability by age and year
+#' @param Retc Numeric matrix (maxage+1, pyears) with retention by age and year
 #' @param Prec Numeric vector (pyears) with recruitment error
 #' @param movc Numeric array (nareas by nareas) with the movement matrix
 #' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)

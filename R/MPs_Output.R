@@ -422,6 +422,7 @@ class(GB_CC) <- "MP"
 #'
 CompSRA_ <- function(x, Data, reps=100) {
   maxage <- Data@MaxAge
+  n_age <- maxage+1 # age-0 class
   TAC <- Bt_K <- FMSY <- Ac <- rep(NA, reps)
   predout <- list()
   for (i in 1:reps) {
@@ -445,8 +446,8 @@ CompSRA_ <- function(x, Data, reps=100) {
     nyCAA <- dim(Data@CAA)[2]
     CAA <- Data@CAA[x, max(nyCAA - 2, 1):nyCAA, ]  # takes last three years as the sample (or last year if there is only one)
     
-    Nac <- exp(-Mc * ((1:maxage) - 1))  # put a rough range on estimate of R0 assuming a mean harvest rate of 10%
-    Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+    Nac <- exp(-Mc * ((1:n_age) - 1))  # put a rough range on estimate of R0 assuming a mean harvest rate of 10%
+    Lac <- Linfc * (1 - exp(-Kc * ((0:maxage) - t0c)))
     Wac <- ac * Lac^bc
     AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
     AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
@@ -455,9 +456,9 @@ CompSRA_ <- function(x, Data, reps=100) {
     
     KES <- max(2, ceiling(mean(c(AFC, AFS))))
     pred <- Nac * Wac
-    pred[1:(KES - 1)] <- 0
+    pred[1:(KES)] <- 0
     pred <- pred/sum(pred)
-    pred <- ((mean(Catch, na.rm=TRUE)/0.1) * pred/Wac)/exp(-(1:maxage) * Mc)
+    pred <- ((mean(Catch, na.rm=TRUE)/0.1) * pred/Wac)/exp(-(0:maxage) * Mc)
     pred <- pred[pred > 0]
     R0range <- c(mean(pred)/1000, mean(pred) * 1000)
     
@@ -2599,7 +2600,7 @@ Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
   ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   C_dat <- Data@Cat[x, ind]
   if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
-    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat, na.rm=TRUE), Data@CV_Cat/(yrsmth^0.5))
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat, na.rm=TRUE), Data@CV_Cat[x,1]/(yrsmth^0.5))
   } else {
     TACstar <- rep(Data@MPrec[x], reps)
   }
