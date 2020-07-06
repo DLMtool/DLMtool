@@ -20,4 +20,35 @@ NULL
   library.dynam.unload("DLMtool", libpath)
 }
 
+# global variable names
+Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "procsd",
+           "L50", "L95", "L50_95", "CAL_binsmid", "Len_age", "maxlen", "Linf", 
+           "M_at_Length", "Frac_area_1", "Prob_staying", "M_ageArray", "Mat_age",
+           "Wt_age", "V", "Spat_targ", "procmu", "recMulti", "Linfrand", "Krand",
+           "Abias Aerr", "Brefbias", "CAA_ESS", "CAA_nsamp", "CAL_ESS", "CAL_bins", "CAL_nsamp",
+           "Cbias", "Crefbias", "Csd", "Dbias", "Derr", "TAEFrac", "TAESD", "EffLower",
+           "EffUpper", "EffYears", "FMSY_Mbias", "Frac_area_1", "Irefbias", "Isd", "K", "Kbias", "Kgrad",
+           "Krand", "Ksd", "L5", "L5s", "LFCbias", "LFS", "LFSbias", "LFSs", "LatASD", "Linfbias", "Linfgrad",
+           "Linfrand", "Linfsd", "M", "M_ageArray", "Mat_age", "Mbias", "Mrand", "Prob_staying", "Recsd",
+           "SLarray", "SizeLimFrac", "SizeLimSD", "Spat_targ", "TACFrac", "TACSD", 
+           "Vmaxlen", "Vmaxlens", "Wt_age", "ageM", "betas", "lenMbias", "nCALbins", "procmu", "qcv", "qinc",
+           "recMulti",  "t0", "t0bias", "Abias", "Aerr", "Perr", "Esd", "qvar", "Marray",
+           "Linfarray", "Karray", "t0array", "mov",  "nareas", "AC", "LenCV", "a", "b", "FinF", 
+           "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
+           "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
+           "Fdisc_array", "Fdisc_array2", "Pinitdist", "DataOut",
+           'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h", 'Index',
+           '.', 'MP', 'Data', 'DataClass', "Type", "Recs", "DominatedMPs"
+)
 
+if(getRversion() >= "2.15.1") utils::globalVariables(Names)
+
+
+# change messages to blue text instead of default red
+message <- function(...) {
+  if (requireNamespace("crayon", quietly = TRUE)) {
+    return(base::message(crayon::blue(..., sep="")))
+  } else {
+    return(base::message(...))
+  }
+}

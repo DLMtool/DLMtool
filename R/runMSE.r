@@ -1,46 +1,3 @@
-
-Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "procsd",
-           "L50", "L95", "L50_95", "CAL_binsmid", "Len_age", "maxlen", "Linf", 
-           "M_at_Length", "Frac_area_1", "Prob_staying", "M_ageArray", "Mat_age",
-           "Wt_age", "V", "Spat_targ", "procmu", "recMulti", "Linfrand", "Krand",
-           "Abias Aerr", "Brefbias", "CAA_ESS", "CAA_nsamp", "CAL_ESS", "CAL_bins", "CAL_nsamp",
-           "Cbias", "Crefbias", "Csd", "Dbias", "Derr", "TAEFrac", "TAESD", "EffLower",
-           "EffUpper", "EffYears", "FMSY_Mbias", "Frac_area_1", "Irefbias", "Isd", "K", "Kbias", "Kgrad",
-           "Krand", "Ksd", "L5", "L5s", "LFCbias", "LFS", "LFSbias", "LFSs", "LatASD", "Linfbias", "Linfgrad",
-           "Linfrand", "Linfsd", "M", "M_ageArray", "Mat_age", "Mbias", "Mrand", "Prob_staying", "Recsd",
-           "SLarray", "SizeLimFrac", "SizeLimSD", "Spat_targ", "TACFrac", "TACSD", 
-           "Vmaxlen", "Vmaxlens", "Wt_age", "ageM", "betas", "lenMbias", "nCALbins", "procmu", "qcv", "qinc",
-           "recMulti",  "t0", "t0bias", "Abias", "Aerr", "Perr", "Esd", "qvar", "Marray",
-           "Linfarray", "Karray", "t0array", "mov",  "nareas", "AC", "LenCV", "a", "b", "FinF", 
-           "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
-           "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
-           "Fdisc_array", "Fdisc_array2", "Pinitdist", "DataOut",
-           'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h", 'Index',
-           '.', 'MP', 'Data', 'DataClass', "Type", "Recs", "DominatedMPs"
-           )
-
-# change messages to blue text instead of default red
-message <- function(...) {
-  if (requireNamespace("crayon", quietly = TRUE)) {
-    return(base::message(crayon::blue(..., sep="")))
-  } else {
-    return(base::message(...))
-  }
-}
-
-if(getRversion() >= "2.15.1") utils::globalVariables(Names)
-
-
-# fls <- list.files("R")
-# fls <- fls[!fls=="sysdata.rda"]
-# for (fl in fls) source(file.path('R', fl))
-# 
-# fls <- list.files("../MSEtool/R")
-# fls <- fls[!fls=="sysdata.rda"]
-# for (fl in fls) source(file.path("../MSEtool/R", fl))
-# cpars_info <- DLMtool:::cpars_info
-# library(dplyr)
-
 #' Run a Management Strategy Evaluation
 #' 
 #' A function that runs a Management Strategy Evaluation (closed-loop
@@ -73,7 +30,6 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param parallel Logical. Should the MSE be run using parallel processing?
 #' @param save_name Character. Optional name to save parallel MSE list
 #' @param checks Logical. Run tests?
-#' @param control control options for testing and debugging
 #' 
 #' @templateVar url running-the-mse
 #' @templateVar ref NULL 
@@ -87,7 +43,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                    CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=100, fracD=0.05, CalcBlow=TRUE, 
                    HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=TRUE, parallel=FALSE, 
-                   save_name=NULL, checks=FALSE, control=NULL) {
+                   save_name=NULL, checks=FALSE) {
   
   if (class(OM)!='OM') stop("OM is not class 'OM'", call. = FALSE)
   
@@ -247,67 +203,65 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=100, fracD=0.05, CalcBlow=TRUE, 
                       HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=TRUE, checks=FALSE,
-                      control=NULL, parallel=FALSE) {
+                      parallel=FALSE) {
   
-  # Dev Setup ####
+  # ---- Dev Setup ----
+  # loads all internal code - also see 'aaDevelop_Setup.R'
   # development mode - assign default argument values to current workspace if they don't exist
   # def.args <- DLMtool:::dev.mode(); for (nm in names(def.args)) assign(nm, def.args[[nm]])
   
+  # ---- Initial Checks and Setup ----
   if  (class(OM) != "OM") stop("You must specify an operating model")
-  Misc<-new('list') #Blank miscellaneous slot created
-  if("seed"%in%slotNames(OM)) set.seed(OM@seed) # set seed for reproducibility 
-  
-  OM <- updateMSE(OM)
-  
   if (OM@nsim <=1) stop("OM@nsim must be > 1", call.=FALSE)
+  if (OM@proyears < 2) stop('OM@proyears must be > 1', call.=FALSE)
+  
+  set.seed(OM@seed) # set seed for reproducibility 
   tiny <- 1e-15  # define tiny variable
   
-  # Backwards compatible with DLMtool v < 4
-  if("nsim"%in%slotNames(OM))nsim<-OM@nsim
-  if("proyears"%in%slotNames(OM))proyears<-OM@proyears
-  
-  # Backwards compatible with DLMtool v < 4.4.2
-  if(length(OM@interval)>0) interval <- OM@interval
-  if(length(OM@pstar)>0) pstar <- OM@pstar
-  if(length(OM@maxF)>0) maxF <- OM@maxF
-  if(length(OM@reps)>0) reps <- OM@reps
-
-  OM@interval <- interval 
-  OM@pstar <- pstar 
-  OM@maxF <- maxF 
-  OM@reps <- reps 
-  
-  OM@nsim<-nsim # number of simulations
-  OM@proyears<-proyears # number of projection years
-  nyears <- OM@nyears  # number of historical years
-  
+  # Check OM object
+  # TODO 
   OM <- ChkObj(OM) # Check that all required slots in OM object contain values 
+  OM <- updateMSE(OM)
   
-  if (proyears < 2) stop('OM@proyears must be > 1', call.=FALSE)
-  if(!silent) message("Loading operating model")
+  nsim<-OM@nsim # number of simulations
+  nyears<-OM@nyears # number of historical years
+  proyears<-OM@proyears # number of projection years
+  interval <- OM@interval # management interval (annual)
+  maxF <- OM@maxF # maximum apical F
+  pstar <- OM@pstar # Percentile of the sample of the TAC for each MP 
+  reps <- OM@reps # Number of samples of the management recommendation for each MP
+  control <- OM@cpars$control
+  OM@cpars$control <- NULL
   
-  # Detect if a plus-group is used
-  plusgroup <- 0 
-  if(!is.null(OM@cpars$plusgroup)) {
-    plusgroup <- 1
+  #TODO 
+  timesteps <- OM@timesteps # number of time-steps per year (default = 1)
+  
+  # ---- Plus-Group ----
+  plusgroup <- 1 # default now is to use plusgroup  
+  if(!is.null(OM@cpars$plusgroup) && !OM@cpars$plusgroup) {
+    plusgroup <- 0
     OM@cpars$plusgroup <- NULL 
   }
   
-  control <- c(control, OM@cpars$control)
-  OM@cpars$control <- NULL
-  # Option to optimize depletion for vulernable biomass instead of spawning biomass
+  # Option to optimize depletion for vulnerable biomass instead of spawning biomass
+  # TODO - document 
   optVB <- FALSE
   if (!is.null(control$D) && control$D == "VB") optVB <- TRUE  
-  
+
   # --- Sample OM parameters ----
-  # Custom Parameters
+  if(!silent) message("Loading operating model")
   # custom parameters exist - sample and write to list
+  # TO DO - check all validcpars are included here 
+  
   SampCpars <- list()
   SampCpars <- if(length(OM@cpars)>0) SampleCpars(OM@cpars, nsim, msg=!silent)
-
+  
   # Stock Parameters & assign to function environment
   StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars, msg=!silent)
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
+
+  
+
 
   # Fleet Parameters & assign to function environment
   FleetPars <- SampleFleetPars(Fleet=SubOM(OM, "Fleet"), Stock=StockPars, nsim, 

@@ -1,3 +1,267 @@
+# ---- Stock Class ----
+#' Class \code{'Stock'}
+#' 
+#' An operating model component that specifies the parameters of the population
+#' dynamics model
+#' 
+
+#' @name Stock-class
+#' @docType class
+#' 
+#' @slot Name The name of the Stock object. Single value. Character string 
+#' @template Stock_template
+#' 
+#' @section Objects from the Class: Objects can be created by calls of the form
+#' \code{new('Stock')}
+#' 
+#' @author T. Carruthers and A. Hordyk
+#' @export
+#' @keywords classes
+#' @examples
+#' 
+#' showClass('Stock')
+#' 
+setClass("Stock", representation(Name = "character", 
+                                 Common_Name='character',
+                                 Species="character",
+                                 maxage = "numeric", 
+                                 R0 = "numeric", 
+                                 M = "numeric",
+                                 Msd = "numeric",
+                                 h = "numeric", 
+                                 SRrel = "numeric", 
+                                 Perr = "numeric", 
+                                 AC = "numeric",
+                                 Linf = "numeric", 
+                                 K = "numeric", 
+                                 t0 = "numeric", 
+                                 LenCV="numeric", 
+                                 Ksd = "numeric",
+                                 Linfsd = "numeric", 
+                                 L50 = "numeric", 
+                                 L50_95 = "numeric", 
+                                 D = "numeric", 
+                                 a = "numeric", 
+                                 b = "numeric",
+                                 Size_area_1 = "numeric", 
+                                 Frac_area_1 = "numeric", 
+                                 Prob_staying = "numeric", 
+                                 Fdisc="numeric", 
+                                 Source = "character"))
+
+# initialize Stock
+setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
+  
+  if (!is.na(file)) {
+    if (file.exists(file)) {
+      dec <- match.arg(dec)
+      Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      if (dec == ".") 
+        dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol)) 
+      if (dec == ",") 
+        dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol)) 
+      dname <- dat[, 1]
+      dat <- dat[, 2:ncol(dat)]
+      Ncol <- ncol(dat)
+      .Object@Name <- dat[match("Name", dname), 1]
+      commonname <- dat[match("Common_Name", dname), 1]
+      commonname1 <- dat[match("Common Name", dname), 1]
+      if (length(commonname)>0) {
+        .Object@Common_Name <-commonname
+      } else if (length(commonname1)>0) {
+        .Object@Common_Name <-commonname1
+      } else {
+        .Object@Common_Name <- "Not specified"
+      }
+      .Object@Species <- dat[match("Species", dname), 1]
+      .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
+      .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
+      options(warn=-1)
+      temp <- as.numeric(dat[match("M", dname), 1:Ncol])
+      .Object@M <- temp
+      nas <- which(is.na(temp))
+      if (length(nas) > 0) {
+        .Object@M <- temp[1:(nas[1]-1)]
+      }
+      temp <- as.numeric(dat[match("M2", dname), 1:Ncol])
+      .Object@M2 <- temp
+      nas <- which(is.na(temp))
+      if (length(nas) > 0) {
+        .Object@M2 <- temp[1:(nas[1]-1)]
+      }
+      options(warn=1)
+      .Object@Msd <- as.numeric(dat[match("Msd", dname), 1:2])
+      .Object@Mexp <- as.numeric(dat[match("Mexp", dname), 1:2])
+      .Object@Fdisc <- as.numeric(dat[match("Fdisc", dname), 1:2])
+      .Object@h <- as.numeric(dat[match("h", dname), 1:2])
+      .Object@SRrel <- as.numeric(dat[match("SRrel", dname), 1])
+      .Object@Linf <- as.numeric(dat[match("Linf", dname), 1:2])
+      .Object@K <- as.numeric(dat[match("K", dname), 1:2])
+      .Object@t0 <- as.numeric(dat[match("t0", dname), 1:2])
+      .Object@LenCV <- as.numeric(dat[match("LenCV", dname), 1:2])
+      .Object@Ksd <- as.numeric(dat[match("Ksd", dname), 1:2])
+      .Object@Linfsd <- as.numeric(dat[match("Linfsd", dname), 1:2])
+      .Object@a <- as.numeric(dat[match("a", dname), 1])
+      .Object@b <- as.numeric(dat[match("b", dname), 1])
+      .Object@D <- as.numeric(dat[match("D", dname), 1:2])
+      .Object@Perr <- as.numeric(dat[match("Perr", dname), 1:2])
+      
+      .Object@AC <- as.numeric(dat[match("AC", dname), 1:2])
+      .Object@Size_area_1 <- as.numeric(dat[match("Size_area_1", dname), 1:2])
+      .Object@Frac_area_1 <- as.numeric(dat[match("Frac_area_1", dname), 1:2])
+      .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
+      .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
+      .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
+      .Object@Source <- dat[match("Source", dname), 1]
+    } else {
+      message("File doesn't exist")
+    }
+  }
+  if (all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08, 0.12)
+  if (all(is.na(.Object@Size_area_1))) .Object@Size_area_1 <- .Object@Frac_area_1
+  if (length(.Object@Size_area_1) == 0) .Object@Size_area_1 <- .Object@Frac_area_1
+  
+  .Object
+  
+})
+
+
+# ---- Fleet Class -----
+#' Class \code{'Fleet'}
+#' 
+#' The component of the operating model that controls fishing dynamics
+#' 
+#' @name Fleet-class
+#' @docType class
+#' @slot Name Name of the Fleet object. Single value. Character string.
+#' @template Fleet_template
+#' 
+#' @section Creating Object: 
+#' Objects can be created by calls of the form \code{new('Fleet')}
+#' 
+#' @author T. Carruthers and A. Hordyk
+#' @export
+#' @keywords classes
+#' @examples
+#' 
+#' showClass('Fleet')
+#' 
+setClass("Fleet", slots = c(Name = "character",
+                            nyears = "numeric", 
+                            CurrentYr="numeric",
+                            EffYears = "numeric",
+                            EffLower = "numeric", 
+                            EffUpper = "numeric", 
+                            Esd = "numeric", 
+                            qinc = "numeric", 
+                            qcv = "numeric",   
+                            L5 = "numeric",
+                            LFS = "numeric", 
+                            Vmaxlen = "numeric", 
+                            isRel = "char.log",
+                            LR5 = "numeric", 
+                            LFR = "numeric", 
+                            Rmaxlen = "numeric", 
+                            DR = "numeric",
+                            Spat_targ = "numeric"))
+
+# initialize Fleet
+setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
+  if (!is.na(file)) {
+    if (file.exists(file)) {
+      dec <- match.arg(dec)
+      Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", 
+                                      col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", 
+                                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      dname <- dat[, 1]
+      dat <- dat[, 2:ncol(dat)]
+      
+      .Object@Name <- dat[match("Name", dname), 1]
+      .Object@nyears <- as.numeric(dat[match("nyears", dname), 1])
+      
+      .Object@CurrentYr <- as.numeric(dat[match("CurrentYr", dname), 1])
+      if(is.na(.Object@CurrentYr)).Object@CurrentYr<-.Object@nyears
+      
+      .Object@Spat_targ <- as.numeric(dat[match("Spat_targ", dname),  1:2])
+      if (!is.na(match("Esd", dname))) {
+        .Object@Esd <- as.numeric(dat[match("Esd", dname), 1:2])  
+      } else {
+        .Object@Esd <- as.numeric(dat[match("Fsd", dname), 1:2])  
+      }
+      
+      # .Object@Fgrad<-as.numeric(dat[match('Fgrad',dname),1:2])
+      nEffYears <- ncol(dat[match("EffYears", dname), ])
+      oldw <- getOption("warn")
+      options(warn = -1)
+      chk <- as.numeric(dat[match("EffYears", dname), 1:nEffYears])
+      options(warn = oldw)
+      ind <- which(!is.na(chk))
+      nEffYears <- length(ind)
+      .Object@EffYears <- as.numeric(dat[match("EffYears", dname),  1:nEffYears])
+      .Object@EffLower <- as.numeric(dat[match("EffLower", dname),  1:nEffYears])
+      .Object@EffUpper <- as.numeric(dat[match("EffUpper", dname),  1:nEffYears])
+      .Object@qinc <- as.numeric(dat[match("qinc", dname), 1:2])
+      .Object@qcv <- as.numeric(dat[match("qcv", dname), 1:2])
+      
+      chkName <- match("SelYears", dname)  # Check if vector of selectivity years exists
+      if (is.finite(chkName)) {
+        nSelYears <- ncol(dat[match("SelYears", dname), ])
+        oldw <- getOption("warn")
+        options(warn = -1)
+        chk <- as.numeric(dat[match("SelYears", dname), 1:nSelYears])
+        options(warn = oldw)
+        ind <- which(is.finite(chk))
+        nSelYears <- length(ind)
+        chk <- length(ind)
+        if (is.finite(chk) & chk > 0) {
+          # parameters for selectivity years exists
+          .Object@SelYears <- as.numeric(dat[match("SelYears", dname), 1:nSelYears])
+          .Object@L5Lower <- as.numeric(dat[match("L5Lower", dname), 1:nSelYears])
+          .Object@L5Upper <- as.numeric(dat[match("L5Upper", dname), 1:nSelYears])
+          .Object@LFSLower <- as.numeric(dat[match("LFSLower", dname), 1:nSelYears])
+          .Object@LFSUpper <- as.numeric(dat[match("LFSUpper", dname), 1:nSelYears])
+          .Object@VmaxLower <- as.numeric(dat[match("VmaxLower", dname), 1:nSelYears])
+          .Object@VmaxUpper <- as.numeric(dat[match("VmaxUpper", dname), 1:nSelYears])
+        }
+      }
+      # These are ignored in MSE if L5Lower etc are set
+      .Object@L5 <- as.numeric(dat[match("L5", dname), 1:2])
+      .Object@LFS <- as.numeric(dat[match("LFS", dname), 1:2])
+      .Object@Vmaxlen <- as.numeric(dat[match("Vmaxlen", dname), 1:2])
+      
+      # Retention curve parameters 
+      .Object@LR5 <- as.numeric(dat[match("LR5", dname), 1:2])
+      .Object@LFR <- as.numeric(dat[match("LFR", dname), 1:2])
+      .Object@Rmaxlen <- as.numeric(dat[match("Rmaxlen", dname), 1:2])
+      .Object@DR <- as.numeric(dat[match("DR", dname), 1:2])
+      
+      .Object@isRel <- dat[match("isRel", dname), 1]  # Are selecivity parameters relative to maturity?
+      if (NAor0(.Object@isRel)) .Object@isRel <- "TRUE"
+      .Object@isRel <- as.character(.Object@isRel)
+      
+      isMPA <- grep('MPA', dname)
+      if (length(isMPA)<1) isMPA <- NA
+      if (!is.na(isMPA)) {
+        MPAdat <- dat[isMPA:nrow(dat),]
+        nrow <- min(which(is.na(as.numeric(MPAdat[1,]))))
+        MPAdat <- MPAdat[,1:(nrow-1)]
+        MPAdat <- as.matrix(sapply(MPAdat, as.numeric))  
+        .Object@MPA <- MPAdat
+      }
+      
+    } else {
+      message("File doesn't exist")
+    }
+  }
+  .Object
+})
+
+
+
+
+
 #' Label class union for performance metric objects
 #' 
 #' @description Used internally. Nothing to see here!
@@ -555,146 +819,6 @@ setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
 # })
 # 
 
-# ---- Stock Class ----
-#' Class \code{'Stock'}
-#' 
-#' An operating model component that specifies the parameters of the population
-#' dynamics model
-#' 
-
-#' @name Stock-class
-#' @docType class
-#' 
-#' @slot Name The name of the Stock object. Single value. Character string 
-#' @template Stock_template
-#' 
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Stock')}
-#' 
-#' @author T. Carruthers and A. Hordyk
-#' @export
-#' @keywords classes
-#' @examples
-#' 
-#' showClass('Stock')
-#' 
-setClass("Stock", representation(Name = "character", 
-                                 Common_Name='character',
-                                 Species="character",
-                                 maxage = "numeric", 
-                                 R0 = "numeric", 
-                                 M = "numeric",
-                                 M2 = "numeric", 
-                                 Mexp="numeric", 
-                                 Msd = "numeric",
-                                 Mgrad = "numeric",  
-                                 h = "numeric", 
-                                 SRrel = "numeric", 
-                                 Perr = "numeric", 
-                                 AC = "numeric",
-                                 Period = "numeric", 
-                                 Amplitude = "numeric",
-                                 Linf = "numeric", 
-                                 K = "numeric", 
-                                 t0 = "numeric", 
-                                 LenCV="numeric", 
-                                 Ksd = "numeric",
-                                 Kgrad = "numeric",
-                                 Linfsd = "numeric", 
-                                 Linfgrad = "numeric",
-                                 L50 = "numeric", 
-                                 L50_95 = "numeric", 
-                                 D = "numeric", 
-                                 a = "numeric", 
-                                 b = "numeric",
-                                 Size_area_1 = "numeric", 
-                                 Frac_area_1 = "numeric", 
-                                 Prob_staying = "numeric", 
-                                 Fdisc="numeric", 
-                                 Source = "character"))
-
-# initialize Stock
-setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
-  
-  if (!is.na(file)) {
-    if (file.exists(file)) {
-      dec <- match.arg(dec)
-      Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      dname <- dat[, 1]
-      dat <- dat[, 2:ncol(dat)]
-      Ncol <- ncol(dat)
-      .Object@Name <- dat[match("Name", dname), 1]
-      commonname <- dat[match("Common_Name", dname), 1]
-      commonname1 <- dat[match("Common Name", dname), 1]
-      if (length(commonname)>0) {
-        .Object@Common_Name <-commonname
-      } else if (length(commonname1)>0) {
-        .Object@Common_Name <-commonname1
-      } else {
-        .Object@Common_Name <- "Not specified"
-      }
-      .Object@Species <- dat[match("Species", dname), 1]
-      .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
-      .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
-      options(warn=-1)
-      temp <- as.numeric(dat[match("M", dname), 1:Ncol])
-      .Object@M <- temp
-      nas <- which(is.na(temp))
-      if (length(nas) > 0) {
-        .Object@M <- temp[1:(nas[1]-1)]
-      }
-      temp <- as.numeric(dat[match("M2", dname), 1:Ncol])
-      .Object@M2 <- temp
-      nas <- which(is.na(temp))
-      if (length(nas) > 0) {
-        .Object@M2 <- temp[1:(nas[1]-1)]
-      }
-      options(warn=1)
-      .Object@Msd <- as.numeric(dat[match("Msd", dname), 1:2])
-      .Object@Mgrad <- as.numeric(dat[match("Mgrad", dname), 1:2])
-      .Object@Mexp <- as.numeric(dat[match("Mexp", dname), 1:2])
-      .Object@Fdisc <- as.numeric(dat[match("Fdisc", dname), 1:2])
-      .Object@h <- as.numeric(dat[match("h", dname), 1:2])
-      .Object@SRrel <- as.numeric(dat[match("SRrel", dname), 1])
-      .Object@Linf <- as.numeric(dat[match("Linf", dname), 1:2])
-      .Object@K <- as.numeric(dat[match("K", dname), 1:2])
-      .Object@t0 <- as.numeric(dat[match("t0", dname), 1:2])
-      .Object@LenCV <- as.numeric(dat[match("LenCV", dname), 1:2])
-      .Object@Ksd <- as.numeric(dat[match("Ksd", dname), 1:2])
-      .Object@Kgrad <- as.numeric(dat[match("Kgrad", dname), 1:2])
-      .Object@Linfsd <- as.numeric(dat[match("Linfsd", dname), 1:2])
-      .Object@Linfgrad <- as.numeric(dat[match("Linfgrad", dname),  1:2])
-      #.Object@recgrad <- as.numeric(dat[match("recgrad", dname), 1:2])
-      .Object@a <- as.numeric(dat[match("a", dname), 1])
-      .Object@b <- as.numeric(dat[match("b", dname), 1])
-      .Object@D <- as.numeric(dat[match("D", dname), 1:2])
-      .Object@Perr <- as.numeric(dat[match("Perr", dname), 1:2])
-      .Object@Period <- as.numeric(dat[match("Period", dname), 1:2])
-      .Object@Amplitude <- as.numeric(dat[match("Amplitude", dname), 1:2])
-      .Object@AC <- as.numeric(dat[match("AC", dname), 1:2])
-      .Object@Size_area_1 <- as.numeric(dat[match("Size_area_1", dname), 1:2])
-      .Object@Frac_area_1 <- as.numeric(dat[match("Frac_area_1", dname), 1:2])
-      .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
-      .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
-      .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
-      
-      # .Object@FecB <- as.numeric(dat[match("FecB", dname), 1:2])
-      
-      .Object@Source <- dat[match("Source", dname), 1]
-    } else {
-      message("File doesn't exist")
-    }
-  }
-  if (all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08, 0.12)
-  # if (all(is.na(.Object@recgrad))) .Object@recgrad <- c(0, 0) # recgrad not currently used
-  if (all(is.na(.Object@Size_area_1))) .Object@Size_area_1 <- .Object@Frac_area_1
-  if (length(.Object@Size_area_1) == 0) .Object@Size_area_1 <- .Object@Frac_area_1
-  
-  .Object
-  
-})
 
 #' Class union for isRel slot
 #' 
@@ -704,128 +828,6 @@ setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
 setClassUnion(name="char.log", members=c("character", "logical"))
 
 
-# ---- Fleet Class -----
-#' Class \code{'Fleet'}
-#' 
-#' The component of the operating model that controls fishing dynamics
-#' 
-#' @name Fleet-class
-#' @docType class
-#' @slot Name Name of the Fleet object. Single value. Character string.
-#' @template Fleet_template
-#' 
-#' @section Creating Object: 
-#' Objects can be created by calls of the form \code{new('Fleet')}
-#' 
-#' @author T. Carruthers and A. Hordyk
-#' @export
-#' @keywords classes
-#' @examples
-#' 
-#' showClass('Fleet')
-#' 
-setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = "numeric", 
-                            EffYears = "numeric", EffLower = "numeric", EffUpper = "numeric", 
-                            Esd = "numeric", qinc = "numeric", qcv = "numeric",   
-                            L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", isRel = "char.log",
-                            LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
-                            SelYears = "numeric", AbsSelYears = "numeric",
-                            L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", 
-                            LFSUpper = "numeric", VmaxLower = "numeric", 
-                            VmaxUpper = "numeric", CurrentYr="numeric", MPA='matrix'))
-
-# initialize Fleet
-setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
-  if (!is.na(file)) {
-    if (file.exists(file)) {
-      dec <- match.arg(dec)
-      Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", 
-                                      col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", 
-                                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      dname <- dat[, 1]
-      dat <- dat[, 2:ncol(dat)]
-      
-      .Object@Name <- dat[match("Name", dname), 1]
-      .Object@nyears <- as.numeric(dat[match("nyears", dname), 1])
-      
-      .Object@CurrentYr <- as.numeric(dat[match("CurrentYr", dname), 1])
-      if(is.na(.Object@CurrentYr)).Object@CurrentYr<-.Object@nyears
-      
-      .Object@Spat_targ <- as.numeric(dat[match("Spat_targ", dname),  1:2])
-      if (!is.na(match("Esd", dname))) {
-        .Object@Esd <- as.numeric(dat[match("Esd", dname), 1:2])  
-      } else {
-        .Object@Esd <- as.numeric(dat[match("Fsd", dname), 1:2])  
-      }
-      
-      # .Object@Fgrad<-as.numeric(dat[match('Fgrad',dname),1:2])
-      nEffYears <- ncol(dat[match("EffYears", dname), ])
-      oldw <- getOption("warn")
-      options(warn = -1)
-      chk <- as.numeric(dat[match("EffYears", dname), 1:nEffYears])
-      options(warn = oldw)
-      ind <- which(!is.na(chk))
-      nEffYears <- length(ind)
-      .Object@EffYears <- as.numeric(dat[match("EffYears", dname),  1:nEffYears])
-      .Object@EffLower <- as.numeric(dat[match("EffLower", dname),  1:nEffYears])
-      .Object@EffUpper <- as.numeric(dat[match("EffUpper", dname),  1:nEffYears])
-      .Object@qinc <- as.numeric(dat[match("qinc", dname), 1:2])
-      .Object@qcv <- as.numeric(dat[match("qcv", dname), 1:2])
-      
-      chkName <- match("SelYears", dname)  # Check if vector of selectivity years exists
-      if (is.finite(chkName)) {
-        nSelYears <- ncol(dat[match("SelYears", dname), ])
-        oldw <- getOption("warn")
-        options(warn = -1)
-        chk <- as.numeric(dat[match("SelYears", dname), 1:nSelYears])
-        options(warn = oldw)
-        ind <- which(is.finite(chk))
-        nSelYears <- length(ind)
-        chk <- length(ind)
-        if (is.finite(chk) & chk > 0) {
-          # parameters for selectivity years exists
-          .Object@SelYears <- as.numeric(dat[match("SelYears", dname), 1:nSelYears])
-          .Object@L5Lower <- as.numeric(dat[match("L5Lower", dname), 1:nSelYears])
-          .Object@L5Upper <- as.numeric(dat[match("L5Upper", dname), 1:nSelYears])
-          .Object@LFSLower <- as.numeric(dat[match("LFSLower", dname), 1:nSelYears])
-          .Object@LFSUpper <- as.numeric(dat[match("LFSUpper", dname), 1:nSelYears])
-          .Object@VmaxLower <- as.numeric(dat[match("VmaxLower", dname), 1:nSelYears])
-          .Object@VmaxUpper <- as.numeric(dat[match("VmaxUpper", dname), 1:nSelYears])
-        }
-      }
-      # These are ignored in MSE if L5Lower etc are set
-      .Object@L5 <- as.numeric(dat[match("L5", dname), 1:2])
-      .Object@LFS <- as.numeric(dat[match("LFS", dname), 1:2])
-      .Object@Vmaxlen <- as.numeric(dat[match("Vmaxlen", dname), 1:2])
-      
-      # Retention curve parameters 
-      .Object@LR5 <- as.numeric(dat[match("LR5", dname), 1:2])
-      .Object@LFR <- as.numeric(dat[match("LFR", dname), 1:2])
-      .Object@Rmaxlen <- as.numeric(dat[match("Rmaxlen", dname), 1:2])
-      .Object@DR <- as.numeric(dat[match("DR", dname), 1:2])
-      
-      .Object@isRel <- dat[match("isRel", dname), 1]  # Are selecivity parameters relative to maturity?
-      if (NAor0(.Object@isRel)) .Object@isRel <- "TRUE"
-      .Object@isRel <- as.character(.Object@isRel)
-      
-      isMPA <- grep('MPA', dname)
-      if (length(isMPA)<1) isMPA <- NA
-      if (!is.na(isMPA)) {
-        MPAdat <- dat[isMPA:nrow(dat),]
-        nrow <- min(which(is.na(as.numeric(MPAdat[1,]))))
-        MPAdat <- MPAdat[,1:(nrow-1)]
-        MPAdat <- as.matrix(sapply(MPAdat, as.numeric))  
-        .Object@MPA <- MPAdat
-      }
-      
-    } else {
-      message("File doesn't exist")
-    }
-  }
-  .Object
-})
 
 
 
