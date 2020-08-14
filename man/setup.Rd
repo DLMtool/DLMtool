@@ -4,10 +4,16 @@
 \alias{setup}
 \title{Setup parallel processing}
 \usage{
-setup(cpus = parallel::detectCores() * 0.5, ...)
+setup(cpus = NULL, logical = FALSE, ...)
 }
 \arguments{
-\item{cpus}{number of CPUs}
+\item{cpus}{the number of CPUs to use for parallel processing. If left empty
+all physical cores will be used, unless \code{logical=TRUE}, in which case both
+physical and logical (virtual) cores will be used.}
+
+\item{logical}{Use the logical cores as well? Using the virtual cores may
+not lead to any significant decrease in run time.
+You can test the optimal number of cores using \code{optCPU()}}
 
 \item{...}{other arguments passed to 'snowfall::sfInit'}
 }
@@ -16,7 +22,8 @@ Sets up parallel processing using the snowfall package
 }
 \examples{
 \dontrun{
-setup() # set-up half the available processors
+setup() # set-up the physical processors
 setup(6) # set-up 6 processors
+setup(logical=TRUE) # set-up physical and logical cores
 }
 }

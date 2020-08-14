@@ -15,13 +15,11 @@ runMSE(
   CalcBlow = TRUE,
   HZN = 2,
   Bfrac = 0.5,
-  AnnualMSY = TRUE,
   silent = FALSE,
   PPD = TRUE,
   parallel = FALSE,
   save_name = NULL,
-  checks = FALSE,
-  control = NULL
+  checks = FALSE
 )
 }
 \arguments{
@@ -54,20 +52,13 @@ in the Blow calculation}
 
 \item{Bfrac}{The target fraction of SSBMSY for calculating Blow}
 
-\item{AnnualMSY}{Deprecated. Always set to TRUE now. Logical. Should MSY statistics be calculated for each projection year?
-May differ from MSY statistics from last historical year if there are changes in productivity}
-
 \item{silent}{Should messages be printed out to the console?}
-
-\item{PPD}{Logical. Should posterior predicted data be included in the MSE object Misc slot?}
 
 \item{parallel}{Logical. Should the MSE be run using parallel processing?}
 
 \item{save_name}{Character. Optional name to save parallel MSE list}
 
 \item{checks}{Logical. Run tests?}
-
-\item{control}{control options for testing and debugging}
 }
 \value{
 An object of class \linkS4class{MSE}

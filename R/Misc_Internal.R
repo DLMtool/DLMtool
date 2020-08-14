@@ -75,17 +75,13 @@ ChkObj <- function(OM, error=TRUE) {
       if (class(slotVal) != "character" && class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
     } 
   }
-  optslots <- OptionalSlots()
-  SelSlots <- optslots$SelSlots
-  RecSlots <-  optslots$RecSlots
   
   # Slots ok to not contain values
-  Ignore <- optslots$Ignore
+  Ignore <- c("Name", "Source", "cpars", 
+              "Agency", "Region", "Latitude", 
+              "Longitude", "Species", "Sponsor", "Common_Name",
+              'MPA') 
   Ignore <- c(Ignore, "Mgrad", "Kgrad", "Linfgrad", "LatentEff")
-  
-  # if values present for one they need to be there for all! 
-  if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
-  if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
   
   probSlots <- slots[!Ok][!slots[!Ok] %in% Ignore]
   probSlots <- probSlots[!probSlots %in% names(OM@cpars)]
@@ -105,31 +101,13 @@ ChkObj <- function(OM, error=TRUE) {
     if (!error) warning("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
   }
 
-  OM <- CheckOM(OM)
-  ## Add variability - variability required in all values otherwise
-  # OMs are not reproducible. 
-  # for (sl in slotNames(OM)) {
-  #   slt <- slot(OM, sl)
-  #   if (class(slt) == "numeric") {
-  #     if (length(slt) ==2) {
-  #       if (!all(is.na(slt)) && slt[1] == slt[2]) {
-  #         slt[1] <- slt[1]
-  #         slt[2] <- slt[2]+tiny
-  #       }
-  #      
-  #     }
-  #     if (length(slt)==1) {
-  #       if (!all(is.na(slt)) && slt == 0) slt <- tiny
-  #     }
-  #     slot(OM,sl) <- slt
-  #   }
-  # }?
+
 
   # check for negative values
   slot_names <- c('M', 'Linf', 'h', 'K', 'L50', 'L50_95', 'maxage', 'nyears',
                   'proyears', 'Vmaxlen', 'Rmaxlen', 'L5', "LFS", 'LR5', 'LFR',
-                  'DR', 'L5Lower', 'L5Upper', 'LFSLower', 'LFSUpper', 'VmaxLower',
-                  'VmaxUpper', 'R0', 'Msd', 'Perr', 'LenCV', 'Ksd',
+                  'DR', 
+                  'R0', 'Msd', 'Perr', 'LenCV', 'Ksd',
                   'Linfsd', 'D', 'Size_area_1', 'Frac_area_1', 'Prob_staying',
                   'Fdisc', 'Spat_targ', "Esd", 'qcv', 'Cobs',
                   'CAA_nsamp', "CAA_ESS", 'CAL_nsamp', 'CAL_ESS', 'Iobs', 'Btobs',
@@ -149,11 +127,7 @@ ChkObj <- function(OM, error=TRUE) {
     if(!is.null(val) && !all(is.na(val)))
       if (all(val<0)) stop('OM@cpars$', i, ' has negative values')
   }
-  
- 
   OM
-  
-  
 }
 
 CheckOM <- function(OM) {
@@ -227,23 +201,6 @@ CheckOM <- function(OM) {
 }
 
 
-OptionalSlots <- function() {
-  SelSlots <- c("SelYears", "L5Lower", "L5Upper", "LFSLower",
-                "LFSUpper", "VmaxLower", "VmaxUpper")
-  RecSlots <-  c("Period", "Amplitude")
-  
-  OptPars <- c("M2", "Mexp", "AbsSelYears", 'MPA')
-  
-  
-  # Slots ok to not contain values
-  Ignore <- c("Name", "Source", "cpars", SelSlots, RecSlots, OptPars,
-              "Agency", "Region", "Latitude", "Longitude", "Species", "Sponsor", "Common_Name") 
-  out <- list(SelSlots=SelSlots,
-              RecSlots=RecSlots,
-              OptPars=c(SelSlots, RecSlots, OptPars),
-              Ignore=Ignore)
-  out
-}
 
 
 
@@ -467,8 +424,9 @@ runMSEnomsg <- function(...) {
 }
 
 
-run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
-                         HZN, Bfrac, AnnualMSY, silent, PPD, control, parallel=FALSE) {
+run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
+                         fracD, CalcBlow, 
+                         HZN, Bfrac, silent, parallel=FALSE) {
   
   # rename Perr in cpars to Perr_Y
   if ("Perr" %in% names(OM@cpars)) {
@@ -518,7 +476,7 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
   
   OM@seed <- OM@seed + i 
   mse <- runMSE_int(OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
-                    HZN, Bfrac, AnnualMSY, silent, PPD=PPD, control=control, parallel=parallel)
+                    HZN, Bfrac, silent, parallel=parallel)
   return(mse)
 }
 
@@ -1171,6 +1129,7 @@ calcV <- function(x, Len_age, LenCV, SLarray, n_age, nyears, proyears, CAL_binsm
   }
   v
 }
+
 
 # 
 # makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,

@@ -21,7 +21,6 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   # cpars_info <- DLMtool:::cpars_info # get internal data from sysdata
   CparsInfo <- cpars_info # get internal data from sysdata
   
-  
   sampCpars <- list()
   ncparsim<-cparscheck(cpars)
   if ('CAL_bins' %in% names(cpars)) {
@@ -64,8 +63,6 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   
   Names <- names(cpars)
   outNames <- paste(Names, "")
-  for (i in seq(5, by=5, length.out=floor(length(outNames)/5)))
-    outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
   if(msg) message("valid custom parameters (OM@cpars) found: \n", paste0(outNames, collapse="\n"))
   
   # Sample custom pars 
@@ -165,8 +162,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   Stock <- updateMSE(Stock) # update to add missing slots with default values
   if (all(is.na(Stock@LenCV))) Stock@LenCV <- c(0.1, 0.1)
-  if (all(is.na(Stock@Mexp))) Stock@Mexp <- c(0, 0)
-  
+ 
   # ---- Maximum age ----
   if (!exists("maxage", inherits=FALSE)) maxage <- Stock@maxage  
   if (length(maxage) > 1) 
@@ -640,8 +636,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$Linfarray <- Linfarray
   StockOut$Karray <- Karray
   StockOut$Agearray <- Agearray
-  StockOut$Wa <- Wa
-  StockOut$Wb <- Wb
   StockOut$Frac_area_1 <- Frac_area_1
   StockOut$Prob_staying <- Prob_staying
   StockOut$Size_area_1 <- Size_area_1
@@ -652,6 +646,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$M_ageArray <- M_ageArray
   StockOut$t0array <- t0array
   StockOut$Len_age <- Len_age
+  StockOut$a <- Wa
+  StockOut$b <- Wb
   StockOut$Wt_age <- Wt_age
   StockOut$L50 <- L50
   StockOut$L50array <- L50array
@@ -901,11 +897,14 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
   LR5_y <- matrix(LR5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   LFR_y <- matrix(LFR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   Rmaxlen_y <- matrix(Rmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-  DR_y <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  
+  if(exists("DR_y", inherits = FALSE)) DR_y <- t(DR_y)
+  if (!exists('DR_y')) 
+    DR_y <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   
   if (exists("retL", inherits=FALSE)) {
     # update retention parameters
-    if (exists("retA", inherits = FALSE))  stop("Cannot pass both retL and retA in cpars")
+    if (exists("retA", inherits = FALSE)) stop("Cannot pass both retL and retA in cpars")
     
     nbins <- length(CAL_binsmid)
     if (any(dim(retL) != c(nsim, nbins, nyears+proyears)))
@@ -937,47 +936,12 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
           Rmaxlen_y[yr, s] <- retA[s, n_age, yr]
         }
       }
-    }
-  }
-    # calculate retL
-    nCALbins <- length(CAL_binsmid)
-    CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
-    retL <- array(NA, dim=c(nsim, nCALbins, nyears+proyears)) # Retention-at-length 
-    Rmaxlen_y[Rmaxlen_y<=0] <- tiny 
-    if (any(LR5_y > LFR_y)) {
-      if (all(LFR_y<0.001)) {
-        LFR_y <- LR5_y + LFR_y
-      } else {
-        stop('LR5 is greater than LFR', call.=FALSE)   
-      }
-    }
-    if(!exists("LR5", inherits = FALSE)) {
-      LR5 <- runif(nsim, min(Fleet@LR5), max(Fleet@LR5)) * multi
-      LR5 <- matrix(LR5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    }
-    if(!exists("LFR", inherits = FALSE)) {
-      LFR <- runif(nsim, min(Fleet@LFR), max(Fleet@LFR)) * multi
-      LFR <- matrix(LFR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    }
-    if(!exists("Rmaxlen", inherits = FALSE)) {
-      Rmaxlen <- runif(nsim, min(Fleet@Rmaxlen), max(Fleet@Rmaxlen))
-      Rmaxlen <- matrix(Rmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    }
-    if(!exists("DR", inherits = FALSE)) {
-      DR <- runif(nsim, min(Fleet@DR), max(Fleet@DR))
-    }
-    if(exists("DR_y", inherits = FALSE)) DR_y <- t(DR_y)
-    if(!exists("DR_y", inherits = FALSE)) {
-      DR_y <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    }
-    
-    Rmaxlen[Rmaxlen<=0] <- tiny 
-    if (any(LR5 > LFR)) {
-      if (all(LFR<0.001)) {
-        LFR <- LR5 + LFR
-      } else {
-        stop('LR5 is greater than LFR', call.=FALSE)   
-      }
+    } else {
+      # calculate retL 
+      nCALbins <- length(CAL_binsmid)
+      CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
+      retL <- array(NA, dim=c(nsim, nCALbins, nyears+proyears)) # Retention-at-length 
+      Rmaxlen_y[Rmaxlen_y<=0] <- tiny
       for (yr in 1:(nyears+proyears)) {
         srs <- (Linf - LFR_y[yr,]) / ((-log(Rmaxlen_y[yr,],2))^0.5) 
         srs[!is.finite(srs)] <- Inf
@@ -985,61 +949,68 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL,
         retL[,, yr] <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFR_y[yr, ], sls=sls, srs=srs))
       }
     }
-    
-    if (!exists("retA", inherits = FALSE)) {
-      # calculate selectivity-at-age from selectivity-at-length
-      retAList <- lapply(1:nsim, calcV, Len_age=Len_age, LenCV=LenCV, SLarray=retL, 
-                         n_age=n_age, nyears=nyears, proyears=proyears, CAL_binsmid=CAL_binsmid)
-      retA <- aperm(array(as.numeric(unlist(retAList, use.names=FALSE)), dim=c(n_age, nyears+proyears, nsim)), c(3,1,2))
+  }
+  if (any(LR5_y > LFR_y)) {
+    if (all(LFR_y<0.001)) {
+      LFR_y <- LR5_y + LFR_y
+    } else {
+      stop('LR5 is greater than LFR', call.=FALSE)   
     }
-    
-    V2 <- V
-    SLarray2 <- SLarray
-    
-    # Apply general discard rate 
-    dr <- aperm(abind::abind(rep(list(DR_y), n_age), along=3), c(2,3,1))
-    retA <- (1-dr) * retA
-    dr <- aperm(abind::abind(rep(list(DR_y), nCALbins), along=3), c(2,3,1))
-    retL <- (1-dr) * retL
-    
-    # update realized vulnerability curve with retention and dead discarded fish 
-    Fdisc_array1 <- array(Fdisc, dim=c(nsim, n_age, nyears+proyears))
-    V <- V * (retA + (1-retA)*Fdisc_array1) # Realised selection at age
-    
-    Fdisc_array2 <- array(Fdisc, dim=c(nsim, nCALbins, nyears+proyears))
-    SLarray <- SLarray2 * (retL + (1-retL)*Fdisc_array2) # Realised selection at length
-    
-    # Realised Retention curves
-    retA <- retA * V2
-    retL <- retL * SLarray2
-    
-    Fleetout$Fdisc <- Fdisc
-    Fleetout$Fdisc_array1 <- Fdisc_array1
-    Fleetout$Fdisc_array2 <- Fdisc_array2
-    Fleetout$LR5 <- LR5_y  
-    Fleetout$LFR <- LFR_y
-    Fleetout$Rmaxlen <- Rmaxlen_y
-    Fleetout$DR <- DR_y
-    Fleetout$retA <- retA  # retention-at-age array - nsim, maxage, nyears+proyears
-    Fleetout$retL <- retL  # retention-at-length array - nsim, nCALbins, nyears+proyears
-    Fleetout$L5 <- L5_y  
-    Fleetout$LFS <- LFS_y 
-    Fleetout$Vmaxlen <- Vmaxlen_y
-    Fleetout$V <- V  # realized vulnerability-at-age
-    Fleetout$SLarray <- SLarray # realized vulnerability-at-length
-    Fleetout$V2 <- V2 # original vulnerablity-at-age curve 
-    Fleetout$SLarray2 <- SLarray2 # original vulnerablity-at-length curve 
-    
+  }
+
+  if (!exists("retA", inherits = FALSE)) {
+    # calculate selectivity-at-age from selectivity-at-length
+    retAList <- lapply(1:nsim, calcV, Len_age=Len_age, LenCV=LenCV, SLarray=retL, 
+                       n_age=n_age, nyears=nyears, proyears=proyears, CAL_binsmid=CAL_binsmid)
+    retA <- aperm(array(as.numeric(unlist(retAList, use.names=FALSE)), dim=c(n_age, nyears+proyears, nsim)), c(3,1,2))
+  }
   
-    # check V 
-    if (sum(apply(V, c(1,3), max) <0.01)) {
-      maxV <- apply(V, c(1,3), max)
-      fails <- which(maxV < 0.01, arr.ind = TRUE)
-      sims <- unique(fails[,1])
-      yrs <- unique(fails[,2])
-      warning("Vulnerability (V) is <0.01 for all ages in:\nsims:", sims, "\nyears:", yrs, "\n", call. = FALSE)
-      # warning('Check selectivity parameters. Is Fleet@isRel set correctly?', call.=FALSE)
-    }
+  V2 <- V
+  SLarray2 <- SLarray
+  
+  # Apply general discard rate 
+  dr <- aperm(abind::abind(rep(list(DR_y), n_age), along=3), c(2,3,1))
+  retA <- (1-dr) * retA
+  dr <- aperm(abind::abind(rep(list(DR_y), nCALbins), along=3), c(2,3,1))
+  retL <- (1-dr) * retL
+  
+  # update realized vulnerability curve with retention and dead discarded fish 
+  Fdisc_array1 <- array(Fdisc, dim=c(nsim, n_age, nyears+proyears))
+  V <- V * (retA + (1-retA)*Fdisc_array1) # Realised selection at age
+  
+  Fdisc_array2 <- array(Fdisc, dim=c(nsim, nCALbins, nyears+proyears))
+  SLarray <- SLarray2 * (retL + (1-retL)*Fdisc_array2) # Realised selection at length
+  
+  # Realised Retention curves
+  retA <- retA * V2
+  retL <- retL * SLarray2
+  
+  Fleetout$Fdisc <- Fdisc
+  Fleetout$Fdisc_array1 <- Fdisc_array1
+  Fleetout$Fdisc_array2 <- Fdisc_array2
+  Fleetout$LR5 <- LR5_y  
+  Fleetout$LFR <- LFR_y
+  Fleetout$Rmaxlen <- Rmaxlen_y
+  Fleetout$DR <- DR_y
+  Fleetout$retA <- retA  # retention-at-age array - nsim, maxage, nyears+proyears
+  Fleetout$retL <- retL  # retention-at-length array - nsim, nCALbins, nyears+proyears
+  Fleetout$L5 <- L5_y  
+  Fleetout$LFS <- LFS_y 
+  Fleetout$Vmaxlen <- Vmaxlen_y
+  Fleetout$V <- V  # realized vulnerability-at-age
+  Fleetout$SLarray <- SLarray # realized vulnerability-at-length
+  Fleetout$V2 <- V2 # original vulnerablity-at-age curve 
+  Fleetout$SLarray2 <- SLarray2 # original vulnerablity-at-length curve 
+  
+  # check V 
+  if (sum(apply(V, c(1,3), max) <0.01)) {
+    maxV <- apply(V, c(1,3), max)
+    fails <- which(maxV < 0.01, arr.ind = TRUE)
+    sims <- unique(fails[,1])
+    yrs <- unique(fails[,2])
+    warning("Vulnerability (V) is <0.01 for all ages in:\nsims:", sims, "\nyears:", yrs, "\n", call. = FALSE)
+    # warning('Check selectivity parameters. Is Fleet@isRel set correctly?', call.=FALSE)
+  }
   Fleetout 
 }
 

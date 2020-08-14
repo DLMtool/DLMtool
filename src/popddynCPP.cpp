@@ -150,7 +150,6 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   // Initial year
   Narray.subcube(0, 0, 0, maxage, 0, nareas-1) = Ncurr;
   
-
   int yr = 0;
   arma::cube movcy = movc(yr);
   
@@ -198,8 +197,8 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     arma::vec SB(nareas);
     arma::cube movcy = movc(yr);
     
-    for (int A=0; A<nareas; A++) SB(A) = accu(SBarray.subcube(0, yr, A, maxage, yr, A));
-    if ((yr >0) & (control==3)) SB = SSB0a;
+    // for (int A=0; A<nareas; A++) SB(A) = accu(SBarray.subcube(0, yr, A, maxage, yr, A));
+    // if ((yr >0) & (control==3)) SB = SSB0a;
           
     arma::mat Ncurr2 = Narray.subcube(0, yr, 0, maxage, yr, nareas-1);
     arma::mat Zcurr = Zarray.subcube(0, yr, 0, maxage, yr, nareas-1);
@@ -217,6 +216,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
       VBarray.subcube(0, yr+1, A, maxage, yr+1, A) = NextYrN.col(A) % WtAge.col(yr+1) % Vuln.col(yr+1);
       Marray.subcube(0, yr+1, A, maxage, yr+1, A) = M_age.col(yr+1);
       tempVec(A) = accu(VBarray.subcube(0, yr+1, A, maxage-1, yr+1, A));
+      SB(A) = accu(SBarray.subcube(0, yr+1, A, maxage, yr+1, A)); // total spawning biomass
       
       // Recruitment assuming regional R0 and stock wide steepness
       // next yr recruitment to age-0

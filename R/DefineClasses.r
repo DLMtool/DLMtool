@@ -282,283 +282,15 @@ setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
   return(.Object)
 })
 
-# setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","), silent=TRUE) {
-#   if (file.exists(stock)) {
-#     dec <- match.arg(dec)
-#     Ncol <- max(unlist(lapply(strsplit(readLines(stock), ","), length)))
-#     col.names <- paste0("V", 1:Ncol)
-# 
-#     if (dec == ".")
-#       dat <- read.csv(stock, header = F, colClasses = "character", col.names=col.names)  # read 1st sheet
-#     if (dec == ",")
-#       dat <- read.csv2(stock, header = F, colClasses = "character", col.names=col.names)  # read 1st sheet
-#     dname <- dat[, 1]
-#     dat <- dat[, 2:ncol(dat)]
-# 
-#     .Object@Name <- dat[match("Name", dname), 1]
-#     .Object@Common_Name <- dat[match("Common Name", dname), 1]
-#     .Object@Species <- dat[match("Species", dname), 1]
-#     .Object@Region <- dat[match("Region", dname), 1]
-#     .Object@Year <- as.numeric(dat[match("Year", dname), dat[match("Year", dname), ] != ""])
-#     # .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), dat[match("Catch", dname), ] != ""]), nrow = 1)
-#     .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), 1:length(.Object@Year)]), nrow = 1)
-#     .Object@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), 1:length(.Object@Year)]), nrow = 1)
-# 
-#     # .Object@Type <- dat[match("Index type", dname), ] %>% as.character()
-#     # .Object@Type <- .Object@Type[!is.na(.Object@Type)]
-#     # .Object@Type <- .Object@Type[nchar(.Object@Type)>0]
-#     # if (length(.Object@Type)>0) {
-#     #   .Object@Type <- .Object@Type[nchar(.Object@Type)>0] %>% as.character()
-#     #   n.ind <- length(.Object@Type)
-#     #   r.ind <- match("Real indices", dname)
-#     #   RInd.dat <- dat[r.ind:(r.ind+n.ind-1),] %>% data.matrix()
-#     #   .Object@RInd <- array(RInd.dat, dim=c(1, n.ind, ncol(RInd.dat)))
-#     # }
-# 
-#     .Object@Rec <- matrix(as.numeric(dat[match("Recruitment", dname), 1:length(.Object@Year)]), nrow = 1)
-#     .Object@t <- as.numeric(dat[match("Duration t", dname), 1])
-#     .Object@AvC <- as.numeric(dat[match("Average catch over time t", dname), 1])
-#     .Object@Dt <- as.numeric(dat[match("Depletion over time t", dname), 1])
-#     .Object@Mort <- as.numeric(dat[match("M", dname), 1])
-#     .Object@FMSY_M <- as.numeric(dat[match("FMSY/M", dname), 1])
-#     .Object@BMSY_B0 <- as.numeric(dat[match("BMSY/B0", dname), 1])
-#     .Object@L50 <- as.numeric(dat[match("Length at 50% maturity", dname), 1])
-#     .Object@L95 <- as.numeric(dat[match("Length at 95% maturity", dname), 1])
-#     .Object@ML <- matrix(as.numeric(dat[match("Mean length", dname), 1:length(.Object@Year)]), nrow = 1)
-#     .Object@Lbar <- matrix(as.numeric(dat[match("Mean length Lc", dname), 1:length(.Object@Year)]), nrow = 1)
-#     .Object@Lc <- matrix(as.numeric(dat[match("Modal length", dname), 1:length(.Object@Year)]), nrow = 1)
-#     .Object@LFC <- as.numeric(dat[match("Length at first capture",  dname), 1])
-#     .Object@LFS <- as.numeric(dat[match("Length at full selection", dname), 1])
-# 
-#     CAAy <- grep("CAA", dname)[1:length(grep("CAA", dname))]
-#     CAAa <- sum(dat[CAAy[1], ] != "")
-#     if (!is.na(CAAa)) {
-#       .Object@CAA <- array(as.numeric(as.matrix(dat[CAAy, 1:CAAa])),  dim = c(1, length(CAAy), CAAa))
-#     }
-#     .Object@Dep <- as.numeric(dat[match("Current stock depletion",  dname), 1])
-#     .Object@Abun <- as.numeric(dat[match("Current stock abundance",  dname), 1])
-#     .Object@SpAbun <- as.numeric(dat[match("Current spawning stock abundance",  dname), 1])
-#     .Object@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
-#     .Object@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
-#     .Object@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
-#     .Object@LenCV <- as.numeric(dat[match("CV of length-at-age", dname), 1])
-#     .Object@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
-#     .Object@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
-#     .Object@steep <- as.numeric(dat[match("Steepness", dname), 1])
-#     .Object@sigmaR <- as.numeric(dat[match("sigmaR", dname), 1])
-# 
-#     .Object@CV_Cat <- as.numeric(dat[match("CV Catch", dname), 1])
-#     .Object@CV_Dt <- as.numeric(dat[match("CV Depletion over time t", dname), 1])
-#     .Object@CV_AvC <- as.numeric(dat[match("CV Average catch over time t", dname), 1])
-#     .Object@CV_Ind <- as.numeric(dat[match("CV Abundance index", dname), 1])
-#     .Object@CV_Mort <- as.numeric(dat[match("CV M", dname), 1])
-#     .Object@CV_FMSY_M <- as.numeric(dat[match("CV FMSY/M", dname),  1])
-#     .Object@CV_BMSY_B0 <- as.numeric(dat[match("CV BMSY/B0", dname), 1])
-#     .Object@CV_Dep <- as.numeric(dat[match("CV current stock depletion", dname), 1])
-#     .Object@CV_Abun <- as.numeric(dat[match("CV current stock abundance", dname), 1])
-#     .Object@CV_vbK <- as.numeric(dat[match("CV von B. K parameter", dname), 1])
-#     .Object@CV_vbLinf <- as.numeric(dat[match("CV von B. Linf parameter", dname), 1])
-#     .Object@CV_vbt0 <- as.numeric(dat[match("CV von B. t0 parameter", dname), 1])
-#     .Object@CV_L50 <- as.numeric(dat[match("CV Length at 50% maturity", dname), 1])
-#     .Object@CV_LFC <- as.numeric(dat[match("CV Length at first capture", dname), 1])
-#     .Object@CV_LFS <- as.numeric(dat[match("CV Length at full selection", dname), 1])
-#     .Object@CV_wla <- as.numeric(dat[match("CV Length-weight parameter a", dname), 1])
-#     .Object@CV_wlb <- as.numeric(dat[match("CV Length-weight parameter b", dname), 1])
-#     .Object@CV_steep <- as.numeric(dat[match("CV Steepness", dname),  1])
-#     .Object@sigmaL <- as.numeric(dat[match("Sigma length composition", dname), 1])
-# 
-#     .Object@MaxAge <- as.numeric(dat[match("Maximum age", dname), 1])
-# 
-#     if (length(grep("CAL", dname)) > 1) {
-#       CAL_bins <- as.numeric(dat[match("CAL_bins", dname), dat[match("CAL_bins", dname), ] != ""])
-#       nCAL <- length(CAL_bins) - 1
-#       .Object@CAL_bins <- CAL_bins
-#       CALdat <- grep("CAL ", dname)
-#       if (length(CALdat) > 0) .Object@CAL <- array(as.numeric(as.matrix(dat[CALdat, 1:nCAL])),dim = c(1, length(CALdat), nCAL))
-#     }
-# 
-#     .Object@Units <- dat[match("Units", dname), 1]
-#     .Object@Ref <- as.numeric(dat[match("Reference OFL", dname), 1])
-#     .Object@Ref_type <- dat[match("Reference OFL type", dname), 1]
-# 
-#     .Object@Cref <- as.numeric(dat[match("Cref", dname), 1])
-#     .Object@Iref <- as.numeric(dat[match("Iref", dname), 1])
-#     .Object@Bref <- as.numeric(dat[match("Bref", dname), 1])
-# 
-#     .Object@CV_Cref <- as.numeric(dat[match("CV Cref", dname), 1])
-#     .Object@CV_Iref <- as.numeric(dat[match("CV Iref", dname), 1])
-#     .Object@CV_Bref <- as.numeric(dat[match("CV Bref", dname), 1])
-#     .Object@CV_Rec <- as.numeric(dat[match("CV Rec", dname), 1])
-# 
-#     .Object@MPrec <- as.numeric(dat[match("MPrec", dname), 1])
-#     .Object@MPeff <- as.numeric(dat[match("MPeff", dname), 1])
-# 
-#     .Object@LHYear <- as.numeric(dat[match("LHYear", dname), 1])
-#     .Object@nareas <- as.numeric(dat[match("nareas", dname), 1])
-# 
-#     .Object@Log[[1]] <- paste("Created:", Sys.time())
-#     .Object@params <- new("list")
-#     .Object@OM <- data.frame(NA)
-#     .Object@Obs <- data.frame(NA)
-#     .Object@TAC <- array(NA, dim = c(1, 1, 1))
-#     .Object@Sense <- array(NA, dim = c(1, 1, 1))
-#     .Object@PosMPs <- NA
-#     .Object@MPs <- NA
-# 
-#   } else {
-#     if (stock != "MSE") {
-#       if (!is.na(stock) && !silent) print("Couldn't find specified csv file, blank DLM object created")
-#     }
-#   }
-# 
-#   if (is.na(.Object@MPeff) || length(.Object@MPeff)==0) .Object@MPeff <- 1
-# 
-#   # Standardise Index if not already
-#   .Object@Ind <- .Object@Ind/mean(.Object@Ind, na.rm=TRUE)
-# 
-#   # Default value
-#   if (NAor0(.Object@LenCV)) .Object@LenCV <- 0.1
-#   if (NAor0(.Object@CV_Cat)) .Object@CV_Cat <- 0.2
-#   if (NAor0(.Object@CV_Dt)) .Object@CV_Dt <- 0.25
-#   if (NAor0(.Object@CV_AvC)) .Object@CV_AvC <- 0.2
-#   if (NAor0(.Object@CV_Ind)) .Object@CV_Ind <- 0.2
-#   if (NAor0(.Object@CV_Mort)) .Object@CV_Mort <- 0.2
-#   if (NAor0(.Object@CV_FMSY_M)) .Object@CV_FMSY_M <- 0.2
-#   if (NAor0(.Object@CV_BMSY_B0)) .Object@CV_BMSY_B0 <- 0.045
-#   if (NAor0(.Object@CV_Cref)) .Object@CV_Cref <- 0.2
-#   if (NAor0(.Object@CV_Bref)) .Object@CV_Bref <- 0.2
-#   if (NAor0(.Object@CV_Iref)) .Object@CV_Iref <- 0.2
-#   if (NAor0(.Object@CV_Rec)) .Object@CV_Rec <- 0.2
-#   if (NAor0(.Object@CV_Dep)) .Object@CV_Dep <- 0.25
-#   if (NAor0(.Object@CV_Abun)) .Object@CV_Abun <- 0.25
-#   if (NAor0(.Object@CV_vbK)) .Object@CV_vbK <- 0.1
-#   if (NAor0(.Object@CV_vbLinf)) .Object@CV_vbLinf <- 0.1
-#   if (NAor0(.Object@CV_vbt0)) .Object@CV_vbt0 <- 0.1
-#   if (NAor0(.Object@CV_L50))  .Object@CV_L50 <- 0.1
-#   if (NAor0(.Object@CV_LFC))  .Object@CV_LFC <- 0.2
-#   if (NAor0(.Object@CV_LFS))  .Object@CV_LFS <- 0.2
-#   if (NAor0(.Object@CV_wla))  .Object@CV_wla <- 0.1
-#   if (NAor0(.Object@CV_wlb))  .Object@CV_wlb <- 0.1
-#   if (NAor0(.Object@CV_steep)) .Object@CV_steep <- 0.2
-#   if (NAor0(.Object@nareas)) .Object@nareas <- 2
-# 
-#   if (length(.Object@sigmaL) == 0) .Object@sigmaL <- 0.2
-#   if (length(.Object@CAA) == 0) .Object@CAA <- array(NA, c(1, 1, 1))
-#   if (length(.Object@CAL) == 0) .Object@CAL <- array(NA, c(1, 1, 1))
-#   if (length(.Object@CAL_bins) == 0) .Object@CAL_bins <- 1
-#   if (length(.Object@TAC) == 0) .Object@TAC <- array(1, c(1, 1))
-#   # if (length(.Object@TACbias) == 0) .Object@TACbias <- array(1, c(1, 1))
-#   if (length(.Object@Sense) == 0) .Object@Sense <- array(1, c(1, 1))
-#   if (length(.Object@ML) == 0)  .Object@ML <- array(NA, c(1, 1))
-#   if (length(.Object@Lbar) == 0) .Object@Lbar <- array(NA, c(1, 1))
-#   if (length(.Object@Lc) == 0) .Object@Lc <- array(NA, c(1, 1))
-# 
-#   if (length(.Object@Type) == 0) .Object@Type <- NA
-#   if (length(.Object@RInd) == 0) .Object@RInd <- array(NA, c(1,1,1))
-# 
-#   .Object
-# })
-
-
-
-# # ---- Fease Class ----
-# #' Class \code{'Fease'}
-# #' 
-# #' An object for storing information about what data are available or might be
-# #' available
-# #' 
-# #' @name Fease-class
-# #' @docType class
-# #' @section Objects from the Class: Objects can be created by calls of the form
-# #' \code{new('Fease', stock)}
-# #'
-# #' @slot Name The name of the data feasibility object
-# #' @slot Case The names of the data feasibility cases
-# #' @slot Catch Total annual catches
-# #' @slot Index An index of relative abundance, catch per unit effort data or of fishing mortality rate (effort)
-# #' @slot Natural_mortality_rate From Maximum age, Tagging data, early fishery catch composition data
-# #' @slot Maturity_at_length From gonadal analysis, growth and natural mortality rate estimates
-# #' @slot Growth Paired length and age observations, maximum length and an estimate of natural mortality rate
-# #' @slot Length_weight_conversion Paired weight and length observations, equivalent data from a similar species
-# #' @slot Fleet_selectivity Length composition of catches with growth curve and natural mortality rate, estimates from a similar fleet type targetting a similar species
-# #' @slot Catch_at_length Length composition of catches (length samples)
-# #' @slot Catch_at_age Age composition of catches (age samples)
-# #' @slot Recruitment_index Spawn survey, estimates from a stock assessment, VPA analysis of catch composition data
-# #' @slot Stock_recruitment_relationship Stock assessment, a stock assessment of a similar species
-# #' @slot Target_catch An agreed annual catch target, MSY proxy
-# #' @slot Target_biomass An agreed absolute biomass target, mean historical biomass estimate
-# #' @slot Target_index An agreed catch rate target
-# #' @slot Abundance Fishery independent survey, current fishing mortality rate from recent length composition, natural mortality rate, maturity at age, growth and stock recruitment relationship, habitat and relative density extrapolation
-# #'
-# #' @author T. Carruthers and A. Hordyk
-# #' @keywords classes
-# #' @examples
-# #' 
-# #' newdata<-new('Fease')
-# #' 
-# setClass("Fease", representation(Name = "character", Case = "character", 
-#                                  Catch = "numeric", Index = "numeric", Natural_mortality_rate = "numeric", 
-#                                  Maturity_at_length = "numeric", Growth = "numeric", Length_weight_conversion = "numeric", 
-#                                  Fleet_selectivity = "numeric", Catch_at_length = "numeric", Catch_at_age = "numeric", 
-#                                  Recruitment_index = "numeric", Stock_recruitment_relationship = "numeric", 
-#                                  Target_catch = "numeric", Target_biomass = "numeric", Target_index = "numeric", 
-#                                  Abundance = "numeric"))
-# 
-# # initialize Fease
-# setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1, dec=c(".", ",")) {
-#   # run an error check here
-#   if (file.exists(file)) {
-#     Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-#     dec <- match.arg(dec)
-#     if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 
-#                                                                                    1:Ncol))  # read 1st sheet
-#     if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 
-#                                                                                                    1:Ncol))  # read 1st sheet
-#     nr <- nrow(dat)
-#     ncases = ncol(dat) - 1
-#     dname <- dat[, 1]
-#     if (ncases == 1) dat <- array(dat[, 2:ncol(dat)], dim = c(nr, ncases))
-#     if (ncases > 1) dat <- dat[, 2:ncol(dat)]
-#     .Object@Name <- dat[match("Name", dname), 1]
-#     .Object@Case <- as.character(dat[match("Case", dname), 1:ncases])
-#     .Object@Catch <- as.numeric(dat[match("Catch", dname), 1:ncases])
-#     .Object@Index <- as.numeric(dat[match("Index", dname), 1:ncases])
-#     .Object@Natural_mortality_rate <- as.numeric(dat[match("Natural_mortality_rate",  dname), 1:ncases])
-#     .Object@Maturity_at_length <- as.numeric(dat[match("Maturity_at_length",  dname), 1:ncases])
-#     .Object@Growth <- as.numeric(dat[match("Growth", dname), 1:ncases])
-#     .Object@Length_weight_conversion <- as.numeric(dat[match("Length_weight_conversion", dname), 1:ncases])
-#     .Object@Fleet_selectivity <- as.numeric(dat[match("Fleet_selectivity", dname), 1:ncases])
-#     .Object@Catch_at_length <- as.numeric(dat[match("Catch_at_length", dname), 1:ncases])
-#     .Object@Catch_at_age <- as.numeric(dat[match("Catch_at_age", dname), 1:ncases])
-#     .Object@Recruitment_index <- as.numeric(dat[match("Recruitment_index", dname), 1:ncases])
-#     .Object@Stock_recruitment_relationship <- as.numeric(dat[match("Stock_recruitment_relationship", dname), 1:ncases])
-#     .Object@Target_catch <- as.numeric(dat[match("Target_catch", dname), 1:ncases])
-#     .Object@Target_biomass <- as.numeric(dat[match("Target_biomass", dname), 1:ncases])
-#     .Object@Target_index <- as.numeric(dat[match("Target_index", dname), 1:ncases])
-#     .Object@Abundance <- as.numeric(dat[match("Abundance", dname), 1:ncases])
-#   } else {
-#     .Object@Name <- "Blank DLM_Fease"
-#     .Object@Case <- "Case 1"
-#     .Object@Catch <- 1
-#     .Object@Index <- 1
-#     .Object@Natural_mortality_rate <- 1
-#     .Object@Maturity_at_length <- 1
-#     .Object@Growth <- 1
-#     .Object@Length_weight_conversion <- 1
-#     .Object@Fleet_selectivity <- 1
-#     .Object@Catch_at_length <- 1
-#     .Object@Catch_at_age <- 1
-#     .Object@Recruitment_index <- 1
-#     .Object@Stock_recruitment_relationship <- 1
-#     .Object@Target_catch <- 1
-#     .Object@Target_biomass <- 1
-#     .Object@Target_index <- 1
-#     .Object@Abundance <- 1
-#   }
-#   .Object
-#   
-# })
-# 
+importslot <- function(name, length=2, Data, Names, numeric=TRUE, essential=TRUE) {
+  x <- Data[match(name, Names), 1:length]
+  if (numeric) x <- as.numeric(x)
+  if (essential) {
+    if (any(is.na(x))) stop('NAs in ', name, '. Should be length ', length)
+    if (length(x)<length) stop(name, ' is missing')  
+  }
+  x
+}    
 
 # ---- Stock Class ----
 #' Class \code{'Stock'}
@@ -589,24 +321,17 @@ setClass("Stock", representation(Name = "character",
                                  maxage = "numeric", 
                                  R0 = "numeric", 
                                  M = "numeric",
-                                 M2 = "numeric", 
-                                 Mexp="numeric", 
                                  Msd = "numeric",
-                                 Mgrad = "numeric",  
                                  h = "numeric", 
                                  SRrel = "numeric", 
                                  Perr = "numeric", 
                                  AC = "numeric",
-                                 Period = "numeric", 
-                                 Amplitude = "numeric",
                                  Linf = "numeric", 
+                                 Linfsd = "numeric", 
                                  K = "numeric", 
+                                 Ksd = "numeric",
                                  t0 = "numeric", 
                                  LenCV="numeric", 
-                                 Ksd = "numeric",
-                                 Kgrad = "numeric",
-                                 Linfsd = "numeric", 
-                                 Linfgrad = "numeric",
                                  L50 = "numeric", 
                                  L50_95 = "numeric", 
                                  D = "numeric", 
@@ -618,96 +343,70 @@ setClass("Stock", representation(Name = "character",
                                  Fdisc="numeric", 
                                  Source = "character"))
 
-# initialize Stock
 setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
   
   if (!is.na(file)) {
-    if (file.exists(file)) {
+    if (!file.exists(file)) {
+      stop('File not found')
+    } else {
+      # load file and populate object
       dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      dname <- dat[, 1]
-      dat <- dat[, 2:ncol(dat)]
+      if (dec == ".") dat <- read.csv(file, header = F, 
+                                      colClasses = "character", 
+                                      col.names = paste0("V", 1:Ncol)) 
+      if (dec == ",") dat <- read.csv2(file, header = F, 
+                                       colClasses = "character", 
+                                       col.names = paste0("V", 1:Ncol)) 
+      Names <- dat[,1]
       Ncol <- ncol(dat)
-      .Object@Name <- dat[match("Name", dname), 1]
-      commonname <- dat[match("Common_Name", dname), 1]
-      commonname1 <- dat[match("Common Name", dname), 1]
-      if (length(commonname)>0) {
+      Data <- dat[,2:Ncol]
+      .Object@Name <- importslot('Name', 1, Data, Names, FALSE)
+      commonname <- Data[match("Common_Name", Names), 1]
+      commonname1 <- Data[match("Common Name", Names), 1]
+      if (length(commonname)>0 && !is.na(commonname)) {
         .Object@Common_Name <-commonname
-      } else if (length(commonname1)>0) {
+      } else if (length(commonname1)>0 && !is.na(commonname)) {
         .Object@Common_Name <-commonname1
       } else {
         .Object@Common_Name <- "Not specified"
       }
-      .Object@Species <- dat[match("Species", dname), 1]
-      .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
-      .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
-      options(warn=-1)
-      temp <- as.numeric(dat[match("M", dname), 1:Ncol])
-      .Object@M <- temp
-      nas <- which(is.na(temp))
-      if (length(nas) > 0) {
-        .Object@M <- temp[1:(nas[1]-1)]
-      }
-      temp <- as.numeric(dat[match("M2", dname), 1:Ncol])
-      .Object@M2 <- temp
-      nas <- which(is.na(temp))
-      if (length(nas) > 0) {
-        .Object@M2 <- temp[1:(nas[1]-1)]
-      }
-      options(warn=1)
-      .Object@Msd <- as.numeric(dat[match("Msd", dname), 1:2])
-      .Object@Mgrad <- as.numeric(dat[match("Mgrad", dname), 1:2])
-      .Object@Mexp <- as.numeric(dat[match("Mexp", dname), 1:2])
-      .Object@Fdisc <- as.numeric(dat[match("Fdisc", dname), 1:2])
-      .Object@h <- as.numeric(dat[match("h", dname), 1:2])
-      .Object@SRrel <- as.numeric(dat[match("SRrel", dname), 1])
-      .Object@Linf <- as.numeric(dat[match("Linf", dname), 1:2])
-      .Object@K <- as.numeric(dat[match("K", dname), 1:2])
-      .Object@t0 <- as.numeric(dat[match("t0", dname), 1:2])
-      .Object@LenCV <- as.numeric(dat[match("LenCV", dname), 1:2])
-      .Object@Ksd <- as.numeric(dat[match("Ksd", dname), 1:2])
-      .Object@Kgrad <- as.numeric(dat[match("Kgrad", dname), 1:2])
-      .Object@Linfsd <- as.numeric(dat[match("Linfsd", dname), 1:2])
-      .Object@Linfgrad <- as.numeric(dat[match("Linfgrad", dname),  1:2])
-      #.Object@recgrad <- as.numeric(dat[match("recgrad", dname), 1:2])
-      .Object@a <- as.numeric(dat[match("a", dname), 1])
-      .Object@b <- as.numeric(dat[match("b", dname), 1])
-      .Object@D <- as.numeric(dat[match("D", dname), 1:2])
-      .Object@Perr <- as.numeric(dat[match("Perr", dname), 1:2])
-      .Object@Period <- as.numeric(dat[match("Period", dname), 1:2])
-      .Object@Amplitude <- as.numeric(dat[match("Amplitude", dname), 1:2])
-      .Object@AC <- as.numeric(dat[match("AC", dname), 1:2])
-      .Object@Size_area_1 <- as.numeric(dat[match("Size_area_1", dname), 1:2])
-      .Object@Frac_area_1 <- as.numeric(dat[match("Frac_area_1", dname), 1:2])
-      .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
-      .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
-      .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
-      
-      # .Object@FecB <- as.numeric(dat[match("FecB", dname), 1:2])
-      
-      .Object@Source <- dat[match("Source", dname), 1]
-    } else {
-      message("File doesn't exist")
+      .Object@Species <- importslot('Species', 1, Data, Names, FALSE, FALSE)
+      .Object@maxage <- importslot('maxage', 1, Data, Names) 
+      .Object@R0 <- importslot('R0', 1, Data, Names)
+      .Object@M <- importslot('M', 2, Data, Names)
+      .Object@Msd <- importslot('Msd', 2, Data, Names)  
+      .Object@Fdisc <- importslot('Fdisc', 2, Data, Names) 
+      .Object@h <- importslot('h', 2, Data, Names)
+      .Object@SRrel <- importslot('SRrel', 1, Data, Names)
+      .Object@Linf <- importslot('Linf', 2, Data, Names) 
+      .Object@K <- importslot("K", 2, Data, Names) 
+      .Object@t0 <- importslot("t0", 2, Data, Names) 
+      .Object@LenCV <- importslot("LenCV", 2, Data, Names) 
+      .Object@Ksd <- importslot("Ksd", 2, Data, Names) 
+      .Object@Linfsd <- importslot("Linfsd", 2, Data, Names) 
+      .Object@a <- importslot("a", 1, Data, Names)
+      .Object@b <- importslot("b", 1, Data, Names)
+      .Object@D <- importslot("D", 2, Data, Names)
+      .Object@Perr <- importslot("Perr", 2, Data, Names)
+      .Object@AC <- importslot("AC", 2, Data, Names)
+      .Object@Size_area_1 <- importslot("Size_area_1", 2, Data, Names)
+      .Object@Frac_area_1 <- importslot("Frac_area_1", 2, Data, Names) 
+      .Object@Prob_staying <- importslot("Prob_staying", 2, Data, Names)
+      .Object@L50 <- importslot("L50", 2, Data, Names) 
+      .Object@L50_95 <- importslot("L50_95", 2, Data, Names)
+      .Object@Source <- importslot("Source", 1, Data, Names, FALSE, FALSE) 
     }
   }
-  if (all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08, 0.12)
-  # if (all(is.na(.Object@recgrad))) .Object@recgrad <- c(0, 0) # recgrad not currently used
-  if (all(is.na(.Object@Size_area_1))) .Object@Size_area_1 <- .Object@Frac_area_1
-  if (length(.Object@Size_area_1) == 0) .Object@Size_area_1 <- .Object@Frac_area_1
-  
   .Object
-  
 })
 
 #' Class union for isRel slot
-#' 
+#'
 #' @description Used internally.
 #' @keywords internal
 #' @export
 setClassUnion(name="char.log", members=c("character", "logical"))
-
 
 # ---- Fleet Class -----
 #' Class \code{'Fleet'}
@@ -729,104 +428,79 @@ setClassUnion(name="char.log", members=c("character", "logical"))
 #' 
 #' showClass('Fleet')
 #' 
-setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = "numeric", 
-                            EffYears = "numeric", EffLower = "numeric", EffUpper = "numeric", 
-                            Esd = "numeric", qinc = "numeric", qcv = "numeric",   
-                            L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", isRel = "char.log",
-                            LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
-                            SelYears = "numeric", AbsSelYears = "numeric",
-                            L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", 
-                            LFSUpper = "numeric", VmaxLower = "numeric", 
-                            VmaxUpper = "numeric", CurrentYr="numeric", MPA='matrix'))
+setClass("Fleet", slots = c(Name = "character",
+                            nyears = "numeric", 
+                            Spat_targ = "numeric", 
+                            EffYears = "numeric", 
+                            EffLower = "numeric", 
+                            EffUpper = "numeric", 
+                            Esd = "numeric", 
+                            qinc = "numeric", 
+                            qcv = "numeric",   
+                            L5 = "numeric", 
+                            LFS = "numeric", 
+                            Vmaxlen = "numeric", 
+                            isRel = "char.log",
+                            LR5 = "numeric", 
+                            LFR = "numeric", 
+                            Rmaxlen = "numeric",
+                            DR = "numeric",
+                            CurrentYr="numeric", 
+                            MPA='matrix'))
 
 # initialize Fleet
 setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
   if (!is.na(file)) {
-    if (file.exists(file)) {
+    if (!file.exists(file)) {
+      stop('File not found')
+    } else {
       dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
       if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", 
-                                      col.names = paste0("V", 1:Ncol))  # read 1st sheet
+                                      col.names = paste0("V", 1:Ncol)) 
       if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", 
-                                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      dname <- dat[, 1]
-      dat <- dat[, 2:ncol(dat)]
+                                       col.names = paste0("V", 1:Ncol))  
+      Names <- dat[, 1]
+      Data <- dat[, 2:ncol(dat)]
       
-      .Object@Name <- dat[match("Name", dname), 1]
-      .Object@nyears <- as.numeric(dat[match("nyears", dname), 1])
-      
-      .Object@CurrentYr <- as.numeric(dat[match("CurrentYr", dname), 1])
+      .Object@Name <- importslot('Name', 1, Data, Names, FALSE)
+      .Object@nyears <- importslot('nyears', 1, Data, Names)
+      .Object@CurrentYr <- importslot('CurrentYr', 1, Data, Names, TRUE, FALSE) 
       if(is.na(.Object@CurrentYr)).Object@CurrentYr<-.Object@nyears
-      
-      .Object@Spat_targ <- as.numeric(dat[match("Spat_targ", dname),  1:2])
+      .Object@Spat_targ <-  importslot('Spat_targ', 2, Data, Names)
       if (!is.na(match("Esd", dname))) {
-        .Object@Esd <- as.numeric(dat[match("Esd", dname), 1:2])  
+        .Object@Esd <- importslot('Esd', 2, Data, Names) 
       } else {
-        .Object@Esd <- as.numeric(dat[match("Fsd", dname), 1:2])  
+        .Object@Esd <- importslot('Fsd', 2, Data, Names)
       }
       
-      # .Object@Fgrad<-as.numeric(dat[match('Fgrad',dname),1:2])
-      nEffYears <- ncol(dat[match("EffYears", dname), ])
+      nEffYears <- ncol(Data[match("EffYears", Names), ])
       oldw <- getOption("warn")
       options(warn = -1)
-      chk <- as.numeric(dat[match("EffYears", dname), 1:nEffYears])
+      chk <- as.numeric(Data[match("EffYears", Names), 1:nEffYears])
       options(warn = oldw)
       ind <- which(!is.na(chk))
       nEffYears <- length(ind)
-      .Object@EffYears <- as.numeric(dat[match("EffYears", dname),  1:nEffYears])
-      .Object@EffLower <- as.numeric(dat[match("EffLower", dname),  1:nEffYears])
-      .Object@EffUpper <- as.numeric(dat[match("EffUpper", dname),  1:nEffYears])
-      .Object@qinc <- as.numeric(dat[match("qinc", dname), 1:2])
-      .Object@qcv <- as.numeric(dat[match("qcv", dname), 1:2])
       
-      chkName <- match("SelYears", dname)  # Check if vector of selectivity years exists
-      if (is.finite(chkName)) {
-        nSelYears <- ncol(dat[match("SelYears", dname), ])
-        oldw <- getOption("warn")
-        options(warn = -1)
-        chk <- as.numeric(dat[match("SelYears", dname), 1:nSelYears])
-        options(warn = oldw)
-        ind <- which(is.finite(chk))
-        nSelYears <- length(ind)
-        chk <- length(ind)
-        if (is.finite(chk) & chk > 0) {
-          # parameters for selectivity years exists
-          .Object@SelYears <- as.numeric(dat[match("SelYears", dname), 1:nSelYears])
-          .Object@L5Lower <- as.numeric(dat[match("L5Lower", dname), 1:nSelYears])
-          .Object@L5Upper <- as.numeric(dat[match("L5Upper", dname), 1:nSelYears])
-          .Object@LFSLower <- as.numeric(dat[match("LFSLower", dname), 1:nSelYears])
-          .Object@LFSUpper <- as.numeric(dat[match("LFSUpper", dname), 1:nSelYears])
-          .Object@VmaxLower <- as.numeric(dat[match("VmaxLower", dname), 1:nSelYears])
-          .Object@VmaxUpper <- as.numeric(dat[match("VmaxUpper", dname), 1:nSelYears])
-        }
-      }
-      # These are ignored in MSE if L5Lower etc are set
-      .Object@L5 <- as.numeric(dat[match("L5", dname), 1:2])
-      .Object@LFS <- as.numeric(dat[match("LFS", dname), 1:2])
-      .Object@Vmaxlen <- as.numeric(dat[match("Vmaxlen", dname), 1:2])
+      .Object@EffYears <- importslot('EffYears', nEffYears, Data, Names)
+      .Object@EffLower <- importslot('EffLower', nEffYears, Data, Names)
+      .Object@EffUpper <- importslot('EffUpper', nEffYears, Data, Names)
+      .Object@qinc <- importslot("qinc", 2, Data, Names)
+      .Object@qcv <- importslot("qcv", 2, Data, Names)
       
-      # Retention curve parameters 
-      .Object@LR5 <- as.numeric(dat[match("LR5", dname), 1:2])
-      .Object@LFR <- as.numeric(dat[match("LFR", dname), 1:2])
-      .Object@Rmaxlen <- as.numeric(dat[match("Rmaxlen", dname), 1:2])
-      .Object@DR <- as.numeric(dat[match("DR", dname), 1:2])
-      
-      .Object@isRel <- dat[match("isRel", dname), 1]  # Are selecivity parameters relative to maturity?
+      .Object@L5 <- importslot("L5", 2, Data, Names) 
+      .Object@LFS <- importslot("LFS", 2, Data, Names)
+      .Object@Vmaxlen <- importslot("Vmaxlen", 2, Data, Names) 
+      .Object@LR5 <- importslot("LR5", 2, Data, Names)
+      .Object@LFR <- importslot("LFR", 2, Data, Names)
+      .Object@Rmaxlen <- importslot("Rmaxlen", 2, Data, Names)
+      .Object@DR <- importslot("DR", 2, Data, Names)
+
+      .Object@isRel <- importslot("isRel", 1, Data, Names, FALSE, FALSE) 
       if (NAor0(.Object@isRel)) .Object@isRel <- "TRUE"
       .Object@isRel <- as.character(.Object@isRel)
       
-      isMPA <- grep('MPA', dname)
-      if (length(isMPA)<1) isMPA <- NA
-      if (!is.na(isMPA)) {
-        MPAdat <- dat[isMPA:nrow(dat),]
-        nrow <- min(which(is.na(as.numeric(MPAdat[1,]))))
-        MPAdat <- MPAdat[,1:(nrow-1)]
-        MPAdat <- as.matrix(sapply(MPAdat, as.numeric))  
-        .Object@MPA <- MPAdat
-      }
-      
-    } else {
-      message("File doesn't exist")
+      # TO DO - MPA 
     }
   }
   .Object
@@ -837,9 +511,6 @@ setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
 
 
 #' ~~ Methods for Function \code{initialize} ~~
-#' 
-#' ~~ Methods for function \code{initialize} ~~
-#' 
 #' 
 #' @name initialize-methods
 #' @aliases initialize-methods initialize,Data-method
@@ -1152,13 +823,11 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   if (.hasSlot(.Object, "maxF")) .Object@maxF <- maxF
   if (.hasSlot(.Object, "reps")) .Object@reps <- reps
   
-  if(length(.Object@Mexp) < 2) .Object@Mexp <- c(0,0)
   if(length(.Object@LenCV) < 2) .Object@LenCV <- c(0.08,0.15)
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
   
   # if(length(.Object@FecB) < 2) .Object@FecB <- c(3,3)
   # if(all(is.na(.Object@FecB))) .Object@FecB <- c(3,3)  
-  if(all(is.na(.Object@Mexp))) .Object@Mexp <- c(0,0)
   if(all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08,0.15)
   if(all(is.na(.Object@CurrentYr))) .Object@CurrentYr=.Object@nyears
   
