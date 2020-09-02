@@ -1032,7 +1032,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
 # }
 
 calcF <- function(x, TACusedE, V_P, Biomass_P, fishdist, Asize, maxage, nareas,
-                  M_ageArray,nyears, y) {
+                  M_ageArray, nyears, y) {
   ct <- TACusedE[x]
   ft <- ct/sum(Biomass_P[x,,y,] * V_P[x,,y+nyears]) # initial guess 
   for (i in 1:50) {
