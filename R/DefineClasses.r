@@ -264,9 +264,14 @@ setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
   if (NAor0(.Object@CV_steep)) .Object@CV_steep <- 0.2
   if (NAor0(.Object@nareas)) .Object@nareas <- 2
   
-  if (length(.Object@CAA) == 0) .Object@CAA <- array(NA, c(1, 1, 1))
-  if (length(.Object@CAL) == 0) .Object@CAL <- array(NA, c(1, 1, 1))
+  if (NAor0(.Object@CAA)) .Object@CAA <- array(NA, c(1, 1, 1))
+  if (NAor0(.Object@CAL)) .Object@CAL <- array(NA, c(1, 1, 1))
   if (length(.Object@CAL_bins) == 0) .Object@CAL_bins <- 1
+  
+  if (NAor0(.Object@AddInd)) .Object@AddInd <- array(NA, c(1, 1, 1))
+  if (NAor0(.Object@CV_AddInd)) .Object@CV_AddInd <- array(NA, c(1, 1, 1))
+  if (NAor0(.Object@AddIndV)) .Object@AddIndV <- array(NA, c(1, 1, 1))
+  
   if (length(.Object@TAC) == 0) .Object@TAC <- array(1, c(1, 1))
   # if (length(.Object@TACbias) == 0) .Object@TACbias <- array(1, c(1, 1))
   if (length(.Object@Sense) == 0) .Object@Sense <- array(1, c(1, 1))
