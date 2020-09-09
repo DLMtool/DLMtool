@@ -1,0 +1,34 @@
+---
+title: "V6 Notes"
+author: "Adrian H"
+date: "9/9/2020"
+output: html_document
+---
+
+
+## Plus-Group
+Plus group is now default. To turn off plusgroup, use `OM@cpars$plusgroup = FALSE`
+
+## Optimizing for depletion
+Depletion is defined in terms of spawning stock biomass. To define depletion in terms of 
+vulnerable stock, use `OM@cpars$control$D == "VB"`. See Depletion calculation section for more details. 
+
+
+## Recruitment deviations
+Recruitment deviations (process error by year) can be specified with `OM@cpars$Perr_y` with dimensions
+`c(nsim, nyears+proyears+maxage)`.
+
+The values in the first `maxage` columns of `Perr_y` are the recruitment deviations for the age structure in the 
+initial year. `Perr_y[,maxage+1]` is the recruitment deviation for age-0 in the first year.
+
+Add example
+
+## Catchability
+Optimizing for catchability (*q*) can be skipped by setting `OM@cpars$qs` with `nsim` numeric values for *q*.
+For example, setting `cpars$qs <- rep(1, nsim)` will result in *F* = `OM@cpars$Find`.
+
+
+
+
+
+

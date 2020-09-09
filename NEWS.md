@@ -5,14 +5,15 @@ The current version of the DLMtool package is available for download from [CRAN]
 ## DLMtool 6.0.999 - Development Version 
 
 ### NOTE
-This is a new major version of DLMtool, with signficant changes from the previous versions.
+This is a new major version of DLMtool, with significant changes from the previous versions.
 It is not backwards compatible with earlier versions of DLMtool.
 
 ### Major changes
 - Age accounting now starts from age-0 instead of age-1
 
 - A plus-group is now used by default. Turn off using `cpars$plusgroup <- 0`  TODO
-- removed all optional slots for time-varying parameters from Stock, Fleet, Obs, and Imp objects. 
+- All optional slots for time-varying parameters from Stock, Fleet, Obs, and Imp objects 
+have been deprecated. 
 All time-varying parameters should now be specified using `OM@cpars`. 
 - `Fleet@MPA` slot has been removed. Historical (existing) MPAs should be specified in 
 cpars TODO
