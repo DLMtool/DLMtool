@@ -55,7 +55,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage,
     }
 
     if (plusgroup > 0) {
-      Nnext(maxage, A) += Ncurr(maxage, A) * exp(-Zcurr(maxage, A))/(1-exp(-Zcurr(maxage, A))); // Total mortality
+      Nnext(maxage, A) += Nnext(maxage, A) * exp(-Zcurr(maxage, A))/(1-exp(-Zcurr(maxage, A))); // Total mortality
     }
   }
   
