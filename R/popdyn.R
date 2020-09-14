@@ -1127,8 +1127,8 @@ MSYCalcs <- function(logF, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
   }
   
   if (plusgroup == 1) {
-    l0[length(l0)] <- l0[length(l0)]/(1-exp(-M_at_Age[length(l0)]))
-    lx[length(lx)] <- lx[length(lx)]/(1-surv[length(lx)])
+    l0[length(l0)] <- l0[length(l0)]+l0[length(l0)]*exp(-M_at_Age[length(l0)])/(1-exp(-M_at_Age[length(l0)]))
+    lx[length(lx)] <- lx[length(lx)]+lx[length(lx)]*exp(-M_at_Age[length(lx)])/(1-exp(-M_at_Age[length(lx)]))
   }
   
   Egg0 <- sum(l0 * Wt_at_Age * Mat_at_Age) # unfished egg-per-recruit (assuming fecundity proportional to weight)

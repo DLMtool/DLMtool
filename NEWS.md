@@ -1,5 +1,11 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.4.6
+
+### Fixes
+- fix to plus-group calculations
+
+
 ## DLMtool 5.4.5
 
 ### New Additions

@@ -362,6 +362,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   surv <- matrix(1, nsim, maxage)
   # surv <- matrix(exp(-M_ageArray[,1,1]), nsim, maxage)
   surv[, 2:maxage] <- t(exp(-apply(M_ageArray[,,1], 1, cumsum)))[, 1:(maxage-1)]  # Survival array
+  if (plusgroup) {
+    surv[,n_age] <- surv[,n_age]+surv[,n_age]*exp(-M_ageArray[,n_age,1])/(1-exp(-M_ageArray[,n_age,1])) # indefinite integral
+  }
+  
   Nfrac <- surv * Mat_age[,,1]  # predicted Numbers of mature ages in first year
   
   # Set up array indexes sim (S) age (A) year (Y) region/area (R)
@@ -446,6 +450,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # surv <- array(exp(-M_ageArray[,1,]), dim=c(nsim, nyears+proyears, maxage))
   # surv <- aperm(surv, c(1,3,2))
   surv[, 2:maxage, ] <- aperm(exp(-apply(M_ageArray, c(1,3), cumsum))[1:(maxage-1), ,], c(2,1,3)) # Survival array
+  
+  if (plusgroup) {
+    surv[,n_age] <- surv[,n_age]+surv[,n_age]*exp(-M_ageArray[,n_age,1])/(1-exp(-M_ageArray[,n_age,1])) # indefinite integral
+  }
+  
+  
   Nfrac <- surv * Mat_age  # predicted numbers of mature ages in all years
   
   # indices for all years
@@ -465,11 +475,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
   SSN_a[SAYR_a] <- Nfrac[SAY_a] * R0[S_a] * initdist[SAR_a]  # Calculate initial spawning stock numbers for all years
   N_a[SAYR_a] <- R0[S_a] * surv[SAY_a] * initdist[SAR_a] # Calculate initial stock numbers for all years
-  if (plusgroup==1) {
-    N_a[,OM@maxage,,] <- N_a[,OM@maxage,,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,])))
-    SSN_a[,OM@maxage,,] <- SSN_a[,OM@maxage,,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,])))
-  }
-  
+ 
   Biomass_a[SAYR_a] <- N_a[SAYR_a] * Wt_age[SAY_a]  # Calculate initial stock biomass
   SSB_a[SAYR_a] <- SSN_a[SAYR_a] * Wt_age[SAY_a]    # Calculate spawning stock biomass
 
@@ -520,12 +526,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Non-equilibrium calcs ----
   SSN[SAYR] <- Nfrac[SAY] * R0[S] * initdist[SAR]*Perr_y[Sa]  # Calculate initial spawning stock numbers
   N[SAYR] <- R0[S] * surv[SAY] * initdist[SAR]*Perr_y[Sa]  # Calculate initial stock numbers
-  
-  if(plusgroup==1) {
-    N[,OM@maxage,1,] <- N[,OM@maxage,1,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,1])))
-    SSN[,OM@maxage,1,] <- SSN[,OM@maxage,1,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,1])))
-  }
-  
   Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
   SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
   VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
