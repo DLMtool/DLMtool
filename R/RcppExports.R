@@ -152,7 +152,7 @@ movfit_Rcpp <- function(par, prb, frac) {
 #' @param bR Numeric vector with Ricker SRR b parameter by area
 #' @param mov Numeric matrix (nareas by nareas) with the movement matrix
 #' @param SRrel Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
-#' 
+#' @param plusgroup Numeric. Include a plusgroup (1) or not (0)
 #' @author A. Hordyk
 #' 
 #' @export
