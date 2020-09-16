@@ -14,12 +14,7 @@ for (sl in slots) {
 
     OM2 <- OM 
     sl_val <- suppressWarnings(mean(slot(OM2, sl)))
-    if (sl == "Perr") {
-      OM2@cpars[[sl]] <- matrix(sl_val[1], OM2@nsim, OM2@nyears+OM2@proyears+OM2@maxage)
-    } else {
-      OM2@cpars[[sl]] <- rep(sl_val[1], OM2@nsim)  
-    }
-    
+    OM2@cpars[[sl]] <- rep(sl_val[1], OM2@nsim)
     testthat::expect_error(runMSE(OM2, Hist=TRUE), NA)
   })
 }

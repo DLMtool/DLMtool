@@ -4,16 +4,16 @@
 \alias{simCAA}
 \title{Simulate Catch-at-Age Data}
 \usage{
-simCAA(nsim, yrs, n_age, Cret, CAA_ESS, CAA_nsamp)
+simCAA(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp)
 }
 \arguments{
 \item{nsim}{Number of simulations}
 
 \item{yrs}{Number of years}
 
-\item{n_age}{Number of age classes}
+\item{maxage}{Maximum age}
 
-\item{Cret}{Retained Catch at age in numbers - array(sim, years, maxage+1)}
+\item{Cret}{Retained Catch at age in numbers - array(sim, years, maxage)}
 
 \item{CAA_ESS}{CAA effective sample size}
 

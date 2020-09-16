@@ -14,7 +14,7 @@
 \alias{initialize,DLM_general-method}
 \title{~~ Methods for Function \code{initialize} ~~}
 \description{
-~~ Methods for Function \code{initialize} ~~
+~~ Methods for function \code{initialize} ~~
 }
 \section{Methods}{
  \describe{

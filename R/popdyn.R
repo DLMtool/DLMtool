@@ -76,9 +76,6 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
                            qs, qvar, qinc, 
                            Effort_pot,
                            checks=FALSE) {
-  
-  n_age <- maxage + 1 # include age-0
-  
   # Effort 
   if (length(MPRecs$Effort) == 0) { # no max effort recommendation
     if (y==1) TAE <- LastTAE * E_f[,y] # max effort is unchanged but has implementation error
@@ -268,7 +265,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
     }
     
     # upper harvest slot 
-    aboveHS <- Len_age[,,allyrs, drop=FALSE]>array(HS, dim=c(nsim, n_age, length(allyrs)))
+    aboveHS <- Len_age[,,allyrs, drop=FALSE]>array(HS, dim=c(nsim, maxage, length(allyrs)))
     tretA_P <- retA_P[,,allyrs]
     tretA_P[aboveHS] <- 0
     retA_P[,,allyrs] <- tretA_P
@@ -277,14 +274,14 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
       retL_P[ss, index, allyrs] <- 0
     }	
     
-    dr <- aperm(abind::abind(rep(list(DR_P), n_age), along=3), c(2,3,1))
+    dr <- aperm(abind::abind(rep(list(DR_P), maxage), along=3), c(2,3,1))
     retA_P[,,allyrs] <- (1-dr[,,yr]) * retA_P[,,yr]
     dr <- aperm(abind::abind(rep(list(DR_P), nCALbins), along=3), c(2,3,1))
     retL_P[,,allyrs] <- (1-dr[,,yr]) * retL_P[,,yr]
     
-    # update realized vulnerablity curve with retention and dead discarded fish 
-    Fdisc_array1 <- array(Fdisc_P, dim=c(nsim, n_age, length(allyrs)))
-
+    # update realized vulnerability curve with retention and dead discarded fish 
+    Fdisc_array1 <- array(Fdisc_P, dim=c(nsim, maxage, length(allyrs)))
+    
     V_P2 <- V_P
     V_P2[,,allyrs] <- V_P[,,allyrs, drop=FALSE] * (retA_P[,,allyrs, drop=FALSE] + (1-retA_P[,,allyrs, drop=FALSE])*Fdisc_array1)
   
@@ -304,9 +301,9 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   FMc <- Zc <- array(NA, dim=dim(CurrentB)) # fishing and total mortality this year
   
   # indices 
-  SAYRL <- as.matrix(expand.grid(1:nsim, 1:n_age, nyears, 1:nareas))  # Final historical year
-  SAYRt <- as.matrix(expand.grid(1:nsim, 1:n_age, y + nyears, 1:nareas))  # Trajectory year
-  SAYR <- as.matrix(expand.grid(1:nsim, 1:n_age, y, 1:nareas))
+  SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
+  SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
+  SAYR <- as.matrix(expand.grid(1:nsim, 1:maxage, y, 1:nareas))
   SAR <- SAYR[, c(1,2,4)]
   SAY <- SAYR[,c(1:3)]
   
@@ -317,7 +314,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   S1 <- SAYR[, 1]
   SY1 <- SAYR[, c(1, 3)]
   SAY1 <- SAYR[, 1:3]
-  SYA <- as.matrix(expand.grid(1:nsim, 1, 1:n_age))  # Projection year
+  SYA <- as.matrix(expand.grid(1:nsim, 1, 1:maxage))  # Projection year
   SY <- SYA[, 1:2]
   SA <- SYA[, c(1, 3)]
   S <- SYA[, 1]
@@ -353,7 +350,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
     TACusedE <- TAC_f[,y]*TACused   # TAC taken after implementation error
     
     # Calculate total vulnerable biomass available mid-year accounting for any changes in selectivity &/or spatial closures
-    M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, n_age, nareas))
+    M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
     Atemp <- apply(CurrentVB * exp(-M_array), c(1,3), sum) # mid-year before fishing
     availB <- apply(Atemp * t(Si), 1, sum) # adjust for spatial closures
     
@@ -396,8 +393,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
       c_temp <- apply(Catch_tot[chk,,, drop=FALSE], 1, sum)
       ratio_temp <- (availB[chk]/c_temp) * 0.99
       # scale total catches to 0.99 available biomass
-      if (sum(chk)>1) Catch_tot[chk,, ] <- Catch_tot[chk,,] * array(ratio_temp, dim=c(sum(chk), n_age, nareas))
-      if (sum(chk)==1) Catch_tot[chk,, ] <- Catch_tot[chk,,] * array(ratio_temp, dim=c(n_age, nareas))
+      if (sum(chk)>1) Catch_tot[chk,, ] <- Catch_tot[chk,,] * array(ratio_temp, dim=c(sum(chk), maxage, nareas))
+      if (sum(chk)==1) Catch_tot[chk,, ] <- Catch_tot[chk,,] * array(ratio_temp, dim=c(maxage, nareas))
     }
     
     # check where actual catches are higher than TAC due to discarding (with imp error) 
@@ -1036,10 +1033,10 @@ calcF <- function(x, TACusedE, V_P, Biomass_P, fishdist, Asize, maxage, nareas,
   ct <- TACusedE[x]
   ft <- ct/sum(Biomass_P[x,,y,] * V_P[x,,y+nyears]) # initial guess 
   for (i in 1:50) {
-    Fmat <- ft * matrix(V_P[x,,y+nyears], nrow=maxage+1, ncol=nareas) *
-      matrix(fishdist[x,], maxage+1, nareas, byrow=TRUE)/ 
-      matrix(Asize[x,], maxage+1, nareas, byrow=TRUE) # distribute F over age and areas
-    Zmat <- Fmat + matrix(M_ageArray[x,,y+nyears], nrow=maxage+1, ncol=nareas, byrow=FALSE)
+    Fmat <- ft * matrix(V_P[x,,y+nyears], nrow=maxage, ncol=nareas) *
+      matrix(fishdist[x,], maxage, nareas, byrow=TRUE)/ 
+      matrix(Asize[x,], maxage, nareas, byrow=TRUE) # distribute F over age and areas
+    Zmat <- Fmat + matrix(M_ageArray[x,,y+nyears], nrow=maxage, ncol=nareas, byrow=FALSE)
     predC <- Fmat/Zmat * (1-exp(-Zmat)) * Biomass_P[x,,y,] # predicted catch
     pct <- sum(predC)
     
@@ -1120,19 +1117,18 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
 MSYCalcs <- function(logF, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, 
                      maxage, R0x, SRrelx, hx, opt=1, plusgroup=0) {
   # Box 3.1 Walters & Martell 2004
-  n_age <- maxage + 1
   FF <- exp(logF)
-  lx <- rep(1, n_age)
-  l0 <- c(1, exp(cumsum(-M_at_Age[1:(n_age-1)]))) # unfished survival
+  lx <- rep(1, maxage)
+  l0 <- c(1, exp(cumsum(-M_at_Age[1:(maxage-1)]))) # unfished survival
   
   surv <- exp(-M_at_Age - FF * V_at_Age)
-  for (a in 2:n_age) {
+  for (a in 2:maxage) {
     lx[a] <- lx[a-1] * surv[a-1] # fished survival
   }
   
   if (plusgroup == 1) {
-    l0[n_age] <- l0[n_age]/(1-exp(-M_at_Age[n_age]))
-    lx[n_age] <- lx[n_age]/(1-surv[n_age])
+    l0[length(l0)] <- l0[length(l0)]+l0[length(l0)]*exp(-M_at_Age[length(l0)])/(1-exp(-M_at_Age[length(l0)]))
+    lx[length(lx)] <- lx[length(lx)]+lx[length(lx)]*exp(-M_at_Age[length(lx)])/(1-exp(-M_at_Age[length(lx)]))
   }
   
   Egg0 <- sum(l0 * Wt_at_Age * Mat_at_Age) # unfished egg-per-recruit (assuming fecundity proportional to weight)
@@ -1890,9 +1886,9 @@ projectEq <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, 
 
 
 optDfun <- function(Perrmulti, x, initD, Nfrac, R0, Perr_y, surv, 
-                    Wt_age, SSB0, n_age) {
+                    Wt_age, SSB0, maxage) {
   
-  initRecs <- rev(Perr_y[x,1:n_age]) * exp(Perrmulti)
+  initRecs <- rev(Perr_y[x,1:maxage]) * exp(Perrmulti)
   
   SSN <- Nfrac[x,] * R0[x] *  initRecs # Calculate initial spawning stock numbers
   SSB <- SSN * Wt_age[x,,1]    # Calculate spawning stock biomass
@@ -1901,26 +1897,14 @@ optDfun <- function(Perrmulti, x, initD, Nfrac, R0, Perr_y, surv,
 }
 
 optDfunwrap <- function(x, initD, Nfrac, R0, initdist, Perr_y, surv,
-                        Wt_age, SSB0, n_age) {
+                        Wt_age, SSB0, maxage) {
   interval <- log(c(0.01, 10))
   
   optD <- optimise(optDfun, interval=interval, x=x, initD=initD, Nfrac=Nfrac, 
                    R0=R0, Perr_y=Perr_y, surv=surv, 
-                   Wt_age=Wt_age, SSB0=SSB0, n_age=n_age)
+                   Wt_age=Wt_age, SSB0=SSB0, maxage=maxage)
   exp(optD$minimum)
 }
-
-
-calcRecruitment <- function(x, SRrel, SSBcurr, recdev, hs, aR, bR, R0a, SSBpR) {
-  if (SRrel[x] == 1) { # BH rec
-    rec_A <- recdev[x] * (4*R0a[x,] * hs[x] * SSBcurr[x,])/(SSBpR[x,] * 
-                                                              R0a[x,] * (1-hs[x]) + (5*hs[x]-1) * SSBcurr[x,])
-  } else { # Ricker rec
-    rec_A <- recdev[x] * aR[x,] * SSBcurr[x,] * exp(-bR[x,]*SSBcurr[x,])
-  }
-  rec_A
-}
-
 
 # calcMSYRicker <- function(MSYyr, M_ageArray, Wt_age, retA, V, Perr_y, maxage,
 #                           nareas, Mat_age, nsim, Asize, N, Spat_targ, hs,

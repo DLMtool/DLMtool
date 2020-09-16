@@ -92,8 +92,8 @@ DLMextra <- function(silent=FALSE, force=FALSE) {
   if (!silent) message("Use 'library(DLMextra)' to load additional data into workspace")
    
   ver <- packageVersion("DLMextra")
-  if (ver <= '0.1.3') stop("This version of DLMextra is not compatible with DLMtool V", 
-                          packageVersion('DLMtool'), '. Please install DLMextra V0.1.4+')
+  if (ver > '0.1.3') stop("This version of DLMextra is not compatible with DLMtool V", 
+                          packageVersion('DLMtool'), '. Please install DLMextra V0.1.3')
   
   # if (tt) {
   #  
@@ -580,30 +580,21 @@ MPurl <- function(topic, url='https://dlmtool.github.io/DLMtool/reference/',
 #'
 #' Sets up parallel processing using the snowfall package
 #'
-#' @param cpus the number of CPUs to use for parallel processing. If left empty
-#' all physical cores will be used, unless `logical=TRUE`, in which case both 
-#' physical and logical (virtual) cores will be used.
-#' @param logical Use the logical cores as well? Using the virtual cores may
-#' not lead to any significant decrease in run time. 
-#' You can test the optimal number of cores using `optCPU()`
+#' @param cpus number of CPUs 
 #' @param ... other arguments passed to 'snowfall::sfInit'
 #' @examples
 #' \dontrun{
-#' setup() # set-up the physical processors
+#' setup() # set-up half the available processors
 #' setup(6) # set-up 6 processors
-#' setup(logical=TRUE) # set-up physical and logical cores
 #' }
 #' @export 
-setup <- function(cpus=NULL, logical=FALSE, ...) {
-  if (is.null(cpus)) 
-    cpus <- parallel::detectCores(logical=logical)
-  if(snowfall::sfIsRunning()) 
-    snowfall::sfStop()
+setup <- function(cpus=parallel::detectCores()*0.5, ...) {
+  if(snowfall::sfIsRunning()) snowfall::sfStop()
   snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)
   sfLibrary("DLMtool", character.only = TRUE, verbose=FALSE)
   pkgs <- search()
-  if ("package:MSEtool" %in% pkgs) 
-    sfLibrary("MSEtool", character.only = TRUE, verbose=FALSE)
+  if ("package:MSEtool" %in% pkgs) sfLibrary("MSEtool", character.only = TRUE, verbose=FALSE)
+  
 }
 
 
@@ -664,6 +655,7 @@ updateMSE <- function(MSEobj) {
       } else slot(MSEobj, slots[X]) <- fun(0)
     }
   }
+  MSEobj <- RepmissingVal(MSEobj, 'Mexp', c(0,0))
   MSEobj <- RepmissingVal(MSEobj, 'LenCV', c(0.08,0.15))
   MSEobj <- RepmissingVal(MSEobj, 'LR5', c(0,0))
   MSEobj <- RepmissingVal(MSEobj, 'LFR', c(0,0))

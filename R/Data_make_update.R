@@ -19,7 +19,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   Data <- replic8(Data, nsim)  # make nsim sized slots in the DLM data object
   
   Data@Name <- Name
-  Data@Year <- (OM@CurrentYr - nyears+1):OM@CurrentYr
+  Data@Year <- 1:nyears
   
   # --- Observed catch ----
   # Simulated observed retained catch (biomass)
@@ -143,7 +143,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   
   # --- Abundance ----
   # Calculate vulnerable and spawning biomass abundance --
-  M_array <- array(0.5*StockPars$M_ageArray[,,nyears], dim=c(nsim, StockPars$maxage+1, nareas))
+  M_array <- array(0.5*StockPars$M_ageArray[,,nyears], dim=c(nsim, StockPars$maxage, nareas))
   A <- apply(VBiomass[, , nyears, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
   Asp <- apply(SSB[, , nyears, ] * exp(-M_array), 1, sum)  # Spawning abundance (mid-year before fishing)
   OFLreal <- A * (1-exp(-RefPoints$FMSY))  # the true simulated Over Fishing Limit
@@ -155,13 +155,13 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   
   # --- Catch-at-age ----
   Cret2 <- apply(Cret * Sample_Area$CAA[,,1:nyears,], 1:3, sum)
-  Data@CAA <- simCAA(nsim, nyears, StockPars$maxage+1, Cret2, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
+  Data@CAA <- simCAA(nsim, nyears, StockPars$maxage, Cret2, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
          
   # --- Catch-at-length ----
   vn <- apply(N*Sample_Area$CAL[,,1:nyears,], c(1,2,3), sum) * FleetPars$retA[,,1:nyears] 
   # numbers at age in population that would be retained
   vn <- aperm(vn, c(1,3, 2))
-  
+
   CALdat <- simCAL(nsim, nyears, StockPars$maxage, ObsPars$CAL_ESS, 
                    ObsPars$CAL_nsamp, StockPars$nCALbins, StockPars$CAL_binsmid, 
                    vn, FleetPars$retL, StockPars$Linfarray, 
@@ -220,7 +220,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   Data@wlb <- rep(StockPars$b, nsim)
   Data@nareas <- nareas
   Data@Ref <- OFLreal 
-  Data@LHYear <- OM@CurrentYr  # Last historical year is nyears (for fixed MPs)
+  Data@LHYear <- nyears  # Last historical year is nyears (for fixed MPs)
   Data@Misc <- vector("list", nsim)
   
   Data
@@ -243,7 +243,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   nareas <- StockPars$nareas
   reps <- OM@reps
   
-  Data@Year <- (OM@CurrentYr - nyears+1):(OM@CurrentYr+ y - 1)
+  Data@Year <- 1:(nyears + y - 1)
   Data@t <- rep(nyears + y, nsim)
   
   # --- Simulate catches ---- 
@@ -370,7 +370,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
    CV_AddInd  <- array(NA, dim=c(nsim, n.ind, nyears+y-1))
    for (i in 1:n.ind) {
      Ind_V <- SampCpars$Data@AddIndV[1,i, ]
-     Ind_V <- matrix(Ind_V, nrow=Data@MaxAge+1, ncol= nyears+proyears)
+     Ind_V <- matrix(Ind_V, nrow=Data@MaxAge, ncol= nyears+proyears)
      Ind_V <- replicate(nsim, Ind_V) %>% aperm(., c(3,1,2))
      
      yr.ind <- max(which(!is.na(ErrList$AddIerr[1,i, 1:nyears])))
@@ -474,7 +474,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   
   # --- Abundance ----
   # Calculate vulnerable and spawning biomass abundance --
-  M_array <- array(0.5*StockPars$M_ageArray[,,nyears+y], dim=c(nsim, StockPars$maxage+1, nareas))
+  M_array <- array(0.5*StockPars$M_ageArray[,,nyears+y], dim=c(nsim, StockPars$maxage, nareas))
   A <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
   Asp <- apply(SSB_P[, , y, ] * exp(-M_array), 1, sum)  # Spawning abundance (mid-year before fishing)
   Data@Abun <- A * ObsPars$Abias * rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr))
@@ -484,18 +484,16 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret
   # --- Catch-at-age ----
   # previous CAA
   oldCAA <- Data@CAA
-  Data@CAA <- array(0, dim = c(nsim, nyears + y - 1, StockPars$maxage+1))
+  Data@CAA <- array(0, dim = c(nsim, nyears + y - 1, StockPars$maxage))
   Data@CAA[, 1:(nyears + y - interval[mm] - 1), ] <- oldCAA[, 1:(nyears + y - interval[mm] - 1), ] 
-  
   # update CAA
+  
   CNtemp <- retA_P[,,yind+nyears, drop=FALSE] * 
     apply(N_P[,,yind,, drop=FALSE]*Sample_Area$CAA[,,nyears+yind,, drop=FALSE], 1:3, sum) 
   CNtemp[is.na(CNtemp)] <- tiny
   CNtemp[!is.finite(CNtemp)] <- tiny
 
-
-  CAA <- simCAA(nsim, yrs=length(yind), StockPars$maxage+1, Cret=CNtemp, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
-
+  CAA <- simCAA(nsim, yrs=length(yind), StockPars$maxage, Cret=CNtemp, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
   Data@CAA[, nyears + yind, ] <- CAA
   
   # --- Catch-at-length ----

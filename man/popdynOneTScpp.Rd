@@ -4,20 +4,33 @@
 \alias{popdynOneTScpp}
 \title{Population dynamics model for one annual time-step}
 \usage{
-popdynOneTScpp(nareas, maxage, Ncurr, Zcurr, mov, plusgroup = 0L)
+popdynOneTScpp(
+  nareas,
+  maxage,
+  SSBcurr,
+  Ncurr,
+  Zcurr,
+  PerrYr,
+  hs,
+  R0a,
+  SSBpR,
+  aR,
+  bR,
+  mov,
+  SRrel,
+  plusgroup = 0L
+)
 }
 \arguments{
 \item{nareas}{The number of spatial areas}
 
 \item{maxage}{The maximum age}
 
-\item{Ncurr}{A numeric matrix (maxage+1, nareas) with current numbers-at-age in each area}
-
-\item{Zcurr}{A numeric matrix (maxage+1, nareas) with total mortality-at-age in each area}
-
-\item{mov}{Numeric matrix (nareas by nareas) with the movement matrix}
-
 \item{SSBcurr}{A numeric vector of length nareas with the current spawning biomass in each area}
+
+\item{Ncurr}{A numeric matrix (maxage, nareas) with current numbers-at-age in each area}
+
+\item{Zcurr}{A numeric matrix (maxage, nareas) with total mortality-at-age in each area}
 
 \item{PerrYr}{A numeric value with recruitment deviation for current year}
 
@@ -30,6 +43,8 @@ popdynOneTScpp(nareas, maxage, Ncurr, Zcurr, mov, plusgroup = 0L)
 \item{aR}{Numeric vector with Ricker SRR a parameter by area}
 
 \item{bR}{Numeric vector with Ricker SRR b parameter by area}
+
+\item{mov}{Numeric matrix (nareas by nareas) with the movement matrix}
 
 \item{SRrel}{Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)}
 }

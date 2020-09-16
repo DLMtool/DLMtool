@@ -46,88 +46,71 @@ the data inputs is used.}
 
 \item{\code{Source}}{A reference to a website or article from which parameters were taken to define the operating model}
 
-\item{\code{Name}}{The name of the Stock object. Single value. Character string}
-
 \item{\code{Common_Name}}{Common name of the species. Character string}
 
-\item{\code{Species}}{Scientific name of the species. Genus and species name.
-Character string}
+\item{\code{Species}}{Scientific name of the species. Genus and species name. Character string}
 
-\item{\code{maxage}}{The maximum age of individuals that is simulated (there is no
-'plus group'). Single value. Positive integer}
+\item{\code{maxage}}{The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer}
 
-\item{\code{R0}}{The magnitude of unfished recruitment. Single value. Positive real
-number}
+\item{\code{R0}}{The magnitude of unfished recruitment. Single value. Positive real number}
 
-\item{\code{M}}{Natural mortality rate. Uniform distribution lower and upper bounds.
-Positive real number}
+\item{\code{M}}{Natural mortality rate. Uniform distribution lower and upper bounds. Positive real number}
 
-\item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a
-coefficient of variation. Uniform distribution lower and upper bounds.
-Non-negative real numbers}
+\item{\code{M2}}{(Optional) Natural mortality rate at age. Vector of length 'maxage'. Positive real number}
 
-\item{\code{h}}{Steepness of the stock recruit relationship. Uniform distribution
-lower and upper bounds. Values from 1/5 to 1}
+\item{\code{Mexp}}{Exponent of the Lorenzen function assuming an inverse relationship between M and weight. Uniform distribution lower and upper bounds. Real numbers <= 0.}
 
-\item{\code{SRrel}}{Type of stock-recruit relationship. Single value, switch (1)
-Beverton-Holt (2) Ricker. Integer}
+\item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Perr}}{Process error, the CV of log-normal recruitment deviations.
-Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Mgrad}}{No longer used. Previously mean temporal trend in natural mortality rate, expressed as a percentage change in M per year.}
 
-\item{\code{AC}}{Auto-correlation in recruitment deviations
-rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper
-bounds. Non-negative real numbers}
+\item{\code{h}}{Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1}
 
-\item{\code{Linf}}{Asymptotic length. Uniform distribution lower and upper bounds.
-Positive real numbers}
+\item{\code{SRrel}}{Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer}
 
-\item{\code{K}}{von Bertalanffy growth parameter k. Uniform distribution lower and
-upper bounds. Positive real numbers}
+\item{\code{Perr}}{Process error, the CV of lognormal recruitment deviations. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{t0}}{von Bertalanffy theoretical age at length zero. Uniform
-distribution lower and upper bounds. Non-positive real numbers}
+\item{\code{AC}}{Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for
-all age classes). Uniform distribution lower and upper bounds. Positive real
-numbers}
+\item{\code{Period}}{(Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Ksd}}{Inter-annual variability in growth parameter k expressed as
-coefficient of variation. Uniform distribution lower and upper bounds.
-Non-negative real numbers}
+\item{\code{Amplitude}}{(Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. 0 < Amplitude < 1}
 
-\item{\code{Linfsd}}{Inter-annual variability in maximum length expressed as a
-coefficient of variation. Uniform distribution lower and upper bounds.
-Non-negative real numbers}
+\item{\code{Linf}}{Maximum length. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{L50}}{Length at 50 percent maturity. Uniform distribution lower and
-upper bounds. Positive real numbers}
+\item{\code{K}}{von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{L50_95}}{Length increment from 50 percent to 95 percent maturity.
-Uniform distribution lower and upper bounds. Positive real numbers}
+\item{\code{t0}}{von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers}
 
-\item{\code{D}}{Current level of stock depletion SSB(current)/SSB(unfished). Uniform
-distribution lower and upper bounds. Fraction}
+\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers}
+
+\item{\code{Ksd}}{Inter-annual variability in growth parameter k expressed as coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{Kgrad}}{No longer used. Previously mean temporal trend in growth parameter k, expressed as a percentage change in k per year.}
+
+\item{\code{Linfsd}}{Inter-annual variability in maximum length expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{Linfgrad}}{No longer used. Previously mean temporal trend in maximum length, expressed as a percentage change in Linf per year.}
+
+\item{\code{L50}}{Length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers}
+
+\item{\code{L50_95}}{Length increment from 50 percent to 95 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers}
+
+\item{\code{D}}{Current level of stock depletion SSB(current)/SSB(unfished). Uniform distribution lower and upper bounds. Fraction}
 
 \item{\code{a}}{Length-weight parameter alpha. Single value. Positive real number}
 
 \item{\code{b}}{Length-weight parameter beta. Single value. Positive real number}
 
-\item{\code{Size_area_1}}{The size of area 1 relative to area 2. Uniform
-distribution lower and upper bounds. Positive real numbers}
+\item{\code{Size_area_1}}{The size of area 1 relative to area 2. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Frac_area_1}}{The fraction of the unfished biomass in stock 1. Uniform
-distribution lower and upper bounds. Positive real numbers}
+\item{\code{Frac_area_1}}{The fraction of the unfished biomass in stock 1. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Prob_staying}}{The probability of individuals in area 1 remaining in
-area 1 over the course of one year. Uniform distribution lower and upper
-bounds. Positive fraction.}
+\item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year. Uniform distribution lower and upper bounds. Positive fraction.}
 
-\item{\code{Fdisc}}{Fraction of discarded fish that die. Uniform distribution lower
-and upper bounds. Non-negative real numbers}
+\item{\code{Fdisc}}{Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Source}}{A reference to a website or article from which parameters were
-taken to define the stock object. Single value. Character string.}
+\item{\code{Source}}{A reference to a website or article from which parameters were taken to define the stock object. Single value. Character string.}
 
 \item{\code{nyears}}{The number of years for the historical 'spool-up' simulation. Single value. Positive integer}
 

@@ -39,21 +39,21 @@ popdynCPP(
 
 \item{maxage}{The maximum age}
 
-\item{Ncurr}{A numeric matrix (maxage+1, nareas) with current numbers-at-age in each area}
+\item{Ncurr}{A numeric matrix (maxage, nareas) with current numbers-at-age in each area}
 
 \item{pyears}{The number of years to project the population forward}
 
-\item{M_age}{Numeric matrix (maxage+1, pyears) with natural mortality by age and year}
+\item{M_age}{Numeric matrix (maxage, pyears) with natural mortality by age and year}
 
 \item{Asize_c}{Numeric vector (length nareas) with size of each area}
 
 \item{MatAge}{Numeric vector with proportion mature by age}
 
-\item{WtAge}{Numeric matrix (maxage+1, pyears) with weight by age and year}
+\item{WtAge}{Numeric matrix (maxage, pyears) with weight by age and year}
 
-\item{Vuln}{Numeric matrix (maxage+1, pyears) with vulnerability by age and year}
+\item{Vuln}{Numeric matrix (maxage, pyears) with vulnerability by age and year}
 
-\item{Retc}{Numeric matrix (maxage+1, pyears) with retention by age and year}
+\item{Retc}{Numeric matrix (maxage, pyears) with retention by age and year}
 
 \item{Prec}{Numeric vector (pyears) with recruitment error}
 
