@@ -779,8 +779,8 @@ LtargetE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xL = 1.05) {
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
 
-  Lrecent <- mean(Data@ML[ind])
-  Lave <- mean(Data@ML[ind3])
+  Lrecent <- mean(Data@ML[x,ind])
+  Lave <- mean(Data@ML[x,ind3])
   L0 <- 0.9 * Lave
   Ltarget <- xL * Lave
   if (Lrecent > L0) {
